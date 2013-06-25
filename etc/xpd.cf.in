@@ -1,0 +1,23 @@
+
+# PROOF part
+# (xrootd only: the 'xpd.' directives are ignored if the protocol is not loaded)
+### Load the XrdProofd protocol:
+xpd.port %PORT1%
+if exec xrootd
+  xrd.protocol xproofd:%PORT1% %ROOTSYS%/lib/libXrdProofd.so
+fi
+
+### Working directory for sessions 
+xpd.workdir %TMPDIR%/pool
+xpd.tmp     %TMPDIR%/tmp
+all.adminpath %TMPDIR%
+
+xpd.resource static ucfg:yes wmx:-1
+xpd.putenv ROOTPROOFCONF=%PAF_SESSION_DIR%/proof.conf
+
+xpd.role worker 
+if %HOSTNAME% 
+  xpd.role any
+fi
+
+xpd.allow %HOSTNAME%

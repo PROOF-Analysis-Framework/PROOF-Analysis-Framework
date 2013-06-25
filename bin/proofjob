@@ -1,0 +1,93 @@
+#!/bin/bash
+#$ -S /bin/bash
+#
+# Proof job to start the proof cluster. It starts the master
+# and then uses qrsh to start the workers.
+
+if [ "x$FULLDEBUG" = "x1"  ] ; then
+    set -x
+fi
+
+HOST=`hostname`
+echo "Starting PAF xproofd session at $HOST"
+HOSTF=`hostname -f`
+
+echo "ROOTSYS: $ROOTSYS"
+echo "PAFPATH: $PAFPATH"
+echo "PAF_SESSION_DIR: $PAF_SESSION_DIR"
+
+if [ "x$ROOTSYS" == "x" ] ; then
+    echo "Unable to continue without ROOTSYS env variable"
+    exit 1
+fi
+if [ ! -d $PAF_SESSION_DIR ] ; then
+    echo "Unable to continue without a PAF session dir."
+    exit 1
+fi
+if [ ! -d $PAFPATH ] ; then
+    echo "Unable to continue without a PAF dir."
+    exit 1
+fi
+
+. $PAFPATH/etc/startproof.conf
+
+if [ "x$PAF_PROOFD_SCRIPT" = "x" ] ; then
+    PAF_PROOFD_SCRIPT=$PAFPATH/bin/proofdwn
+fi
+
+# 1. create config file template
+cat $PAFPATH/etc/xpd.cf.in \
+    | sed "s#%HOSTNAME%#$HOSTF#g" \
+    | sed "s#%ROOTSYS%#$ROOTSYS#g" \
+    | sed "s#%PAF_SESSION_DIR%#$PAF_SESSION_DIR#g" \
+    > $PAF_SESSION_DIR/xpd.cf.in
+
+MASTER_NWORKERS=`cat $PE_HOSTFILE | grep $HOST | cut -f2 -d" "`
+$PAF_PROOFD_SCRIPT $MASTER_NWORKERS $PAF_SESSION_DIR/master_conf $PAF_SESSION_DIR/paf_url
+st=$?
+
+if [ $st -ne 0 ]; then
+    echo "Unable to start master !?"
+    exit 1
+fi
+
+echo "Starting workers"
+mkdir $PAF_SESSION_DIR/workers
+cat $PE_HOSTFILE | grep -v $HOST | while read host count garbage
+do
+    echo "Starting proofd at $host ($count)"
+    qrsh -V -verbose -inherit -nostdin $host $PAF_PROOFD_SCRIPT $count $PAF_SESSION_DIR/workers/proof.$host.conf & < /dev/null
+done
+
+wait
+
+# wait for the workers to start, max 10min (= 600s) wait 
+tstart=`date +%s`
+workers=`cat $PE_HOSTFILE | grep -v $HOST | wc -l | tr -s " "` 
+count=`ls $PAF_SESSION_DIR/workers | wc -l | tr -s " "`
+while [ $count -ne $workers ] ; do
+    sleep 10
+    count=`ls $PAF_SESSION_DIR/workers | wc -l | tr -s " "`
+    tcurrent=`date +%s`
+    tdiff=`expr $tstart - $tcurrent`
+    if [ $tdiff -ge 600 ] ; then
+        break
+    fi
+done
+
+echo "Got $count (out of $workers) workers started correctly"
+
+echo "Creating PROOF conf file"
+cat $PAF_SESSION_DIR/master_conf > $PAF_SESSION_DIR/proof.conf
+cat $PAF_SESSION_DIR/workers/* >> $PAF_SESSION_DIR/proof.conf 2> /dev/null
+
+# notify startproof
+touch $PAF_SESSION_DIR/session
+
+# sleep indefinetily
+while [ true ] ; do
+    sleep 1h
+done
+
+# Session is over, remove file
+rm $PAF_SESSION_DIR/session

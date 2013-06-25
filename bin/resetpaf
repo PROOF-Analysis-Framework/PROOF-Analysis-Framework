@@ -1,0 +1,97 @@
+#!/bin/bash
+
+####################################################################
+#    FILE: resetproof.sh
+# AUTHORS: I. Gonzalez Caballero, A.Y. Rodriguez Marrero
+#    DATE: 2010
+#
+# CONTENT: Resets the environment by deleting all the files created
+#          by PAF and PROOF
+#
+####################################################################
+
+usage() {
+    cat <<EOF
+NAME:
+       $0 - Resets the PAF environment by closing any session that
+            might be opened and deleting any file created. 
+
+SYNOPSIS:
+       $0 [-h]
+       $0 [-a]
+
+OPTIONS
+       -a: Aggressive cleaning of files in the packages not in the
+           official list. If this is not specified the Makefile and
+           the PROOF-INFO directory are left untouched. Note that unless
+           these files already exist, they are created by PAF. 
+
+       -h: Prints this help
+
+EOF
+exit
+}
+
+agresive=0
+
+######################################################
+# PARSE PARAMETERS
+#
+
+if [ ! -z $2 ]; then
+    usage
+fi
+
+if [ ! -z $1 ]; then
+    case $1 in
+	-h)  usage
+	    ;;
+	-a) agresive=1
+	    ;;
+	*)  usage
+	    ;;
+    esac
+fi
+
+
+######################################################
+# START CLEANING
+#
+
+# Stop POD Server
+if [ "$POD_LOCATION" != "" ]; then
+    echo ">> Stopping pod-server..."
+    podstatus=`pod-server status`
+    if [ $? -eq 0 ]; then
+	pod-server stop
+    else
+	echo "   ...already stopped."
+    fi
+fi
+
+# Kill proofserv processes
+proofpids=`ps ux | grep proofserv.exe | grep -v grep | awk '{print $2}'`
+if [ "$proofpids" != "" ]; then
+    echo ">> Killing proofserv proccesses..."
+    for i in $proofpids; do
+	kill $i
+    done
+    echo "   + Remaining proofserv.exe processes:"
+    ps ux | grep proofserv.exe | grep -v grep
+fi
+
+PAF_WORK_DIR=${PAF_WORK_DIR:-~/.paf}
+
+ls $PAF_WORK_DIR//session_* >& /dev/null
+if [ $? -eq 0 ] ; then
+    echo ">> Deleting files created by CINT and PAF in $PAF_WORK_DIR..."
+    for d in $PAF_WORK_DIR/session_* ; do
+        if [ ! -d $d ] ; then continue; fi
+        rm -rf $d
+    done
+fi
+
+# Removing proof caches
+echo ">> Removing .proof and ~/.proof"
+rm -rf ~/.proof .proof proof-package-lock-$USER
+

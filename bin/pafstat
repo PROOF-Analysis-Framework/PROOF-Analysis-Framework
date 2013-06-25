@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# pafstat shows current status of the paf thing
+
+# set to 1 to enable debug
+DEBUG=0
+# set to 1 to enable full debug
+FULLDEBUG=0
+
+if [ $FULLDEBUG -eq 1 ] ; then
+    set -x
+    export FULLDEBUG
+fi
+
+debug_msg() {
+    if [ $DEBUG -eq 1 ] ; then
+        echo "PAF [D] $@" 1>&2
+    fi
+}
+
+info_msg() {
+    echo "PAF [I] $@" 1>&2
+}
+
+error_msg() {
+    echo "PAF [E] $@" 1>&2
+    if [ "x$PAF_SESSION_DIR" != "x" -a -d "$PAF_SESSION_DIR" ] ; then
+        echo "PAF [E] check logs at $PAF_SESSION_DIR " 1>&2
+    fi
+}
+
+print_usage() {
+    echo "pafstat [-h] [-c]" 1>&2
+    echo "" 1>&2
+    echo "Shows PROOF status in the cluster" 1>&2
+    echo "" 1>&2
+    echo "Optional arguments:" 1>&2
+    echo " -h        show this help message and exit" 1>&2
+    echo " -c        show also configuration" 1>&2
+    echo "" 1>&2
+}
+
+# do we create the active file?
+show_config=0
+while [ "x$1" != "x" ] ; do
+    case "$1" in
+        -c)
+            show_config=1
+            shift
+            ;;
+
+        -h)
+            print_usage
+            exit 0
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [ $show_config -eq 1 ] ; then
+    if [ "x$PAFPATH" = "x" ] ; then
+        export PAFPATH=$(cd $(dirname $0); cd .. ; pwd -P)
+    fi
+
+    unset PAF_MAX_WORKERS
+
+    # get configuration variables
+    . $PAFPATH/etc/startproof.conf 2> /dev/null
+    if [ $? -ne 0 ] ; then
+        info_msg "Unable to read $PAFPATH/etc/startproof.conf"
+    fi
+fi
+
+PAF_WORK_DIR=${PAF_WORK_DIR:-~/.paf}
+
+if [ ! -d $PAF_WORK_DIR ] ; then
+    info_msg "The work dir $PAF_WORK_DIR does not exist"
+    info_msg "Have you ever used PAF?"
+    exit 1
+fi
+
+ls $PAF_WORK_DIR/proof_* >& /dev/null
+if [ $? -ne 0 ] ; then
+    info_msg "No previous PAF sessions found!"
+else
+    nojob_d=""
+    echo "jobid     st   slots   ready? active? master           sessiondir"
+    echo "---------------------------------------------------------------------------------"
+    for d in $PAF_WORK_DIR/proof_* ; do
+        if [ ! -f $d/jobid ] ; then nojob_d="$nojob_d $d"; continue; fi
+        jobid=`cat $d/jobid`
+        # is the session already up?
+        [ -f $d/session ] && session="yes" || session="no"
+        [ -f $d/active ]  && active="yes"  || active="no"
+        qstat=$(qstat -u $(whoami) | grep $jobid)
+        st=$?
+        if [ $st -ne 0 ] ; then nojob_d="$nojob_d $d"; continue; fi
+        jobst=$(echo $qstat | tr -s [:space:] | cut -f5 -d" ")
+        workers=$(echo $qstat | tr -s [:space:] | sed 's/^.* \([0-9]\+\)[ ]*$/\1/')
+        [ -f $d/paf_url ] && paf_url=`cat $d/paf_url` || paf_url="" 
+        printf "%-8d %3s    %3d     %3s    %3s    %-16s %s\n" \
+            $jobid $jobst $workers $session $active $paf_url $d
+    done
+fi
+
+exit 0

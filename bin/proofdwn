@@ -1,0 +1,127 @@
+#!/bin/bash
+# Starts proofd on current host
+# Arguments
+#  -> number of workers
+#  -> config file to write
+#  -> url file
+
+if [ "x$FULLDEBUG" = "x1"  ] ; then
+    set -x
+fi
+
+HOST=`hostname`
+
+debug_msg() {
+    echo "PROOFDWN @ $HOST $*"
+}
+
+debug_msg "Arguments: $*"
+
+
+WORKERS=$1
+if [ "x$WORKERS" = "x" ] ; then
+    debug_msg "Assuming only 1 worker to be started!"
+    WORKERS=1
+else
+    shift
+    PROOF_CONF_FILE=$1
+    if [ "x$PROOF_CONF_FILE" != "x" ] ; then
+        shift
+        PROOF_URL_FILE=$1
+    fi
+fi
+
+debug_msg "Starting xproofd! "
+debug_msg "PROOF_CONF_FILE: $PROOF_CONF_FILE"
+debug_msg "PROOF_URL_FILE: $PROOF_URL_FILE"
+
+PAF_WORK_DIR=${PAF_WORK_DIR:-~/.paf}
+PAF_SESSION_DIR=${PAF_SESSION_DIR:-$PAF_WORK_DIR/current}
+
+debug_msg "ROOTSYS: $ROOTSYS"
+debug_msg "PAF_SESSION_DIR: $PAF_SESSION_DIR"
+
+if [ "x$ROOTSYS" == "x" ] ; then
+    echo "Unable to continue without ROOTSYS env variable"
+    exit 1
+fi
+. $ROOTSYS/bin/thisroot.sh
+
+if [ ! -d $PAF_SESSION_DIR ] ; then
+    echo "Unable to continue without a PAF session dir."
+    exit 1
+fi
+
+MYTMPDIR=`mktemp -d`
+debug_msg "Using $MYTMPDIR as temp dir"
+
+mkdir -p $MYTMPDIR/pool
+mkdir -p $MYTMPDIR/tmp
+mkdir -p $MYTMPDIR/session
+
+mkdir -p $PAF_SESSION_DIR/xpdlogs
+
+PORT1=1093
+PORT2=1094
+trials=0
+max_trials=10
+started=1
+while [ $started -eq 1 ] ; do 
+    LOG_FILE=$PAF_SESSION_DIR/xpdlogs/xpd.$HOST.$PORT1.log
+    debug_msg "Trying to start xproofd at $HOST:$PORT1"
+    # 2. Create config file with port and tmpdir
+    cat $PAF_SESSION_DIR/xpd.cf.in \
+        | sed "s#%TMPDIR%#$MYTMPDIR#g" \
+        | sed "s#%PORT1%#$PORT1#g" \
+        | sed "s#%PORT2%#$PORT2#g" \
+        > $PAF_SESSION_DIR/xpd.$HOST.cf
+    echo "xpd.localwrks $WORKERS" >> $PAF_SESSION_DIR/xpd.$HOST.cf 
+    echo "xpd.putrc ProofServ.Sandbox: $MYTMPDIR/session " >> $PAF_SESSION_DIR/xpd.$HOST.cf 
+    xproofd -c $PAF_SESSION_DIR/xpd.$HOST.cf -l $LOG_FILE &
+    XROOTD_PID=$!
+    # wait for log file
+    while [ ! -e  $LOG_FILE ] ; do ps $XROOTD_PID >& /dev/null || break; sleep 2 ; done
+    # wait initialization in log file
+    while [ true ] ; do
+        ps $XROOTD_PID >& /dev/null || break
+        grep "initialization" $LOG_FILE &> /dev/null && break 
+        sleep 2
+    done
+    grep "initialization failed" $LOG_FILE &> /dev/null
+    # Change port
+    if [ $? -eq 0 ] ; then
+        let trials=$trials+1
+        if [ $trials -eq $max_trials ] ; then
+            debug_msg "Initialization failed after trying to connect to $trials different ports!"
+            break
+        fi
+        let PORT1=$PORT1+10
+        let PORT2=$PORT2+10
+        debug_msg "Will retry with ports $PORT1"
+        kill -9 $XROOTD_PID &> /dev/null
+        #ps $XROOTD_PID
+    fi
+    debug_msg "Checking the PID of xroot ($XROOT_PID): `ps $XROOTD_PID`"
+    ps $XROOTD_PID >& /dev/null && started=0
+done
+
+if [ $started -eq 0 ] ; then
+    debug_msg "PROOF available at $HOST:$PORT1, pid: $XROOTD_PID"
+    if [ "x$PROOF_URL_FILE" != "x" ] ; then
+        debug_msg "Writing xrootd url to $PROOF_URL_FILE"
+        echo "$HOST:$PORT1" > $PROOF_URL_FILE
+        # master must be written also to proof.conf file
+        echo "master $HOST port=$PORT1" > $PROOF_CONF_FILE
+    fi
+
+    if [ "x$PROOF_CONF_FILE" != "x" ] ; then
+        debug_msg "Writing xrootd config to $PROOF_CONF_FILE"
+        for i in `seq 1 $WORKERS`; do
+            echo "worker $HOST port=$PORT1" >> $PROOF_CONF_FILE
+        done
+    fi
+fi
+
+debug_msg "PROOFD Status: $started"
+
+exit $started

@@ -1,0 +1,74 @@
+# Makefile taken mostly from the ROOT test programs.
+# Author:  Fons Rademakers, 29/2/2000
+
+include Makefile.arch
+
+#------------------------------------------------------------------------------
+
+TARGET= %NAME%
+
+TARGETHEAD  = $(TARGET).h
+TARGETO     = $(TARGET).$(ObjSuf) 
+TARGETDICT  = $(TARGET)Dict.$(ObjSuf)
+TARGETS     = $(TARGET).$(SrcSuf) 
+TARGETSO    = lib$(TARGET).$(DllSuf)
+TARGETLIB   = $(TARGETSO)
+
+OBJS        = $(TARGETO) 
+
+PWD=$(shell pwd)
+
+MYINCLUDES=$(shell INC=""; for i in `ls -d $(PWD)/../*/`; do INC="-I$$i $$INC"; done; echo $$INC)
+CXXFLAGS+= $(MYINCLUDES)
+
+#------------------------------------------------------------------------------
+
+
+.SUFFIXES: .$(SrcSuf) .$(ObjSuf) .$(DllSuf)
+
+all:             $(TARGETLIB)
+
+$(TARGETSO):    $(TARGETO) $(TARGETDICT)
+ifeq ($(ARCH),aix)
+	/usr/ibmcxx/bin/makeC++SharedLib $(OutPutOpt) $@ $(LIBS) -p 0 $^
+else
+ifeq ($(ARCH),aix5)
+	/usr/vacpp/bin/makeC++SharedLib $(OutPutOpt) $@ $(LIBS) -p 0 $^
+else
+ifeq ($(PLATFORM),macosx)
+# We need to make both the .dylib and the .so
+	$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@
+ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
+ifeq ($(MACOSX_MINOR),4)
+	ln -sf $@ $(subst .$(DllSuf),.so,$@)
+else
+	$(LD) -bundle -undefined $(UNDEFOPT) $(LDFLAGS) $^ \
+	$(OutPutOpt) $(subst .$(DllSuf),.so,$@)
+endif
+endif
+else
+	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(EXPLLINKLIBS)
+endif
+endif
+endif
+	@echo "$@ done"
+
+clean:
+	@rm -f $(OBJS) core
+
+distclean:       clean
+	@rm -f $(TARGETO) $(TARGETLIB) *Dict.* *.def *.exp \
+		*.so *.lib *.dll *.d *.log .def so_locations
+	@rm -rf cxx_repository
+
+# Dependencies
+
+$(TARGET).$(ObjSuf): $(TARGETHEAD)
+
+$(TARGET)Dict.$(SrcSuf): $(TARGETHEAD)
+	@echo "Generating dictionary $@..."
+	@rootcint -f $@ -c $(MYINCLUDES) $^
+
+
+.$(SrcSuf).$(ObjSuf):
+	$(CXX) $(CXXFLAGS) -c $<

@@ -1,0 +1,241 @@
+#!/bin/bash
+# START PROOF MAIN SCRIPT
+# submits the job to the queue and waits until a PROOF cluster is available
+#
+
+# set to 1 to enable debug
+DEBUG=0
+# set to 1 to enable full debug
+FULLDEBUG=0
+
+if [ $FULLDEBUG -eq 1 ] ; then
+    set -x
+    export FULLDEBUG
+fi
+
+debug_msg() {
+    if [ $DEBUG -eq 1 ] ; then
+        echo "PAF [D] $@" 1>&2
+    fi
+}
+
+info_msg() {
+    echo "PAF [I] $@" 1>&2
+}
+
+
+error_msg() {
+    echo "PAF [E] $@" 1>&2
+    if [ "x$PAF_SESSION_DIR" != "x" -a -d "$PAF_SESSION_DIR" ] ; then
+        echo "PAF [E] check logs at $PAF_SESSION_DIR " 1>&2
+    fi
+    if [ -d "$PAF_ACCT_DIR" ] ; then
+        dt=`date --rfc-3339=seconds`
+        echo "$dt - START PAF $NWORKERS - ERROR $@" >> $PAF_ACCT_DIR/`whoami`.log
+    fi
+}
+
+clean_up() {
+    debug_msg "Cleaning up!"
+    for f in $QSUB_OUT $QSUB_ERR ; do
+        if [ -f $f ] ; then
+            rm -f $f
+        fi
+    done
+}
+
+print_usage() {
+    echo "startproof [-a] [-h] [WORKERS]" 1>&2
+    echo "" 1>&2
+    echo "Starts PROOF job on the cluster" 1>&2
+    echo "" 1>&2
+    echo "Optional arguments:" 1>&2
+    echo " -h        show this help message and exit" 1>&2
+    echo " -a        create the active file in the session dir" 1>&2
+    echo "           (for running the script within ROOT)" 1>&2
+    echo " NWORKERS  number of workers to request" 1>&2
+    echo "" 1>&2
+}
+
+trap clean_up EXIT
+
+if [ "x$PAFPATH" = "x" ] ; then
+    export PAFPATH=$(cd $(dirname $0); cd .. ; pwd -P)
+fi
+
+
+# make sure the user has not set this on this shell
+unset PAF_MAX_WORKERS
+unset PAF_ACCT_DIR
+
+# get configuration variables
+. $PAFPATH/etc/startproof.conf 2> /dev/null
+if [ $? -ne 0 ] ; then
+    info_msg "Unable to read $PAFPATH/etc/startproof.conf"
+fi
+
+# default number of workers
+PAF_DEFAULT_NWORKERS=${PAF_DEFAULT_NWORKERS:-6}
+# name of sge PE
+PAF_PE_NAME=${PAF_PE_NAME:-proof}
+# job to submit 
+if [ "x$PAF_GE_JOB_SCRIPT" = "x" ] ; then 
+    PAF_GE_JOB_SCRIPT=$PAFPATH/bin/proofjob
+fi
+# file with extra qsub parameters
+if [ "x$PAF_GE_QSUB_CONF" = "x" ] ; then 
+    PAF_GE_QSUB_CONF=$PAFPATH/etc/qsub.conf
+fi
+# maximum number of workers
+PAF_MAX_WORKERS=${PAF_MAX_WORKERS:-100}
+# PAF work dir
+PAF_WORK_DIR=${PAF_WORK_DIR:-~/.paf}
+
+# do we create the active file?
+create_active=0
+while [ "x$1" != "x" ] ; do
+    case "$1" in
+        -a)
+            create_active=1
+            shift
+            ;;
+
+        -h)
+            print_usage
+            exit 0
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+if [ "x$1" != "x" ] ; then
+    NWORKERS=$1
+    shift
+else
+    NWORKERS=$PAF_DEFAULT_NWORKERS
+fi
+
+[ "$NWORKERS" -eq "$NWORKERS" ] > /dev/null 2>&1
+if [ $? -ne 0 ] ; then
+    error_msg "Expecting numeric value for number of workers!"
+    exit 1
+fi
+
+if [ $NWORKERS -lt 1 -o $NWORKERS -gt 100 ] ; then
+    error_msg "Value $NWORKERS is outside the valid range for the number of workers"
+    exit 1
+fi
+
+# default workdir at ~/
+mkdir -p $PAF_WORK_DIR
+
+# check current started sessions
+for d in $PAF_WORK_DIR/proof_* ; do
+    if [ ! -d $d ] ; then continue; fi
+    debug_msg "Checking previous PAF session $d"
+    # is there a job?
+    if [ ! -f $d/jobid ] ; then continue; fi
+    jobid=`cat $d/jobid`
+    if [ "x$jobid" = "x" ] ; then continue; fi
+    debug_msg "Job id for the session: $jobid"
+    # is the session already up?
+    if [ ! -f $d/session ] ; then continue; fi
+    debug_msg "Session is up"
+    # someone using it?
+    if [ -f $d/active ] ; then continue; fi
+    debug_msg "Session is not used currently"
+    qstat -j $jobid >& /dev/null
+    st=$?
+    if [ $st -ne 0 ] ; then continue; fi
+    debug_msg "Job still running"
+    master=`cat $d/paf_url`
+    info_msg "Reusing previous session (master: $master, job: $jobid)"
+    if [ $create_active -ne 0 ] ; then touch $d/active; fi
+    echo $d
+    if [ -d "$PAF_ACCT_DIR" ] ; then
+        dt=`date --rfc-3339=seconds`
+        echo "$dt - START PAF $NWORKERS - REUSE $jobid" >> $PAF_ACCT_DIR/`whoami`.log
+    fi
+    exit 0
+done
+
+current_workers=0
+# if we are here, we need to submit a new job, check first if we are not beyond the limits
+for n in $(qstat -u $(whoami) | grep proofjob | tr -s " " | sed 's/^.* \([0-9]\+\)[ ]*$/\1/') ; do
+    let current_workers=$current_workers+$n
+done
+
+if [ $current_workers -ge $PAF_MAX_WORKERS ] ; then
+    error_msg "You have reached the current limit ($PAF_MAX_WORKERS) of worker nodes for a single user!"
+    error_msg "Exiting!"
+    exit 1
+fi
+
+let future_workers=$current_workers+$NWORKERS
+if [ $future_workers -gt $PAF_MAX_WORKERS ] ; then
+    error_msg "Requesting $NWORKERS workers will surpass the current limit ($PAF_MAX_WORKERS) of worker nodes for a single user!"
+    error_msg "You may request `expr $PAF_MAX_WORKERS - $current_workers` nodes at most!"
+    error_msg "Exiting!"
+    exit 1
+fi
+
+export PAF_SESSION_DIR=$(mktemp -d -p $PAF_WORK_DIR proof_$(date +%g%m%d)_XXXXX)
+if [ $? -ne 0 ]; then
+    error_msg "Unable to create session directory $PAF_SESSION_DIR!"
+    exit 1
+fi
+debug_msg "Working dir for session at $PAF_SESSION_DIR"
+if [ $create_active -ne 0 ] ; then touch $PAF_SESSION_DIR/active; fi
+
+OUTDIR=$PAF_SESSION_DIR/out
+PAF_JOBID_FILE=$PAF_SESSION_DIR/jobid
+
+mkdir -p $OUTDIR
+
+debug_msg "Submitting job to batch system..."
+
+ 
+QSUB_OUT=`mktemp`
+QSUB_ERR=`mktemp`
+qsub -@ $PAF_GE_QSUB_CONF -pe $PAF_PE_NAME 1-$NWORKERS \
+     -o $OUTDIR -e $OUTDIR $PAF_GE_JOB_SCRIPT > $QSUB_OUT 2> $QSUB_ERR
+st=$?
+
+if [ $st -ne 0 ]; then
+    error_msg "Error submitting job !?"
+    error_msg `cat $QSUB_ERR`
+    exit 1
+fi
+
+PAF_JOBID=`cat $QSUB_OUT | grep "Your job" | cut -f3 -d" "`
+info_msg "Submitted PAF job with id $PAF_JOBID"
+echo $PAF_JOBID > $PAF_JOBID_FILE
+
+if [ -d "$PAF_ACCT_DIR" ] ; then
+    dt=`date --rfc-3339=seconds`
+    echo "$dt - START PAF $NWORKERS - JOBID $PAF_JOBID" >> $PAF_ACCT_DIR/`whoami`.log
+fi
+
+
+debug_msg "Waiting for PAF session file"
+qstat -j $PAF_JOBID >& /dev/null
+st=$?
+while [ ! -f $PAF_SESSION_DIR/session -a $st -eq 0 ]; do 
+    sleep 4 
+    qstat -j $PAF_JOBID >& /dev/null
+    st=$?
+done
+
+if [ $st -ne 0 ]; then
+    error_msg "Job $PAF_JOBID is no longer in queue!?"
+    exit 1
+fi
+
+if [ -f $PAF_SESSION_DIR/session -a $PAF_SESSION_DIR/paf_url ] ; then
+    info_msg "Session established, you may now connect to: `cat $PAF_SESSION_DIR/paf_url`"
+    echo $PAF_SESSION_DIR
+else
+    error_msg "Session file or paf url not available, exiting"
+    exit 1
+fi

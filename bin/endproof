@@ -1,0 +1,80 @@
+#!/bin/sh
+
+# set to 1 to enable debug
+DEBUG=0
+# set to 1 to enable full debug
+FULLDEBUG=0
+
+if [ $FULLDEBUG -eq 1 ] ; then
+    set -x
+    export FULLDEBUG
+fi
+
+debug_msg() {
+    if [ $DEBUG -eq 1 ] ; then
+        echo "PAF [D] $@" 1>&2
+    fi
+}
+
+info_msg() {
+    echo "PAF [I] $@" 1>&2
+}
+
+force_clean=0
+
+if [ "x$1" = "x-f" ] ; then
+    force_clean=1
+fi
+
+if [ "x$PAFPATH" = "x" ] ; then
+    export PAFPATH=$(cd $(dirname $0); cd .. ; pwd -P)
+fi
+
+# workdir at ~/
+PAF_WORK_DIR=${PAF_WORK_DIR:-~/.paf}
+if [ ! -d $PAF_WORK_DIR ] ; then
+    info_msg "No previous PAF sessions found!"
+    exit 0
+fi
+
+ls $PAF_WORK_DIR/proof_* >& /dev/null
+if [ $? -ne 0 ] ; then
+    info_msg "No previous PAF sessions found!"
+    exit 0
+fi
+
+count=0
+# check current started sessions
+for d in $PAF_WORK_DIR/proof_* ; do
+    if [ ! -d $d ] ; then continue; fi
+    debug_msg "Checking previous PAF session at `basename $d`"
+    if [ -f $d/jobid ] ; then 
+        jobid=`cat $d/jobid`
+        qstat -j $jobid >& /dev/null
+        st=$?
+        if [ $st -eq 0 ] ; then
+            let count=$count+1
+            if [ -f $d/active ] ; then 
+                if [ $force_clean = 0 ] ; then
+                    info_msg "Session with jobid $jobid is still active, use -f to force its removal!" 
+                    continue
+                else
+                    info_msg "Removing still active session (jobid $jobid)!" 
+                fi
+            fi
+            info_msg "Killing job $jobid"
+            qdel $jobid 
+        else 
+            # No job, just remove the dir it's not needed anymore
+            rm -rf $d
+        fi
+    fi
+    rm -f $d/session
+    rm -f $d/active
+done
+
+if [ $count -eq 0 ] ; then
+    info_msg "No previous active PAF sessions found!"
+fi
+
+exit 0

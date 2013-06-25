@@ -1,0 +1,47 @@
+#!/bin/bash
+
+####################################################################
+#    FILE: checkcompilation
+# AUTHORS: I. Gonzalez Caballero, A.Y. Rodriguez Marrero
+#    DATE: 2010
+#
+# CONTENT: This script checks if all the files used in the 
+#          ProofAnalysisFramework compile as expected.
+#
+####################################################################
+
+help() {
+    cat <<EOF
+
+DESCRIPTION:
+This script checks if all the files used in the ProofAnalysisFramework compile
+as expected.
+
+SYNTAX:
+   $0 [flavour]
+
+PARAMETERS:
+
+   [flavour]: Optional parameter to describe the flavour of the trees. 
+              Posible values are "TESCO" or "MiniTrees" (default).
+
+
+EOF
+}
+
+
+flavour=MiniTrees
+if [ ! -z $1 ]; then
+    if [ "$1" == "-help" ]; then
+	help;
+    elif [ "$1" != "TESCO" -a "$1" != "MiniTrees" ]; then
+	echo "ERROR: Wrong flavour"
+	help;
+    else
+	flavour=$1
+    fi
+fi
+
+commandline="root -b -q `dirname $0`/CheckCompilation.C(\"$flavour\")"
+echo ">> Executing $commandline..."
+$commandline

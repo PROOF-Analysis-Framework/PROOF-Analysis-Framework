@@ -1,0 +1,204 @@
+#!/bin/bash
+# STARTS CLOUD PROOF SETUP
+# (only valid at IFCA)
+
+# requires working nova commands properly configured
+# i.e. with the OS_AUTH_URL and similar variables 
+#      defined
+
+# set to 1 to enable debug
+DEBUG=0
+# set to 1 to enable full debug
+FULLDEBUG=0
+
+if [ $FULLDEBUG -eq 1 ] ; then
+    set -x
+    export FULLDEBUG
+fi
+
+debug_msg() {
+    if [ $DEBUG -eq 1 ] ; then
+        echo "PAF [D] $@" 1>&2
+    fi
+}
+
+info_msg() {
+    echo "PAF [I] $@" 1>&2
+}
+
+
+error_msg() {
+    echo "PAF [E] $@" 1>&2
+}
+
+if [ "x$PAFPATH" = "x" ] ; then
+    export PAFPATH=$(cd $(dirname $0); cd .. ; pwd -P)
+fi
+
+# get configuration variables
+. $PAFPATH/etc/proofcloud.conf 2> /dev/null
+if [ $? -ne 0 ] ; then
+    error_msg "Unable to read $PAFPATH/etc/proofcloud.conf"
+fi
+
+# default values
+PAF_KEYPAIR=${PAF_KEYPAIR:-"proofkey"}
+PAF_KEYFILE=${PAF_KEYFILE:-"$PAF_KEYPAIR.pem"}
+ 
+# Internal stuff
+# VM_NAME
+PAF_VM_NAME="proofvm"
+AUTH_OPTS="--x509-user-proxy $X509_USER_PROXY"
+
+create_proxy() {
+    if [ "x$PAF_VO" = "x" ] ; then
+        error_msg "PAF_VO undefined!"
+        exit 1
+    fi
+    info_msg "Creating a new proxy"
+    voms-proxy-init --voms $PAF_VO -rfc
+    if [ $? -ne 0 ] ; then
+        error_msg "Unable to create proxy, exiting!"
+        exit 1
+    fi
+}
+
+check_proxy() {
+    TIME_LEFT=`voms-proxy-info -timeleft 2> /dev/null`
+    if [ "x$TIME_LEFT" = "x" ] ; then
+        create_proxy
+    elif [ $TIME_LEFT -lt 100 ] ; then
+        create_proxy
+    fi
+}
+
+wait_for_active() {
+    info_msg "Check if VM $ID is active"
+    STATUS=`nova $AUTH_OPTS list --name $PAF_VM_NAME | \
+            grep $PAF_VM_NAME | cut -f4 -d"|" | tr -d " "`
+    TR=0
+    while [ "x$STATUS" != "xACTIVE" -a $TR -le 30 ] ; do
+        debug_msg "(sleeping 5 seconds)"
+        sleep 5
+        STATUS=`nova $AUTH_OPTS list --name $PAF_VM_NAME | \
+                grep $PAF_VM_NAME | cut -f4 -d"|" | tr -d " "`
+        TR=`expr $TR + 1`
+    done
+    if [ "x$STATUS" = "xACTIVE" ] ; then
+        IP=`nova $AUTH_OPTS list --name $PAF_VM_NAME | \
+            grep $PAF_VM_NAME | cut -f5 -d"|" | tr -d " " | cut -f2 -d"="`
+        info_msg "Check network access to VM ($IP)"
+        ping -c 1 $IP 2>&1 > /dev/null
+        st=$?
+        while [ $st -ne 0 ]; do
+            debug_msg "(sleeping 2 seconds)"
+            sleep 2
+            ping -c 1 $IP 2>&1 > /dev/null
+            st=$?
+        done
+    else
+        error_msg "Unexpected status $STATUS, exiting."
+        exit 1
+    fi
+}
+
+attach_volume() {
+    ID=$1
+    IP=$2
+    ATTACHMENTS=`nova $AUTH_OPTS volume-show $PAF_VOL_ID | grep "attachments" | grep "\[\]"`
+    if [ "x$ATTACHMENTS" = "x" ] ; then
+        info_msg "Data already attached to VM"
+    else
+        info_msg "Attaching volume with data"
+        nova $AUTH_OPTS volume-attach $ID $PAF_VOL_ID /dev/xvdc > /dev/null
+        if [ $? -ne 0 ]; then 
+            error_msg "Something went wrong with volume attachment..."
+        fi
+        sleep 5 # let it mount...
+        ssh -i $PAF_KEYFILE root@$IP "mount /dev/xvdc /mnt"
+    fi
+
+}
+
+get_machine() {
+    SERVERS=`nova $AUTH_OPTS list --name $PAF_VM_NAME | grep $PAF_VM_NAME`
+    if [ "x$SERVERS" != "x" ] ; then
+        ID=`echo $SERVERS | cut -f2 -d"|" | tr -d " "`
+        IP=`echo $SERVERS | cut -f5 -d"|" | tr -d " " | cut -f2 -d"="`
+        return 0
+    fi
+    return 1
+}
+
+start_or_get_machine() {
+    if [ "x$PAF_IMG_ID" = "x" ] ; then
+        error_msg "PAF_IMG_ID undefined!"
+        exit 1
+    fi
+    if [ "x$PAF_FLV_ID" = "x" ] ; then
+        error_msg "PAF_FLV_ID undefined!"
+        exit 1
+    fi
+    get_machine
+    if [ $? -ne 0 ] ; then
+        # Create new server
+        info_msg "Starting new PROOF VM"
+        ID=`nova $AUTH_OPTS boot --flavor $PAF_FLV_ID \
+        --image $PAF_IMG_ID --key_name $PAF_KEYPAIR \
+        $PAF_VM_NAME | grep "\<id\>" | cut -f3 -d"|" | tr -d " "` 
+    fi
+    wait_for_active 
+    attach_volume $ID $IP
+}
+
+stop_this() {
+    get_machine
+    if [ $? -eq 0 ] ; then
+        ssh -i $PAF_KEYFILE root@$IP "umount /mnt"
+        nova $AUTH_OPTS volume-detach $ID $PAF_VOL_ID
+        if [ $? -ne 0 ]; then 
+            info_msg "Something went wrong with volume deatachment..."
+        fi
+        nova $AUTH_OPTS delete $ID 
+    else
+        info_msg "No proof machine available, exiting"
+    fi
+}
+
+status() {
+    get_machine
+    if [ $? -eq 0 ] ; then
+        STATUS=`nova $AUTH_OPTS list --name $PAF_VM_NAME | \
+                grep $PAF_VM_NAME | cut -f4 -d"|" | tr -d " "`
+        debug_msg "VM $ID is $STATUS, with IP: $IP"
+        YESNO=""
+        ATTACHMENTS=`nova $AUTH_OPTS volume-show $PAF_VOL_ID | grep "attachments" | grep $ID`
+        if [ "x$ATTACHMENTS" = "x" ]; then
+            YESNO="not"
+        fi
+        debug_msg "Volume $PAF_VOL_ID is $YESNO attached to the VM"
+    else
+        info_msg "No proof machine available, exiting"
+    fi
+}
+
+if [ "x$1" == "xstart" ] ; then
+    check_proxy
+    start_or_get_machine
+elif [ "x$1" == "xstatus" ] ; then
+    check_proxy
+    status
+elif [ "x$1" == "xgetserver" ] ; then
+    check_proxy
+    IP=`nova $AUTH_OPTS list --name $PAF_VM_NAME | \
+        grep $PAF_VM_NAME | cut -f5 -d"|" | tr -d " " | cut -f2 -d"="`
+    echo "proof@$IP"
+elif [ "x$1" == "xstop" ] ; then
+    check_proxy
+    stop_this
+else
+    echo "Usage: $0 [start|status|getserver|stop]" 2>&1
+    exit 1
+fi
+
+exit 0
