@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ ! -n "${ROOTSYS}" ] ; then
     echo "WARNING: ROOT environment is not set."
-    echo "         Please source /opt/root/bin/thisroot.sh"
+    echo "         Please make sure you configure ROOT before using PAF"
 fi
 
 
