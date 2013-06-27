@@ -213,6 +213,40 @@ TProof* InitProof() {
   cerr << PAFDEBUG << ">> InitProof(" << gPAFOptions->proofMode << ")" << endl;
 #endif
 
+  // Initial checks
+  if (gPAFOptions->proofMode == kLite) {
+    // Nothing to check
+  }
+  else if (gPAFOptions->proofMode == kCluster) {
+    // XXX - I.G. Nothing to check?
+    // XXX - I.G. Perhaps the existance of PROOF Cluster utilities in the path?
+  }
+  else if (gPAFOptions->proofMode == kPoD) {
+    // Check for env variable POD_LOCATION that should be set if the
+    // environent was properly set
+    if (!gSystem->Getenv("POD_LOCATION")) {
+      cerr << PAFERROR 
+	   << "PoD path not set. Try to source something like /opt/PoD/PoD_env.sh" 
+	   << endl
+	   << PAFERROR << "Exiting!" << endl;
+      return 0;
+    }
+  } 
+  else if ( gPAFOptions->proofMode == kCloud ) {
+    // XXX - I.G. Nothing to check?
+    // XXX - I.G. Perhaps the existance of Cloud utilities in the path?
+  }
+  else if (gPAFOptions->proofMode == kSequential) {
+    // Nothing to check
+  } else {
+    cerr << PAFERROR << "You have chosen a PROOF Mode not yet implemented" << endl;
+    cerr << PAFERROR << "Exiting!" << endl;
+    return 0;
+  }
+
+
+
+
   // Set build dir
   if (!CreateSessionDir()) {
     cerr << PAFERROR << "Unable to continue without a valid build dir!" << endl;
@@ -220,11 +254,14 @@ TProof* InitProof() {
     return 0;
   }
 
+
   // Check PAF Version (no more needed)
   //if (gPAFOptions->checkVersion)
   //  gSystem->Exec("$PAFPATH/bin/checkversion.sh&");
 
-  
+
+
+
   // Start PROOF
   gPAFOptions->proofSession = 0;
 
@@ -238,11 +275,8 @@ TProof* InitProof() {
     gPAFOptions->proofSession = InitCloud();
   } else if (gPAFOptions->proofMode == kSequential) {
     cout << PAFINFO << "+ Sequential mode selected. No PROOF will be used." << endl;
-  } else {
-    cerr << PAFERROR << "You have chosen a PROOF Mode not yet implemented" << endl;
-    cerr << PAFERROR << "Exiting!" << endl;
-    return 0;
   }
+
 
   // Weird! This will avoid that a lot of output is printed whenever something
   // is run on PROOF
