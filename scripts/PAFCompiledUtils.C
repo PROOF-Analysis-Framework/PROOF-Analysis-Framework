@@ -918,17 +918,57 @@ void UploadAndEnablePackages(TProof* proofSession,
 
   for (unsigned int i = 0; i < packages.size(); i++) {
     cout << PAFINFO << "Enabling package " << packages[i] << endl;
+
+    // (1) Construct the .par file for the package
     BuildParFile(packages[i], isSelector);
+
+
+
+    // (2) Upload the .par file to the slaves
 #if DEBUGUTILS    
     cerr << PAFDEBUG << "Uploading " << packages[i] << endl;
 #endif
-    proofSession->UploadPackage(packages_dir + packages[i] + ".par",
-				TProof::kRemoveOld);
+    Int_t up = 999;
+    up=proofSession->UploadPackage(packages_dir + packages[i] + ".par",
+				   TProof::kRemoveOld);
+
+#if DEBUGUTILS    
+    cerr << PAFDEBUG << "Result of uploading -> " << up << endl;
+#endif
+
+
+    // (3) Enable (load) the package in each of the slaves.
+    //     We try a couple of times since we have seen that from time to time
+    //     it fails under PoD.
 #if DEBUGUTILS    
     cerr << PAFDEBUG << "Enabling " << packages[i] << endl;
 #endif
-    proofSession->EnablePackage(packages[i]);
-
+    Int_t ep = proofSession->EnablePackage(packages[i]);
+#ifdef DEBUGUTILS
+    cerr << PAFDEBUG << "Result of first enabling -> " << ep << endl;
+#endif
+    
+    if (ep == -1) {
+#ifdef DEBUGUTILS
+      cerr << PAFWARN << "Failed enabling " << packages[i] 
+	   << " - Giving it a second chance! " << endl;
+#endif
+      if (proofSession->EnablePackage(packages[i]) == -1) {
+	cerr << PAFERROR << "Failed enabling " << packages[i] 
+	     << "!!! We have tried two times with no success" 
+	     << endl;
+	cerr << PAFERROR << "Exiting..." << endl;
+	//XXX Should exit or propagate the error up??
+	exit(-333);
+      }
+#if DEBUGUTILS    
+      else
+	cerr << PAFINFO << "Enabling the package " << packages[i] 
+	     << " worked this time" << endl;
+#endif
+    }
+    
+    
     // fix for root < 5.34 add include path
     gSystem->AddIncludePath("-I" + packages_dir + packages[i]);
   }
