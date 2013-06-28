@@ -78,9 +78,11 @@ int GetFromPipe(const char* command, TString& out) {
  *
  ************************/
 bool CreateSelector(const char* filename, 
-            TString& pkgName,
+		    TString& pkgName,
 		    const TString& treeDir,
-		    const TString& treeName) {
+		    const TString& treeName,
+		    const TString& analysis,
+		    const vector<TString>& packages) {
 #if DEBUGUTILS
   cerr << PAFDEBUG << "==> CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ")" << endl;
@@ -98,7 +100,8 @@ bool CreateSelector(const char* filename,
   gSystem->mkdir(selectorpath);
 
   bool created = CreateSelector(filename, treeDir, treeName, 
-			    selectorpath, selectorname);
+				selectorpath, selectorname,
+				analysis,packages);
 
   pkgName = selectorname;
 #if DEBUGUTILS
@@ -121,7 +124,9 @@ bool CreateSelector(const char* filename,
 		    const TString& treeDir,
 		    const TString& treeName,
 		    const char* selectorpath,
-		    const char* selectorname) {
+		    const char* selectorname,
+		    const TString& analysis,
+		    const vector<TString>& packages) {
 #if DEBUGUTILS
   cerr << PAFDEBUG << "==> CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ", "  << selectorpath << ", " 
@@ -188,6 +193,32 @@ bool CreateSelector(const char* filename,
   //Create the selector in tmp
   cout << PAFINFO << "Creating the selector..." << endl;
   MakeSimpleSelector(tree, tmpselectorfp, selectorname);
+
+
+  //Slim the selector by removing unneeded branches
+
+  cout << PAFINFO << "Slimming the selector... " << endl;
+  TString slimcommand;
+  slimcommand.Form("slimselector -v -s %s %s.C %s.h", 
+		   tmpselector.Data(), analysis.Data(), analysis.Data());
+  for (unsigned int i = 0; i < packages.size(); i++) {
+    TString tmppack=Form("packages/%s", packages[i].Data());
+    slimcommand += tmppack;
+    slimcommand += ".C ";
+    slimcommand += tmppack;
+    slimcommand += ".h ";
+  }
+  cout << PAFDEBUG << "Executing " << slimcommand << endl;
+  TString slimout("-");
+  int slimres = GetFromPipe(slimcommand.Data(), slimout);
+  cerr << PAFDEBUG << "Output from command: \"" << slimout << "\"" << endl;
+  if (slimres < 0) {
+    cerr << PAFERROR << "Could not execute \"'" << slimcommand << "\"" << endl;
+    return false;
+  }
+
+  
+  
 
   //If there is already a selector, compare it with the new one
   TString coutput("-");

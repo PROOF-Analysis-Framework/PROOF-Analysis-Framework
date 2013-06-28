@@ -19,7 +19,7 @@
 // XXX this must go on the user side, because this file is no longer
 // editable by users
 // Uncomment the line below to get information on time spent at each step
-//#define TIMERS
+#define TIMERS
 
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
@@ -443,7 +443,10 @@ bool RunAnalysis() {
     cout << PAFINFO << ">> Creating Selector..." << endl;
     TString pkgName;
     if (!CreateSelector(gPAFOptions->dataFiles[0], pkgName,
-            gPAFOptions->GetTreeDir(), gPAFOptions->GetTreeName())) {
+			gPAFOptions->GetTreeDir(), 
+			gPAFOptions->GetTreeName(),
+			gPAFOptions->GetAnalysis(),
+			gPAFOptions->GetSelectorPackages())) {
         cerr << PAFERROR "Error creating selector..." << endl;
         return false;
     } else {

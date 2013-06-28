@@ -63,9 +63,11 @@ int GetFromPipe(const char* command, TString& out);
  *
  ************************/
 bool CreateSelector(const char* filename,
-            TString& pkgName,
+		    TString& pkgName,
 		    const TString& treeDir,
-		    const TString& treeName);
+		    const TString& treeName,
+		    const TString& analysis,
+		    const vector<TString>& packages);
 
 
 /************************
@@ -79,7 +81,9 @@ bool CreateSelector(const char* filename,
 		    const TString& treeDir,
 		    const TString& treeName,
 		    const char* selectorpath,
-		    const char* selectorname);
+		    const char* selectorname,
+		    const TString& analysis,
+		    const vector<TString>& packages);
 
 
 /************************
