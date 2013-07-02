@@ -19,7 +19,7 @@
 // XXX this must go on the user side, because this file is no longer
 // editable by users
 // Uncomment the line below to get information on time spent at each step
-#define TIMERS
+//#define TIMERS
 
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
