@@ -16,10 +16,22 @@
 #include "PAF.h"
 
 
-// XXX this must go on the user side, because this file is no longer
-// editable by users
 // Uncomment the line below to get information on time spent at each step
+// This setting may also be defined in the main user code from a clean 
+// session.
 //#define TIMERS
+#ifdef TIMERS
+double PAFTime0; //InitProof
+double PAFTime1; //Building dataset
+double PAFTime2; //Create base selector
+double PAFTime3; //Include path
+double PAFTime4; //Loading packages
+double PAFTime5; //Compile selector
+double PAFTime6; //Parameters and dynamic histograms
+double PAFTime7; //Processing data
+double PAFTime8; //Output file
+#endif
+
 
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
@@ -212,15 +224,28 @@ TProof* InitProof() {
 #if DEBUGUTILS
   cerr << PAFDEBUG << ">> InitProof(" << gPAFOptions->proofMode << ")" << endl;
 #endif
+#ifdef TIMERS
+  cout << PAFINFO << "Setting up InitProof timer..." << endl;
+  TStopwatch PAFTimer;
+  PAFTimer.Start();
+#endif
 
+  ///////////////////
   // Initial checks
+  //
+
+  // ++ LITE
   if (gPAFOptions->proofMode == kLite) {
     // Nothing to check
   }
+
+  // ++ Cluster
   else if (gPAFOptions->proofMode == kCluster) {
     // XXX - I.G. Nothing to check?
     // XXX - I.G. Perhaps the existance of PROOF Cluster utilities in the path?
   }
+
+  // ++ PoD
   else if (gPAFOptions->proofMode == kPoD) {
     // Check for env variable POD_LOCATION that should be set if the
     // environent was properly set
@@ -232,14 +257,22 @@ TProof* InitProof() {
       return 0;
     }
   } 
+
+  // ++ Cloud
   else if ( gPAFOptions->proofMode == kCloud ) {
     // XXX - I.G. Nothing to check?
     // XXX - I.G. Perhaps the existance of Cloud utilities in the path?
   }
+
+  // ++ Sequential
   else if (gPAFOptions->proofMode == kSequential) {
     // Nothing to check
-  } else {
-    cerr << PAFERROR << "You have chosen a PROOF Mode not yet implemented" << endl;
+  } 
+
+  // ++ Something else
+  else {
+    cerr << PAFERROR << "You have chosen a PROOF mode (" 
+	 << gPAFOptions->proofMode << ") not yet implemented" << endl;
     cerr << PAFERROR << "Exiting!" << endl;
     return 0;
   }
@@ -247,7 +280,9 @@ TProof* InitProof() {
 
 
 
+  ///////////////////
   // Set build dir
+  //
   if (!CreateSessionDir()) {
     cerr << PAFERROR << "Unable to continue without a valid build dir!" << endl;
     cerr << PAFERROR << "Exiting!" << endl;
@@ -262,46 +297,73 @@ TProof* InitProof() {
 
 
 
+  ///////////////////
   // Start PROOF
+  //
   gPAFOptions->proofSession = 0;
 
-  if (gPAFOptions->proofMode == kLite) {
+  // ++ LITE
+  if (gPAFOptions->GetPAFMode() == kLite) {
     gPAFOptions->proofSession = InitLite();
-  } else if (gPAFOptions->proofMode == kCluster) {
+  } 
+  // ++ CLUSTER
+  else if (gPAFOptions->GetPAFMode() == kCluster) {
     gPAFOptions->proofSession = InitCluster();
-  } else  if ( gPAFOptions->proofMode == kPoD ) {
+  } 
+  // ++ POD
+  else  if ( gPAFOptions->GetPAFMode() == kPoD ) {
     gPAFOptions->proofSession = InitPoD();
-  } else if ( gPAFOptions->proofMode == kCloud ) {
+  } 
+  // ++ CLOUD
+  else if ( gPAFOptions->GetPAFMode() == kCloud ) {
     gPAFOptions->proofSession = InitCloud();
-  } else if (gPAFOptions->proofMode == kSequential) {
+  } 
+  // ++ SEQUENTIAL
+  else if (gPAFOptions->GetPAFMode() == kSequential) {
     cout << PAFINFO << "+ Sequential mode selected. No PROOF will be used." << endl;
   }
 
 
   // Weird! This will avoid that a lot of output is printed whenever something
   // is run on PROOF
-  if (gPAFOptions->proofMode != kSequential) {
-    if (gPAFOptions->proofSession) {
-      gPAFOptions->proofSession->Exec("int kkkkkkkkkkkkkkkkkkkkk;");
-      if (gPAFOptions->proofMode != kLite) {
-        gPAFOptions->proofSession->SetParameter("PROOF_MaxSlavesPerNode", 
+  if (gPAFOptions->GetPAFMode() != kSequential) {
+    if (gPAFOptions->GetPROOFSession()) {
+      gPAFOptions->GetPROOFSession()->Exec("int kkkkkkkkkkkkkkkkkkkkk;");
+      if (gPAFOptions->GetPAFMode() != kLite) {
+        gPAFOptions->GetPROOFSession()->SetParameter("PROOF_MaxSlavesPerNode", 
                                                 gPAFOptions->maxSlavesPerNode);
       }
     }
   }
+
+
+
+  ///////////////////
+  // Load extra utils
+  //
+
+  // ++ PAFCompiledUtils
   gROOT->LoadMacro("$PAFPATH/scripts/PAFCompiledUtils.C+");
-  // Load or Enable InputParameters
+
+  // ++ Load or Enable InputParameters
   vector<TString> ip;
   ip.push_back("InputParameters");
-  if (gPAFOptions->proofMode == kSequential) {
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     LoadPackages(ip, false);
   } else {
-    UploadAndEnablePackages(gPAFOptions->proofSession, ip, false);
+    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), ip, false);
   }
-#if DEBUGUTILS
-  cerr << PAFDEBUG << "<< InitProof(" << gPAFOptions->proofSession << ")" << endl;
+
+
+#ifdef TIMERS
+  PAFTime0 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (InitProof): " << PAFTime0 << endl;
 #endif
-  return gPAFOptions->proofSession;
+
+#if DEBUGUTILS
+  cerr << PAFDEBUG << "<< InitProof(" << gPAFOptions->GetPROOFSession() << ")" << endl;
+#endif
+  return gPAFOptions->GetPROOFSession();
 }
 //
 ///////////////////////////////////////////////////////////////////////
@@ -387,16 +449,17 @@ void LoadPackages(const vector<TString>& packages, bool isSelector) {
 
 bool RunAnalysis() {
 #ifdef TIMERS
-  TStopwatch timer;
-  timer.Start();
-  double t1, t2, t3, t4, t5, t6, t7, t8;
+  cout << PAFINFO << "+ Setting up timers..." << endl;
+  TStopwatch PAFTimer;
+  PAFTimer.Start();
 #endif
 
   //
   // If we are in a PROOF like session, check it was initialized
   //
-  if (gPAFOptions->proofMode != kSequential && (!gPAFOptions->proofSession)) {
-    cerr << PAFERROR "The PROOF Session was not initialized in RunAnalysis()" << endl
+  if (gPAFOptions->GetPAFMode() != kSequential && (!gPAFOptions->GetPROOFSession())) {
+    cerr << PAFERROR "The PROOF Session was not initialized in RunAnalysis()"
+	 << endl
          << PAFERROR << "Exiting! " << endl;
     return false;
   }
@@ -432,9 +495,10 @@ bool RunAnalysis() {
 #endif
 
 #ifdef TIMERS
-  //T1
-  t1 = timer.RealTime();
-  timer.Start();
+  //PAFTIME1
+  PAFTime1 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Building dataset): " << PAFTime1 << endl;
+  PAFTimer.Start();
 #endif
 
   //
@@ -458,9 +522,10 @@ bool RunAnalysis() {
   }
 
 #ifdef TIMERS
-  //T2
-  t2 = timer.RealTime();
-  timer.Start();
+  //PAFTIME2
+  PAFTime2 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Create base selector): " << PAFTime2 << endl;
+  PAFTimer.Start();
 #endif
 
   //
@@ -469,32 +534,37 @@ bool RunAnalysis() {
   SetIncludePath();
 
 #ifdef TIMERS
-  //T3
-  t3 = timer.RealTime();
-  timer.Start();
+  //PAFTIME3
+  PAFTime3 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Include path): " << PAFTime3 << endl;
+  PAFTimer.Start();
 #endif
 
   //
   // Upload and enable packages / Load packages
   cout << PAFINFO << ">> Loading packages ..." << endl;
-  if (gPAFOptions->proofMode == kSequential) {
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     LoadPackages(gPAFOptions->GetPackages(), false);
     LoadPackages(gPAFOptions->GetSelectorPackages(), true);
   }
   else {
-    UploadAndEnablePackages(gPAFOptions->proofSession, 
+    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
 			    gPAFOptions->GetPackages(), false);
-    UploadAndEnablePackages(gPAFOptions->proofSession, 
+    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
 			    gPAFOptions->GetSelectorPackages(), true);
   }
 
 
 #ifdef TIMERS
-  //T4
-  t4 = timer.RealTime();
-  timer.Start();
+  //PAFTIME4
+  PAFTime4 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Loading packages): " << PAFTime4 << endl;
+  PAFTimer.Start();
 #endif
 
+  //
+  // Compile Selector
+  //
   TString selectorcfile = selector + ".C";
   TString selectorhfile = selector + ".h";
 
@@ -520,15 +590,16 @@ bool RunAnalysis() {
   selectorcplus+= "++";
   PAFBaseSelector *pafbaseselector = 0;
 
-  if (gPAFOptions->proofMode == kSequential) {
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     cout << PAFINFO << ">> Creating selector..." << endl;
     pafbaseselector = (PAFBaseSelector*)TSelector::GetSelector(selectorcplus);
   }
 
 #ifdef TIMERS
-  //T5
-  t5 = timer.RealTime();
-  timer.Start();
+  //PAFTIME5
+  PAFTime5 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Compile selector): " << PAFTime5 << endl;
+  PAFTimer.Start();
 #endif
   
 
@@ -538,7 +609,7 @@ bool RunAnalysis() {
   if (gPAFOptions->inputParameters) {
     cout << PAFINFO << ">> Adding input parameters..." << endl;
     
-    if (gPAFOptions->proofMode == kSequential) {
+    if (gPAFOptions->GetPAFMode() == kSequential) {
       TList* inputlist = new TList;
       if (gPAFOptions->inputParameters) {
 	inputlist->Add(gPAFOptions->inputParameters);
@@ -547,7 +618,7 @@ bool RunAnalysis() {
     }
     else {
       if (gPAFOptions->inputParameters) {
-	gPAFOptions->proofSession->AddInput(gPAFOptions->inputParameters);
+	gPAFOptions->GetPROOFSession()->AddInput(gPAFOptions->inputParameters);
       }
     }
   }
@@ -555,14 +626,14 @@ bool RunAnalysis() {
   //
   // Add dynamic histograms (feedback)
   //
-  if (gPAFOptions->proofMode != kSequential && 
+  if (gPAFOptions->GetPAFMode() != kSequential && 
       gPAFOptions->dynamicHistograms.size() > 0) {
     cout << PAFINFO << ">> Adding dynamic histograms (Feedback)" << endl;
     for (unsigned int i = 0; 
 	 i < gPAFOptions->dynamicHistograms.size(); 
 	 i++) {
       cout << PAFINFO << "+ " << gPAFOptions->dynamicHistograms[i] << endl;
-      gPAFOptions->proofSession->AddFeedback(gPAFOptions->dynamicHistograms[i]);
+      gPAFOptions->GetPROOFSession()->AddFeedback(gPAFOptions->dynamicHistograms[i]);
     }
     new TDrawFeedback(proof);
   }
@@ -572,20 +643,22 @@ bool RunAnalysis() {
 #endif
   }
 #ifdef TIMERS
-  t6 = timer.RealTime();
-  timer.Start();
+  PAFTime6 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Parametes and dynamic histograms): " 
+       << PAFTime6 << endl;
+  PAFTimer.Start();
 #endif
 
   //
   // Processing...
-  //T7
+  //
   cout << PAFINFO << ">> Processing " << selector << " in ";
-  if (gPAFOptions->proofMode == kSequential) {
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     cout << "sequential mode..." << endl;
     cerr << PAFWARN << "Note that no dialog or progressing bar will be shown!" << endl;
   }
   else {
-    cout << gPAFOptions->proofSession->GetParallel() << " nodes..." << endl;
+    cout << gPAFOptions->GetPROOFSession()->GetParallel() << " nodes..." << endl;
   }
 
   Long64_t nevents    = gPAFOptions->GetNEvents();
@@ -597,7 +670,7 @@ bool RunAnalysis() {
     cout << " on event " << firstevent << endl;
   else
     cout << " at first event" << endl;
-  if (gPAFOptions->proofMode == kSequential) {
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     tchaindataset->Process(pafbaseselector, 0, nevents, firstevent);
   }
   else {
@@ -605,9 +678,10 @@ bool RunAnalysis() {
     tchaindataset->Process(selectorcplus, 0, nevents, firstevent);
   }
 
-#ifdef TIMERS
-  t7 = timer.RealTime();
-  timer.Start();
+#ifdef PAFTIME7
+  PAFTime7 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Processing data): " << PAFTime7 << endl;
+  PAFTimer.Start();
 #endif
 
   //
@@ -625,13 +699,13 @@ bool RunAnalysis() {
   if (histoAnalysis.IsOpen()) {
     TList* li = 0;
     TList* lo = 0;
-    if (gPAFOptions->proofMode == kSequential) {
+    if (gPAFOptions->GetPAFMode() == kSequential) {
       li = inputlist;
       lo = pafbaseselector->GetOutputList();
     }
     else {
-      li = gPAFOptions->proofSession->GetInputList();
-      lo = gPAFOptions->proofSession->GetOutputList();
+      li = gPAFOptions->GetPROOFSession()->GetInputList();
+      lo = gPAFOptions->GetPROOFSession()->GetOutputList();
     }
     li->Write();
     lo->Write();
@@ -654,7 +728,7 @@ bool RunAnalysis() {
   }
   
   
-  if ( gPAFOptions->proofMode == kCluster ) {
+  if ( gPAFOptions->GetPAFMode() == kCluster ) {
     // XXX: enol, remove the active file, so others can reuse!
     gSystem->Unlink(gPAFOptions->pafSessionDir + "/active");
     cerr << PAFWARN << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl
@@ -666,11 +740,15 @@ bool RunAnalysis() {
 
 
 #ifdef TIMERS
-  t8 = timer.RealTime();
+  PAFTime8 = PAFTimer.RealTime();
+  cout << PAFINFO << "  + TIME (Output file): " << PAFTime8 << endl;
 
   ofstream ftimes(Form("tiempos_ejecucion%d", gPAFOptions->GetNSlots()),
 		   ios::app);
-  ftimes << Form("%f;%f;%f;%f;%f;%f;%f;%f;\n",t1,t2,t3,t4,t5,t6,t7,t8);
+  ftimes << Form("%f;%f;%f;%f;%f;%f;%f;%f;%f;\n",
+		 PAFTime0,
+		 PAFTime1, PAFTime2, PAFTime3, PAFTime4,
+		 PAFTime5, PAFTime6, PAFTime7, PAFTime8);
   ftimes.flush();
   ftimes.close();
 #endif

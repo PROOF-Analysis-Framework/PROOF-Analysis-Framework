@@ -61,6 +61,7 @@ class PAFOptions {
   //
   // PROOF Mode. See ProofMode enum for details
   ProofMode proofMode; 
+  ProofMode GetPAFMode() const {return proofMode;}
   //
   ///////////////////////////////
 
@@ -242,6 +243,7 @@ class PAFOptions {
   //
   // PROOF Session. Don't mess with it!
   TProof* proofSession;
+  TProof* GetPROOFSession() const {return proofSession;}
   //
   ///////////////////////////////
 
