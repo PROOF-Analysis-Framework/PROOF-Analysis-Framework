@@ -678,7 +678,7 @@ bool RunAnalysis() {
     tchaindataset->Process(selectorcplus, 0, nevents, firstevent);
   }
 
-#ifdef PAFTIME7
+#ifdef TIMERS
   PAFTime7 = PAFTimer.RealTime();
   cout << PAFINFO << "  + TIME (Processing data): " << PAFTime7 << endl;
   PAFTimer.Start();
