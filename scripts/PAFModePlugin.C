@@ -1,0 +1,1 @@
+#include "PAFModePlugin.h"
