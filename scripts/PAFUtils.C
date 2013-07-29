@@ -103,21 +103,26 @@ TProof* InitProof() {
   }
 
   // ++ PROOF Cluster
-  else if (pm == kCluster)
-    gPAFModePlugin = new PROOFClusterPlugin(gPAFOptions->GetNSlots()
+  else if (pm == kCluster) {
+    gROOT->LoadMacro("$PAFPATH/scripts/PROOFClusterPlugin.C");
+    gPAFModePlugin = new PROOFClusterPlugin(gPAFOptions->GetNSlots(),
 					    gPAFOptions->GetMaxSlavesPerNode());
+  }
   
   // ++ Cloud
   else if ( pm == kCloud ) {
-    gPAFModePlugin = new PROOFCloudPlugin(gPAFOptions->GetNSlots()
-					  gPAFOptions->proofRequest
+    gROOT->LoadMacro("$PAFPATH/scripts/PROOFCloudPlugin.C");
+    gPAFModePlugin = new PROOFCloudPlugin(gPAFOptions->GetNSlots(),
+					  gPAFOptions->proofRequest,
 					  gPAFOptions->proofServer,
 					  gPAFOptions->proofServerPort);
   }
 
   // ++ Sequential
   else if (pm == kSequential) {
-    gPAFModePlugin = 0;
+    gROOT->LoadMacro("$PAFPATH/scripts/SequentialPlugin.C");
+    gPAFModePlugin = new SequentialPlugin();
+
   } 
   // ++ Something else
   else {
@@ -134,15 +139,8 @@ TProof* InitProof() {
   // Initial checks
   //
 
-  // ++ Sequential
-  if (pm == kSequential) {
-    // Nothing to check
-  } 
-  // ++ PoD, Lite, Cluster, Cloud
-  else {
-    if (!gPAFModePlugin->InitialChecks())
-      return false;
-   } 
+  if (!gPAFModePlugin->InitialChecks())
+    return false;
 
 
 
@@ -168,28 +166,8 @@ TProof* InitProof() {
   ///////////////////
   // Start PROOF
   //
-  gPAFOptions->proofSession = 0;
 
-  // ++ Sequential
-  if (gPAFOptions->GetPAFMode() == kSequential) {
-    cout << PAFINFO << "+ Sequential mode selected. No PROOF will be used." << endl;
-  }
-  else
-    gPAFOptions->proofSession = gPAFModePlugin->Init();
-
-
-
-  // Weird! This will avoid that a lot of output is printed whenever something
-  // is run on PROOF
-//   if (gPAFOptions->GetPAFMode() != kSequential) {
-//     if (gPAFOptions->GetPROOFSession()) {
-//       gPAFOptions->GetPROOFSession()->Exec("int kkkkkkkkkkkkkkkkkkkkk;");
-//       if (gPAFOptions->GetPAFMode() != kLite) {
-//         gPAFOptions->GetPROOFSession()->SetParameter("PROOF_MaxSlavesPerNode", 
-//                                                 gPAFOptions->maxSlavesPerNode);
-//       }
-//     }
-//   }
+  gPAFOptions->proofSession = gPAFModePlugin->Init();
 
 
 
@@ -582,7 +560,8 @@ bool RunAnalysis() {
 	 << endl;
   }
   
-  gPAFModePlugin->Finish();
+  if (gPAFModePlugin)
+    gPAFModePlugin->Finish();
 
 #ifdef TIMERS
   PAFTime8 = PAFTimer.RealTime();
