@@ -15,6 +15,14 @@
 // Some definitions...
 #include "PAF.h"
 
+// Plugins for the different PAF Modes
+#include "PAFModePlugin.h"
+// #include "PoDPlugin.h"
+// #include "PROOFLitePlugin.h"
+// #include "PROOFClusterPlugin.h"
+// #include "PROOFCloudPlugin.h"
+
+
 
 // Uncomment the line below to get information on time spent at each step
 // This setting may also be defined in the main user code from a clean 
@@ -32,6 +40,9 @@ double PAFTime7; //Processing data
 double PAFTime8; //Output file
 #endif
 
+// The PAF Mode Plugin that will be used depending on the 
+// PAF Mode selected
+PAFModePlugin* gPAFModePlugin = 0;
 
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
@@ -50,170 +61,8 @@ bool CreateSessionDir() {
 }
 
 
-// Inits Proof Lite session 
-TProof *InitLite() {
-  // If ProofLite: all cores
-  cout << PAFINFO << "+ PROOF Lite mode selected. Using local node." << endl;
-  TString nworkers("");
-  if (gPAFOptions->GetNSlots() > 0) {
-    SysInfo_t si;
-    Int_t ncpus = 0;
-    if (gSystem->GetSysInfo(&si) == 0)
-      ncpus = TMath::Min(gPAFOptions->GetNSlots(), si.fCpus);
 
-    //The syntax to set the number of slots changed in ROOT 5.30.00
-    if (gROOT->GetVersionInt() < 53000)
-      nworkers.Form("workers=%d",ncpus);
-    else
-      nworkers.Form("lite:///?workers=%d",ncpus);
 
-    if (gPAFOptions->GetNSlots() != ncpus)
-      cerr << PAFWARN << "Using only " << ncpus <<  " slots (the number of available cores)" << endl;
-    cout << PAFINFO << " - Using " << ncpus << " slaves..." << endl;
-  }
-#if DEBUGUTILS
-  cerr << PAFDEBUG << "nworkers string: " << nworkers << endl;
-#endif
-  return TProof::Open(nworkers.Data());
-}
-
-// Inits Proof Cluster session 
-TProof *InitCluster() {
-  if (gPAFOptions->GetNSlots() < 0 )
-    gPAFOptions->SetNSlots(10);
-
-  cout << PAFINFO << "+ PROOF Cluster mode selected. Using:" << endl
-       << PAFINFO << " - N. Slots     = " << gPAFOptions->GetNSlots() << endl
-       << PAFINFO << " - Max. N. Slav.= " << gPAFOptions->maxSlavesPerNode << endl;
-
-  // Ask the desired number of workers:
-  TString slots_petition;
-  slots_petition.Form("startproof -a %d", gPAFOptions->GetNSlots());
-#if DEBUGUTILS
-  cerr << PAFDEBUG << "Slots petition: " << slots_petition  << endl;
-#endif
-  // XXX: think of a better way of doing this, 
-  // startproof returns the path where the paf_url file is located
-  gPAFOptions->pafSessionDir = gSystem->GetFromPipe(slots_petition);
-
-  ifstream paf_url;
-  paf_url.open(gPAFOptions->pafSessionDir + "/paf_url");
-  if (!paf_url.is_open()) {
-    cerr << PAFERROR << "Cannot open file with proof master address" << endl;
-    return 0;
-  }
-  string line;
-  getline(paf_url, line);
-  TString proofserverchain(line); 
-
-  cout << PAFINFO << "+ Starting PROOF session at " << proofserverchain << endl;
-  // XXX: this should not be necessary for the new style PAF
-  // gPAFOptions->proofSession = TProof::Reset(proofserverchain,kTRUE);
-  return TProof::Open(proofserverchain);
-}
-
-// Inits Proof PoD session 
-TProof *InitPoD() {
-  if (!gSystem->Getenv("POD_LOCATION")) {
-    cerr << PAFERROR << "PoD path not set. Try to source something like /opt/PoD/PoD_env.sh" << endl
-         << PAFERROR << "Exiting!" << endl;
-    return 0;
-  }
-  int wait = 1; //Interval between checks in seconds
-  int n_waits = gPAFOptions->GetPoDTimeOut() / wait;
-  if (gPAFOptions->GetNSlots() < 0 )
-    gPAFOptions->SetNSlots(10);
-
-  // If ProofLite: all cores
-  cout << PAFINFO << "+ PROOF on Demand (PoD)  mode selected. Using local node." << endl;
-  // Start pod-server if it isn't runnign already
-  TString podserverstatus=gSystem->GetFromPipe("pod-server status 2>&1");
-  if (podserverstatus.Contains("NOT")) {
-    cout << PAFINFO << "+ PoD server not running, starting it: " << endl;
-    gSystem->Exec("pod-server start");
-  }
-  else
-    cout << PAFINFO << "+ PoD server already running, reusing it" << endl;
-
-  //Find if there are already slots being used
-  int activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
-
-  if (activeSlots) {
-    cout << PAFINFO << "+ You already have " << activeSlots 
-         << " slots allocated." << endl;
-  }
-
-  //Initially assume no slots has been allocated
-  int missingSlots = gPAFOptions->GetNSlots() - activeSlots;
-
-  if (missingSlots < 0) {
-    gPAFOptions->SetNSlots(activeSlots);
-  }
-
-  if (missingSlots > 0) {
-    cout << PAFINFO << "+ Asking for " << missingSlots << " slots" << endl;
-
-#if DEBUGUTILS
-    cerr << PAFDEBUG << Form("pod-submit -r pbs -n %d", missingSlots) << endl;
-#endif
-    gSystem->Exec(Form ("pod-submit -r pbs -n %d", missingSlots));
-    //We have to wait until we have all our WNs
-    cout << PAFINFO << "+ Waiting for batch system. Found 0 slots (" 
-         << gPAFOptions->GetPoDTimeOut() << " s)  " << flush; 
-
-    int slotsReady = 0;
-    int srmsize = 1;
-    int trmsize = (int) TMath::Log10(gPAFOptions->GetPoDTimeOut()) + 1;
-    int rmsize  = srmsize + trmsize + 13;
-    do{
-      gSystem->Sleep(wait*1000);
-      slotsReady = gSystem->GetFromPipe("pod-info -n").Atoi();
-      n_waits--;
-      for (int i = 0; i < rmsize; i++)
-        cout << '\b';
-      cout << slotsReady << " slots (" << n_waits * wait << " s)  "<< flush;
-      srmsize = (slotsReady == 0?1:(int) TMath::Log10(slotsReady) + 1);
-      trmsize = (int) TMath::Log10(n_waits*wait) + 1;
-      rmsize = srmsize + trmsize + 13;
-    } while((slotsReady < gPAFOptions->GetNSlots()) && (n_waits > 0) );
-    cout << endl;
-  }
-
-  cout << PAFINFO << "+ We will use " << gSystem->GetFromPipe("pod-info -n").Atoi()
-       << " slots" << endl;
-
-  // Open proof session using the server we launched with PoD
-  cout << PAFINFO << "+ Opening Proof session using " 
-       << gSystem->GetFromPipe("pod-info -c") << endl;
-  return TProof::Open(gSystem->GetFromPipe("pod-info -c"));
-}
-
-// Inits Proof PoD session 
-TProof *InitCloud() {
-  cout << PAFINFO << "+ PROOF Cloud mode selected." << endl;
-  TString proofserverchain = "";
-  if ( gPAFOptions->proofRequest ) {  // User may disable the request
-#if DEBUGUTILS
-    cerr << PAFDEBUG << "Calling startproof cloud!" << endl;
-#endif
-    if (gSystem->Exec("proofcloud start") != 0) {
-      cerr << PAFERROR << "ERROR Trying to get machines" << endl;
-      return 0;
-    }
-    proofserverchain = gSystem->GetFromPipe("proofcloud getserver");
-  } else {
-    // Build the full user@proofserver:port string
-    proofserverchain = "proof@";
-    proofserverchain +=gPAFOptions->proofServer;
-    proofserverchain +=":";
-    proofserverchain +=gPAFOptions->proofServerPort;
-  }
-  cout << PAFINFO << "+ Starting PROOF session at " << proofserverchain << "..."
-       << endl;
-  //gPAFOptions->proofSession = TProof::Open(proofserverchain);
-  //gPAFOptions->proofSession = TProof::Reset(proofserverchain, kTRUE);
-  return TProof::Open(proofserverchain);
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -222,7 +71,8 @@ TProof *InitCloud() {
 //
 TProof* InitProof() {
 #if DEBUGUTILS
-  cerr << PAFDEBUG << ">> InitProof(" << gPAFOptions->proofMode << ")" << endl;
+  cerr << PAFDEBUG << ">> InitProof(" << gPAFOptions->GetPAFMode() 
+       << ")" << endl;
 #endif
 #ifdef TIMERS
   cout << PAFINFO << "Setting up InitProof timer..." << endl;
@@ -230,52 +80,70 @@ TProof* InitProof() {
   PAFTimer.Start();
 #endif
 
+  ProofMode pm = gPAFOptions->GetPAFMode();
+
+
+  ///////////////////
+  // Use plugins where possible
+  //
+  cout << PAFINFO << "+ Loading PAF Mode Plugin for the selected mode" << endl;
+
+  // ++ PoD
+  if (pm == kPoD) {
+    gROOT->LoadMacro("$PAFPATH/scripts/PoDPlugin.C");
+    gPAFModePlugin = new PoDPlugin(gPAFOptions->GetNSlots(),
+				   gPAFOptions->GetMaxSlavesPerNode(), 
+				   gPAFOptions->GetPoDTimeOut());
+  }
+
+  // ++ PROOF Lite
+  else if (pm == kLite) {
+    gROOT->LoadMacro("$PAFPATH/scripts/PROOFLitePlugin.C");
+    gPAFModePlugin = new PROOFLitePlugin(gPAFOptions->GetNSlots());
+  }
+
+  // ++ PROOF Cluster
+  else if (pm == kCluster)
+    gPAFModePlugin = new PROOFClusterPlugin(gPAFOptions->GetNSlots()
+					    gPAFOptions->GetMaxSlavesPerNode());
+  
+  // ++ Cloud
+  else if ( pm == kCloud ) {
+    gPAFModePlugin = new PROOFCloudPlugin(gPAFOptions->GetNSlots()
+					  gPAFOptions->proofRequest
+					  gPAFOptions->proofServer,
+					  gPAFOptions->proofServerPort);
+  }
+
+  // ++ Sequential
+  else if (pm == kSequential) {
+    gPAFModePlugin = 0;
+  } 
+  // ++ Something else
+  else {
+    cerr << PAFERROR << "You have chosen a PROOF mode (" 
+	 << gPAFOptions->GetPAFMode() << ") not yet implemented" << endl;
+    cerr << PAFERROR << "Exiting!" << endl;
+    return 0;
+  }
+
+
+
+
   ///////////////////
   // Initial checks
   //
 
-  // ++ LITE
-  if (gPAFOptions->proofMode == kLite) {
-    // Nothing to check
-  }
-
-  // ++ Cluster
-  else if (gPAFOptions->proofMode == kCluster) {
-    // XXX - I.G. Nothing to check?
-    // XXX - I.G. Perhaps the existance of PROOF Cluster utilities in the path?
-  }
-
-  // ++ PoD
-  else if (gPAFOptions->proofMode == kPoD) {
-    // Check for env variable POD_LOCATION that should be set if the
-    // environent was properly set
-    if (!gSystem->Getenv("POD_LOCATION")) {
-      cerr << PAFERROR 
-	   << "PoD path not set. Try to source something like /opt/PoD/PoD_env.sh" 
-	   << endl
-	   << PAFERROR << "Exiting!" << endl;
-      return 0;
-    }
-  } 
-
-  // ++ Cloud
-  else if ( gPAFOptions->proofMode == kCloud ) {
-    // XXX - I.G. Nothing to check?
-    // XXX - I.G. Perhaps the existance of Cloud utilities in the path?
-  }
-
   // ++ Sequential
-  else if (gPAFOptions->proofMode == kSequential) {
+  if (pm == kSequential) {
     // Nothing to check
   } 
-
-  // ++ Something else
+  // ++ PoD, Lite, Cluster, Cloud
   else {
-    cerr << PAFERROR << "You have chosen a PROOF mode (" 
-	 << gPAFOptions->proofMode << ") not yet implemented" << endl;
-    cerr << PAFERROR << "Exiting!" << endl;
-    return 0;
-  }
+    if (!gPAFModePlugin->InitialChecks())
+      return false;
+   } 
+
 
 
 
@@ -302,39 +170,26 @@ TProof* InitProof() {
   //
   gPAFOptions->proofSession = 0;
 
-  // ++ LITE
-  if (gPAFOptions->GetPAFMode() == kLite) {
-    gPAFOptions->proofSession = InitLite();
-  } 
-  // ++ CLUSTER
-  else if (gPAFOptions->GetPAFMode() == kCluster) {
-    gPAFOptions->proofSession = InitCluster();
-  } 
-  // ++ POD
-  else  if ( gPAFOptions->GetPAFMode() == kPoD ) {
-    gPAFOptions->proofSession = InitPoD();
-  } 
-  // ++ CLOUD
-  else if ( gPAFOptions->GetPAFMode() == kCloud ) {
-    gPAFOptions->proofSession = InitCloud();
-  } 
-  // ++ SEQUENTIAL
-  else if (gPAFOptions->GetPAFMode() == kSequential) {
+  // ++ Sequential
+  if (gPAFOptions->GetPAFMode() == kSequential) {
     cout << PAFINFO << "+ Sequential mode selected. No PROOF will be used." << endl;
   }
+  else
+    gPAFOptions->proofSession = gPAFModePlugin->Init();
+
 
 
   // Weird! This will avoid that a lot of output is printed whenever something
   // is run on PROOF
-  if (gPAFOptions->GetPAFMode() != kSequential) {
-    if (gPAFOptions->GetPROOFSession()) {
-      gPAFOptions->GetPROOFSession()->Exec("int kkkkkkkkkkkkkkkkkkkkk;");
-      if (gPAFOptions->GetPAFMode() != kLite) {
-        gPAFOptions->GetPROOFSession()->SetParameter("PROOF_MaxSlavesPerNode", 
-                                                gPAFOptions->maxSlavesPerNode);
-      }
-    }
-  }
+//   if (gPAFOptions->GetPAFMode() != kSequential) {
+//     if (gPAFOptions->GetPROOFSession()) {
+//       gPAFOptions->GetPROOFSession()->Exec("int kkkkkkkkkkkkkkkkkkkkk;");
+//       if (gPAFOptions->GetPAFMode() != kLite) {
+//         gPAFOptions->GetPROOFSession()->SetParameter("PROOF_MaxSlavesPerNode", 
+//                                                 gPAFOptions->maxSlavesPerNode);
+//       }
+//     }
+//   }
 
 
 
@@ -727,17 +582,7 @@ bool RunAnalysis() {
 	 << endl;
   }
   
-  
-  if ( gPAFOptions->GetPAFMode() == kCluster ) {
-    // XXX: enol, remove the active file, so others can reuse!
-    gSystem->Unlink(gPAFOptions->pafSessionDir + "/active");
-    cerr << PAFWARN << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl
-         << PAFWARN << " REMINDER: If you do not need anymore the slots you asked for" << endl 
-         << PAFWARN << " please free them after leaving the ROOT session," << endl
-         << PAFWARN << " you can do that just by typing 'endproof' " << endl  
-         << PAFWARN << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-  }
-
+  gPAFModePlugin->Finish();
 
 #ifdef TIMERS
   PAFTime8 = PAFTimer.RealTime();
