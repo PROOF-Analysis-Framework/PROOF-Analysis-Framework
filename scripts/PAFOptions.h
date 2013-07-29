@@ -77,7 +77,7 @@ class PAFOptions {
 
   ///////////////////////////////
   //
-  // PROOF Cluster specific variables
+  // PROOF Cluster/Cloud specific variables
   //+ Proof Server name (default is proof.ifca.es)
   TString proofServer;
   //+ Proof Server port (default is 1093)
@@ -85,9 +85,9 @@ class PAFOptions {
   //+ Perform or not the request for nodes (default is True)
   bool proofRequest;
   //+ Maximum number of slaves per node (use 9999 for all)
-  Int_t maxSlavesPerNode;
-  // Internal variable to keep the session dir of PAF
-  TString pafSessionDir;
+  void SetMaxSlavesPerNode(int mspn) {maxSlavesPerNode = mspn;}
+  int  GetMaxSlavesPerNode() const {return maxSlavesPerNode;}
+  int maxSlavesPerNode;
   //
   ///////////////////////////////
 
