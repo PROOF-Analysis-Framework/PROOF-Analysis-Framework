@@ -168,6 +168,8 @@ TProof* InitProof() {
   //
 
   gPAFOptions->proofSession = gPAFModePlugin->Init();
+  if (gPAFOptions->proofSession)
+    gPAFOptions->proofSession->SetParameter("PROOF_UseMergers", (Int_t)0)
 
 
 
