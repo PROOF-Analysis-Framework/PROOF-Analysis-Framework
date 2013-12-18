@@ -28,6 +28,7 @@
 
 using namespace std;
 
+//#define DEBUGUTILS 2
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -60,6 +61,72 @@ int GetFromPipe(const char* command, TString& out) {
   int r = gSystem->ClosePipe(pipe);
   return r;
 
+}
+
+
+/***********************
+ *
+ * Backups a file.
+ * + file: Name of the file to be backed up
+ * + backupfile: Name of the backup file. If not provided file will be used
+ *               with the suffix '.bak'
+ * + force: If true, do not check if the file exists and do a backup in any
+ *          case
+ * + returns true if the backup was done, false otherwise
+ ************************/
+bool BackupFile(const char* file, char* backupfile=0, 
+		bool force = false) {
+#ifdef DEBUGUTILS
+  cerr << PAFDEBUG << "==> BackupFile(\"" << file << "\", ";
+  if (backupfile)
+    cerr << "\"" << backupfile << "\"";
+  else
+    cerr << '0';
+  cerr << ", " << force << ")" << endl;
+#endif
+  if (!file) {
+    cerr << PAFERROR << " in PAFCompiledUtils::BackupFile(). First argument is null" << endl;
+    return false;
+  }
+
+  // If backupfile is null then use file.bak for the backup
+  TString bfile(backupfile);
+  if (!backupfile)
+    bfile = Form("%s.bak",file);
+#ifdef DEBUGUTILS
+  cerr << PAFDEBUG << "+ Backup file name will be " << bfile << endl;
+#endif
+  
+  // This variable will store the need to do the backup
+  bool dothebackup = force;
+
+  // Check if the file exist to decide, unless force is true
+  if (!force) {
+    char* found = gSystem->Which(".", file);
+    if (found) {
+#ifdef DEBUGUTILS
+      cerr << PAFDEBUG << "+ File found. We need to do a backup" << endl;
+#endif
+      dothebackup = true;
+      delete[] found;
+    }
+  }
+
+  // Do the backup
+  if (dothebackup) {
+    gSystem->CopyFile(file, bfile, kTRUE);
+    gSystem->Unlink(file);
+  }
+
+#ifdef DEBUGUTILS
+  cerr << PAFDEBUG << "<== BackupFile(\"" << file << "\", ";
+  if (backupfile)
+    cerr << "\"" << backupfile << "\"";
+  else
+    cerr << '0';
+  cerr << ", " << force << ")" << endl;
+#endif
+  return dothebackup;
 }
 
 //
@@ -940,7 +1007,7 @@ int MakeSimpleSelector(TTree* fTree,
  * Upload and enable packages / Load packages
  *
  ************************/
-void UploadAndEnablePackages(TProof* proofSession, 
+bool UploadAndEnablePackages(TProof* proofSession, 
 			     const vector<TString>& packages,
 			     bool isSelector) {
 
@@ -962,11 +1029,13 @@ void UploadAndEnablePackages(TProof* proofSession,
 #ifdef DEBUGUTILS    
     cerr << PAFDEBUG << "+ Uploading " << packages[i] << endl;
 #endif
-    Int_t up = 999;
-
-    up=proofSession->UploadPackage(packages_dir + packages[i] + ".par",
-				   TProof::kRemoveOld);
-
+    Int_t up = proofSession->UploadPackage(packages_dir + packages[i] + ".par",
+					   TProof::kRemoveOld);
+    if (up != 0) {
+      cerr << PAFERROR << "Could not upload package " << packages[i]
+	   << ". Exiting!" << endl;
+      return false;
+    }
 #ifdef DEBUGUTILS    
     cerr << PAFDEBUG << "+ Result of uploading -> " << up << endl;
 #endif
@@ -975,6 +1044,43 @@ void UploadAndEnablePackages(TProof* proofSession,
     // (3) Enable (load) the package in each of the slaves.
     //     We try a couple of times since we have seen that from time to time
     //     it fails under PoD.
+    Int_t ep = -1;
+    const unsigned int maxNTries = 5;
+    unsigned int nTries = 1;
+    while(ep == -1 && nTries <= maxNTries) {
+#ifdef DEBUGUTILS    
+      cerr << PAFDEBUG << "+ Enabling " << packages[i] << " - Try number " 
+	   << nTries << endl;
+#endif
+
+      ep = proofSession->EnablePackage(packages[i]);
+      
+#if DEBUGUTILS > 1
+      cerr << PAFDEBUG << "+ Result of enabling -> " << ep << endl;
+#endif
+      
+      if (ep == -1) {
+	cerr << PAFWARN << "Failed enabling " << packages[i] 
+	     << " - Giving it another (" << nTries+1 << ") chance! " << endl;
+	
+      }
+      
+      nTries++;
+    }
+    
+    if (ep == -1) {
+      cerr << PAFERROR << "Failed enabling " << packages[i] 
+	   << "!!! We have tried " << nTries-1 << " times with no success" 
+	   << endl;
+      cerr << PAFERROR << "Exiting..." << endl;
+      return false;
+    }
+#ifdef DEBUGUTILS    
+    else
+      cerr << PAFINFO << "+ " << packages[i] << " finally enabled" << endl;
+#endif
+    
+    /*
 #ifdef DEBUGUTILS    
     cerr << PAFDEBUG << "+ Enabling " << packages[i] << endl;
 #endif
@@ -993,8 +1099,7 @@ void UploadAndEnablePackages(TProof* proofSession,
 	     << "!!! We have tried two times with no success" 
 	     << endl;
 	cerr << PAFERROR << "Exiting..." << endl;
-	//XXX Should exit or propagate the error up??
-	exit(-333);
+	return false;
       }
 #ifdef DEBUGUTILS    
       else
@@ -1002,6 +1107,7 @@ void UploadAndEnablePackages(TProof* proofSession,
 	     << " worked this time" << endl;
 #endif
     }
+    */
     
     
     // fix for root < 5.34 add include path
@@ -1016,6 +1122,8 @@ void UploadAndEnablePackages(TProof* proofSession,
   cerr << PAFDEBUG << "Include path: " << endl;
   cerr << PAFDEBUG << gSystem->GetIncludePath() << endl;
 #endif
+
+  return true;
 }
 
 

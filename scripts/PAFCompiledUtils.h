@@ -120,7 +120,7 @@ int MakeSimpleSelector(TTree* fTree,
  * Upload and enable packages / Load packages
  *
  ************************/
-void UploadAndEnablePackages(TProof* proofsession, 
+bool UploadAndEnablePackages(TProof* proofsession, 
 			     const vector<TString>& packages,
 			     bool isSelector = false);
 
