@@ -10,19 +10,33 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-// Include the singleton where the options are stored.
-#include "PAFOptions.C"
 // Some definitions...
 #include "PAF.h"
 
+// Include the singleton where the options are stored.
+#include "PAFOptions.C"
+
+// ROOT includes
+#include "TNamed.h"
+#include "TProof.h"
+#include "TEnv.h"
+#include "TROOT.h"
+#include "TFile.h"
+#include "TDrawFeedback.h"
+
+
 // Plugins for the different PAF Modes
 #include "PAFModePlugin.h"
+
+// Uncomment to try to compile
 // #include "PoDPlugin.h"
 // #include "PROOFLitePlugin.h"
 // #include "PROOFClusterPlugin.h"
 // #include "PROOFCloudPlugin.h"
-
-
+// #include "SequentialPlugin.h"
+//class PROOFLitePlugin;
+//class PROOFClusterPlugin;
+//class PROOFCloudPlugin;
 
 // Uncomment the line below to get information on time spent at each step
 // This setting may also be defined in the main user code from a clean 
@@ -46,17 +60,35 @@ PAFModePlugin* gPAFModePlugin = 0;
 
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
+  cout << PAFINFO << "Creating buildir and proof sand box" << endl;
   // XXX: errors are not properly catched here!
-  TString dir = gSystem->GetFromPipe("mktemp -d");
+  TString tmpdir = gSystem->GetFromPipe("mktemp -d");
   // - And let's set the build dir there so nothing interferes in the
   //   PAF directory installation
-  if (dir == "") {
+  if (tmpdir == "") {
     return false;
   }
-  gSystem->SetBuildDir(dir);
-  TString ProofSandboxDir;
-  ProofSandboxDir.Form("%s/.proof", dir.Data());
+  TString ProofSandboxDir = Form("%s/.proof", tmpdir.Data());
+  TString builddir = tmpdir;
+
+
+  
+  //XXX I.G. Why not set everything to ~/.paf... so we avoid problems in
+  //    cleaning the tmp area?
+  //    This does not work directly like that
+  //TString builddir = "~/.paf/BuildDir";
+  //TString ProofSandboxDir = "~/.paf/Sandbox";
+  //gSystem->mkdir(builddir.Data(),true);
+  //gSystem->mkdir(ProofSandboxDir.Data(),true);
+  
+#if DEBUGUTILS
+  cerr << PAFDEBUG << "BuilDir set to " << builddir << endl;
+  cerr << PAFDEBUG << "Sandbox set to " << ProofSandboxDir << endl;
+#endif
+  
+  gSystem->SetBuildDir(builddir);
   gEnv->SetValue("Proof.Sandbox", ProofSandboxDir);
+  
   return true;
 }
 
@@ -80,7 +112,8 @@ TProof* InitProof() {
   PAFTimer.Start();
 #endif
 
-  ProofMode pm = gPAFOptions->GetPAFMode();
+  EProofMode pm = gPAFOptions->GetPAFMode();
+
 
 
   ///////////////////
@@ -146,14 +179,6 @@ TProof* InitProof() {
 
 
 
-  ///////////////////
-  // Set build dir
-  //
-  if (!CreateSessionDir()) {
-    cerr << PAFERROR << "Unable to continue without a valid build dir!" << endl;
-    cerr << PAFERROR << "Exiting!" << endl;
-    return 0;
-  }
 
 
   // Check PAF Version (no more needed)
@@ -167,34 +192,56 @@ TProof* InitProof() {
   // Start PROOF
   //
 
-  gPAFOptions->proofSession = gPAFModePlugin->Init();
-  if (gPAFOptions->proofSession)
-    gPAFOptions->proofSession->SetParameter("PROOF_UseMergers", (Int_t)0)
-
-
-
+  gPAFOptions->SetPROOFSession(gPAFModePlugin->Init());
+  if (gPAFOptions->GetPROOFSession()) {
+    cout << PAFINFO << "Setting PROOF to use mergers..." << endl;
+    gPAFOptions->GetPROOFSession()->SetParameter("PROOF_UseMergers", (Int_t)0);
+  }
+  else if (gPAFOptions->GetPAFMode() != kSequential) {
+    cerr << PAFERROR << "Could not start session!!!" << endl;
+    cerr << PAFERROR << "Exiting!" << endl;
+    return 0;
+  }
+  
+  ///////////////////
+  // Set build dir and sandbox
+  //
+  if (!CreateSessionDir()) {
+    cerr << PAFERROR << "Unable to continue without a valid build dir!" << endl;
+    cerr << PAFERROR << "Exiting!" << endl;
+    return 0;
+  }
+  
+  
+  
   ///////////////////
   // Load extra utils
   //
-
+  
   // ++ PAFCompiledUtils
-  gROOT->LoadMacro("$PAFPATH/scripts/PAFCompiledUtils.C+");
-
+  cout << PAFINFO << "Compiling PAF extra utils..." << endl;
+  if (gROOT->LoadMacro("$PAFPATH/scripts/PAFCompiledUtils.C+") !=0) {
+    cerr << PAFERROR << "Could not compile$PAFPATH/scripts/PAFCompiledUtils.C" << endl;
+    cerr << PAFERROR << "Exiting" << endl;
+    return 0;
+  }
+  
   // ++ Load or Enable InputParameters
   vector<TString> ip;
   ip.push_back("InputParameters");
   if (gPAFOptions->GetPAFMode() == kSequential) {
     LoadPackages(ip, false);
-  } else {
-    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), ip, false);
+  } else if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
+				      ip, false)) {
+    return 0;
   }
-
-
+  
+  
 #ifdef TIMERS
   PAFTime0 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (InitProof): " << PAFTime0 << endl;
+  cout << PAFINFO << "+++ TIME (InitProof): " << PAFTime0 << endl;
 #endif
-
+  
 #if DEBUGUTILS
   cerr << PAFDEBUG << "<< InitProof(" << gPAFOptions->GetPROOFSession() << ")" << endl;
 #endif
@@ -332,13 +379,13 @@ bool RunAnalysis() {
 #ifdef TIMERS
   //PAFTIME1
   PAFTime1 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Building dataset): " << PAFTime1 << endl;
+  cout << PAFINFO << "+++ TIME (Building dataset): " << PAFTime1 << endl;
   PAFTimer.Start();
 #endif
 
   //
   //Make selector
-  if (gPAFOptions->createSelector) {
+  if (gPAFOptions->ShouldCreateSelector()) {
     cout << PAFINFO << ">> Creating Selector..." << endl;
     TString pkgName;
     if (!CreateSelector(gPAFOptions->dataFiles[0], pkgName,
@@ -359,7 +406,7 @@ bool RunAnalysis() {
 #ifdef TIMERS
   //PAFTIME2
   PAFTime2 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Create base selector): " << PAFTime2 << endl;
+  cout << PAFINFO << "+++ TIME (Create base selector): " << PAFTime2 << endl;
   PAFTimer.Start();
 #endif
 
@@ -371,7 +418,7 @@ bool RunAnalysis() {
 #ifdef TIMERS
   //PAFTIME3
   PAFTime3 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Include path): " << PAFTime3 << endl;
+  cout << PAFINFO << "+++ TIME (Include path): " << PAFTime3 << endl;
   PAFTimer.Start();
 #endif
 
@@ -383,17 +430,19 @@ bool RunAnalysis() {
     LoadPackages(gPAFOptions->GetSelectorPackages(), true);
   }
   else {
-    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
-			    gPAFOptions->GetPackages(), false);
-    UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
-			    gPAFOptions->GetSelectorPackages(), true);
+    if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
+				 gPAFOptions->GetPackages(), false))
+      return false; 
+    if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
+				 gPAFOptions->GetSelectorPackages(), true))
+      return false;
   }
 
 
 #ifdef TIMERS
   //PAFTIME4
   PAFTime4 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Loading packages): " << PAFTime4 << endl;
+  cout << PAFINFO << "+++ TIME (Loading packages): " << PAFTime4 << endl;
   PAFTimer.Start();
 #endif
 
@@ -423,23 +472,23 @@ bool RunAnalysis() {
   // Selector
   TString selectorcplus = selectorcfile; 
   selectorcplus+= "++";
-  PAFBaseSelector *pafbaseselector = 0;
+  PAFBaseSelector* pafbaseselector = 0;
 
   if (gPAFOptions->GetPAFMode() == kSequential) {
     cout << PAFINFO << ">> Creating selector..." << endl;
-    pafbaseselector = (PAFBaseSelector*)TSelector::GetSelector(selectorcplus);
+    pafbaseselector = (PAFBaseSelector*) TSelector::GetSelector(selectorcplus);
   }
 
 #ifdef TIMERS
   //PAFTIME5
   PAFTime5 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Compile selector): " << PAFTime5 << endl;
+  cout << PAFINFO << "+++ TIME (Compile selector): " << PAFTime5 << endl;
   PAFTimer.Start();
 #endif
   
 
   //  
-  // Add the set of parameters to the input lists
+  // Add the set of parameters and some other stuffto the input lists
   //
   if (gPAFOptions->inputParameters) {
     cout << PAFINFO << ">> Adding input parameters..." << endl;
@@ -452,9 +501,13 @@ bool RunAnalysis() {
       pafbaseselector->SetInputList(inputlist);
     }
     else {
+      TProof* p = gPAFOptions->GetPROOFSession();
       if (gPAFOptions->inputParameters) {
-	gPAFOptions->GetPROOFSession()->AddInput(gPAFOptions->inputParameters);
+	p->AddInput(gPAFOptions->inputParameters);
       }
+      //Define if should merge through
+      p->AddInput(new TNamed("PAF_MergeThroughFile",
+			     gPAFOptions->GetMergeThroughFile()?"true":"false"));
     }
   }
 
@@ -470,7 +523,7 @@ bool RunAnalysis() {
       cout << PAFINFO << "+ " << gPAFOptions->dynamicHistograms[i] << endl;
       gPAFOptions->GetPROOFSession()->AddFeedback(gPAFOptions->dynamicHistograms[i]);
     }
-    new TDrawFeedback(proof);
+    new TDrawFeedback(gPAFOptions->GetPROOFSession());
   }
   else {
 #if DEBUGUTILS
@@ -479,7 +532,7 @@ bool RunAnalysis() {
   }
 #ifdef TIMERS
   PAFTime6 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Parametes and dynamic histograms): " 
+  cout << PAFINFO << "+++ TIME (Parametes and dynamic histograms): " 
        << PAFTime6 << endl;
   PAFTimer.Start();
 #endif
@@ -499,7 +552,10 @@ bool RunAnalysis() {
   Long64_t nevents    = gPAFOptions->GetNEvents();
   Long64_t firstevent = gPAFOptions->GetFirstEvent();
   cout << PAFINFO << "+ ";  
-  if (nevents == TChain::kBigNumber) cout << "All"; else cout << nevents;
+  if (nevents == TChain::kBigNumber)
+    cout << "All"; 
+  else 
+    cout << nevents;
   cout << " events will be scanned, starting";
   if (firstevent)
     cout << " on event " << firstevent << endl;
@@ -510,33 +566,115 @@ bool RunAnalysis() {
   }
   else {
     tchaindataset->SetProof();
-    tchaindataset->Process(selectorcplus, 0, nevents, firstevent);
+    const char* options = 0;
+    if (gPAFOptions->GetMergeThroughFile()) {
+      if (BackupFile(gPAFOptions->GetOutputFile().Data()))
+	cerr << PAFWARN << "+ File \"" << gPAFOptions->GetOutputFile() 
+	     << "\" already exists! It has been backed up."
+	     << endl;
+      
+      TString of = Form("of=%s;stf", gPAFOptions->GetOutputFile().Data());
+      options=of.Data();
+    }
+    tchaindataset->Process(selectorcplus, options, nevents, firstevent);
   }
 
 #ifdef TIMERS
   PAFTime7 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Processing data): " << PAFTime7 << endl;
+  cout << PAFINFO << "+++ TIME (Processing data): " << PAFTime7 << endl;
   PAFTimer.Start();
 #endif
 
   //
+  // If not merging throug file, let's create the ouptut file and fill it
+  //
+  if (!gPAFOptions->GetMergeThroughFile()) {
+    cout << PAFINFO << ">> Saving results to \"" 
+	 << gPAFOptions->GetOutputFile() << "\"..." << endl;
+
+    // Backup the output file if it already exists
+    if (BackupFile(gPAFOptions->GetOutputFile().Data()))
+      cerr << PAFWARN << "+ File \"" << gPAFOptions->GetOutputFile() 
+	   << "\" already exists! It has been backed up."
+	   << endl;
+
+    // Open file and store objects
+    cout << PAFINFO << "+ Opening new file \""
+	 << gPAFOptions->GetOutputFile() << "\"..." << endl;
+    TFile* histoAnalysis = TFile::Open(gPAFOptions->GetOutputFile(), 
+				       "NEW", "PAFOutputFile");
+    if (!histoAnalysis->IsZombie()) {
+      cout << PAFINFO << "+ Saving objects in input and output lists"
+	   << endl;
+      TList* li = 0;
+      TList* lo = 0;
+      if (gPAFOptions->GetPAFMode() == kSequential) {
+	//XXX Is this working???
+	li = pafbaseselector->GetInputList()
+	  lo = pafbaseselector->GetOutputList();
+      }
+      else {
+	li = gPAFOptions->GetPROOFSession()->GetInputList();
+	lo = gPAFOptions->GetPROOFSession()->GetOutputList();
+      }
+      li->Write();
+      lo->Write();
+      histoAnalysis->Close();
+    }
+    else {
+      cerr << PAFERROR << "  + Could not open output file \"" << of 
+	   << "\"" << endl;
+    }
+  }
+
+  //
+  // This is used to have the objects available in the shell
+  // It is only done if we are in an interactive session
+  //
+  if (gPAFOptions->ShouldReopenOutputFile() && !gROOT->IsBatch()) {
+    cout << PAFINFO << ">> Reopening the file in current session..."
+	 << endl;
+    TFile *f = TFile::Open(gPAFOptions->GetOutputFile());
+    if (f) {
+      cout << PAFINFO << ">> You may now directly access all the saved objects."
+	   << endl
+	   << PAFINFO << "   The list of available obects is:"
+	   << endl;
+      f->ls();
+    }
+  }
+
+
+
+  /***************************
+
+
+
+  //
   // Create the ouptut file and fill it
   //
-  cout << PAFINFO << ">> Saving results to " << gPAFOptions->outputFile << " ..." << endl;
-  if (gSystem->FindFile(".", TString(gPAFOptions->outputFile))) {
-    TString outputFileBak = gPAFOptions->outputFile + ".bak";
-    cerr << PAFWARN << "File " << gPAFOptions->outputFile << " already exists! "
-         << "Moving it to " << outputFileBak << endl;
-    gSystem->CopyFile(gPAFOptions->outputFile, outputFileBak, kTRUE);
-    gSystem->Unlink(gPAFOptions->outputFile);
+  cout << PAFINFO << ">> Saving results to \"" 
+       << gPAFOptions->GetOutputFile() << "\"..." << endl;
+  if (gSystem->FindFile(".", gPAFOptions->GetOutputFile())) {
+    TString outputFileBak = gPAFOptions->GetOutputFile() + ".bak";
+    cerr << PAFWARN << "   + File \"" << gPAFOptions->GetOutputFile() << "\" already exists! "
+	 << "Moving it to " << outputFileBak << endl;
+    gSystem->CopyFile(gPAFOptions->GetOutputFile(), outputFileBak, kTRUE);
+    gSystem->Unlink(gPAFOptions->GetOutputFile());
   }
-  TFile histoAnalysis(gPAFOptions->outputFile, "NEW");
-  if (histoAnalysis.IsOpen()) {
+  cout << PAFINFO << "   + Opening new file \""
+       << gPAFOptions->GetOutputFile() << "\"..." << endl;
+  TFile* histoAnalysis = TFile::Open(gPAFOptions->GetOutputFile(), 
+				     "NEW", "PAFOutputFile");
+  if (!histoAnalysis->IsZombie()) {
+    cout << PAFINFO << "   + Saving objects in input and output lists"
+	 << endl;
     TList* li = 0;
     TList* lo = 0;
     if (gPAFOptions->GetPAFMode() == kSequential) {
-      li = inputlist;
-      lo = pafbaseselector->GetOutputList();
+      //XXX Is this working???
+      li = pafbaseselector->GetInputList()
+	lo = pafbaseselector->GetOutputList();
     }
     else {
       li = gPAFOptions->GetPROOFSession()->GetInputList();
@@ -544,30 +682,36 @@ bool RunAnalysis() {
     }
     li->Write();
     lo->Write();
-    histoAnalysis.Close();
+    histoAnalysis->Close();
 
     //
     // This is used to have the objects available in the shell
     // XXX should only be done if interactive!?
+    //     * DONE with gROOT ->IsBatch()
     //
-    if (gPAFOptions->reopenOutputFile) {
-      cout << PAFINFO << ">> You may directly access the following objects that you saved ..."
+    if (gPAFOptions->reopenOutputFile && !gROOT->IsBatch()) {
+      cout << PAFINFO << "   + Reopening the file in current session..."
+	   << endl;
+      TFile *f = TFile::Open(of);
+      cout << PAFINFO << ">> You may now directly access all the saved objects."
+	   << endl
+	   << PAFINFO << "   The list of available obects is:"
            << endl;
-      TFile *f = TFile::Open(gPAFOptions->outputFile);
       f->ls();
     }
   }
   else {
-    cerr << PAFERROR << "Could not open output file " << gPAFOptions->outputFile
-	 << endl;
+    cerr << PAFERROR << "  + Could not open output file \"" << of 
+	 << "\"" << endl;
   }
-  
+  ***************************/  
+
   if (gPAFModePlugin)
     gPAFModePlugin->Finish();
-
+  
 #ifdef TIMERS
   PAFTime8 = PAFTimer.RealTime();
-  cout << PAFINFO << "  + TIME (Output file): " << PAFTime8 << endl;
+  cout << PAFINFO << "+++ TIME (Output file): " << PAFTime8 << endl;
 
   ofstream ftimes(Form("tiempos_ejecucion%d", gPAFOptions->GetNSlots()),
 		   ios::app);
