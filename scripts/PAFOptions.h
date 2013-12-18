@@ -18,6 +18,7 @@
 // ROOT includes
 #include "TString.h"
 #include "TChain.h" //For TChain::kBigNumber
+#include "TProof.h"
 
 // STL includes
 #include <vector>
@@ -35,7 +36,8 @@ class InputParameters;
 // * kCluster: PROOF Cluter mode
 // * kPoD: PROOF on Demand mode (NOT yet implemented)
 // * kCloud: PROOF on Cloud (basically Cluster mode without fixed root)
-enum ProofMode {kSequential, kLite, kCluster, kPoD, kCloud};
+enum EProofMode {kSequential, kLite, kCluster, kPoD, kCloud};
+const char* kCProofMode[] = {"Sequential", "PROOF Lite", "PROOF Cluster", "PoD", "Cloud"};
 //
 /////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +47,8 @@ enum ProofMode {kSequential, kLite, kCluster, kPoD, kCloud};
 // for details:
 // * kMiniTrees: Flat Trees developed at IFCA-UO
 // * kTESCO: Trees developed by the ETH
-enum TreeType {kMiniTrees, kTESCO};
+enum ETreeType {kMiniTrees, kTESCO};
+const char* kCTreeType[] = {"MiniTrees", "TESCO"};
 //
 /////////////////////////////////////////////////////////////////////////
 
@@ -56,12 +59,14 @@ enum TreeType {kMiniTrees, kTESCO};
 //
 class PAFOptions {
  public:
+  void Dump() const;
+
   
   ///////////////////////////////
   //
-  // PROOF Mode. See ProofMode enum for details
-  ProofMode proofMode; 
-  ProofMode GetPAFMode() const {return proofMode;}
+  // PROOF Mode. See EProofMode enum for details
+  EProofMode proofMode; 
+  EProofMode GetPAFMode() const {return proofMode;}
   //
   ///////////////////////////////
 
@@ -73,6 +78,8 @@ class PAFOptions {
   void SetNSlots(int nslots) {NSlots = nslots;}
   int  GetNSlots() const {return NSlots;}
   int NSlots;
+  //
+  ///////////////////////////////
 
 
   ///////////////////////////////
@@ -91,31 +98,41 @@ class PAFOptions {
   //
   ///////////////////////////////
 
+
   ///////////////////////////////
   //
-  // Tree type. It defines the data formats that may be used. See TreeType
+  // PoD specific parameters
+  void SetPoDTimeOut (int);
+  int  GetPoDTimeOut () const {return fPoDTimeout;}
+  //
+  ///////////////////////////////
+
+
+  ///////////////////////////////
+  //
+  // Tree type. It defines the data formats that may be used. See ETreeType
   // enum for details. Default is kMiniTrees
-  TreeType GetTreeType() const { return treeType;}
-  void SetTreeType(TreeType tt) {
-    treeType = tt;
+  ETreeType GetTreeType() const { return fTreeType;}
+  void SetTreeType(ETreeType tt) {
+    fTreeType = tt;
     if (tt == kMiniTrees) {
-      treeDir  = "";
-      treeName = "Tree";
-      if (myAnalysis == "")
-	myAnalysis = "MyAnalysisMiniTrees";
+      fTreeDir  = "";
+      fTreeName = "Tree";
+      if (fAnalysisFile == "")
+	fAnalysisFile = "MyAnalysisMiniTrees";
     }
     else {
-      treeDir  = "analyze";
-      treeName = "Analysis";
-      if (myAnalysis == "")
-	myAnalysis = "MyAnalysisTESCO";
+      fTreeDir  = "analyze";
+      fTreeName = "Analysis";
+      if (fAnalysisFile == "")
+	fAnalysisFile = "MyAnalysisTESCO";
     }
   }
-  void SetTree(const char* t) {tt = t; Ssiz_t i= tt.Last('/');treeDir=tt(0,i); treeName=tt(i+1,tt.Sizeof());}
-  TString GetTreeDir() const { return treeDir;}
-  TString GetTreeName() const { return treeName;}
-  void SetTreeDir(const char* td) { treeDir = td;}
-  void SetTreeName(const char* tn) { treeName = tn;}
+  void SetTree(const char* t) {TString tt = t; Ssiz_t i= tt.Last('/');fTreeDir=tt(0,i); fTreeName=tt(i+1,tt.Sizeof());}
+  TString GetTreeDir() const { return fTreeDir;}
+  TString GetTreeName() const { return fTreeName;}
+  void SetTreeDir(const char* td) { fTreeDir = td;}
+  void SetTreeName(const char* tn) { fTreeName = tn;}
   //
   ///////////////////////////////
 
@@ -123,12 +140,12 @@ class PAFOptions {
   ///////////////////////////////
   // Input data sample
   //
-  vector<TString> dataFiles;
+  std::vector<TString> dataFiles;
   void AddDataFile(const char* file) {dataFiles.push_back(file);}
-  void AddDataFiles(const vector<TString>& files);
-  void SetDataFiles(const vector<TString>& files) {dataFiles = files;}
+  void AddDataFiles(const std::vector<TString>& files);
+  void SetDataFiles(const std::vector<TString>& files) {dataFiles = files;}
   unsigned int GetNDataFiles() const {return dataFiles.size();}
-  vector<TString> GetDataFiles() const {return dataFiles;}
+  std::vector<TString> GetDataFiles() const {return dataFiles;}
   void PrintDataFiles() const;
   //
   ///////////////////////////////
@@ -137,7 +154,8 @@ class PAFOptions {
   //
   // Output file name. Specifies the name of the file where you want the
   // histograms to be saved
-  TString outputFile;
+  void SetOutputFile(const char* of) {fOutputFile = of;}
+  TString GetOutputFile() const {return fOutputFile;}
   //
   ///////////////////////////////
 
@@ -145,6 +163,8 @@ class PAFOptions {
   //
   // Parameters for the analysis
   InputParameters *inputParameters;
+
+  InputParameters* GetInputParameters();
 
   void SetInputString(std::string s);
   void SetInputInt(int i);
@@ -158,20 +178,18 @@ class PAFOptions {
   void SetInputNamedDouble(std::string n, double d);
   void SetInputNamedBool(std::string n, bool b);
 
-  void SetInputObject(TObject* obj) {proofSession->AddInput(obj);}
-
-  void SetPoDTimeOut (int);
-  int  GetPoDTimeOut () const {return PoD_Timeout;}
+  void SetInputObject(TObject* obj) {fProofSession->AddInput(obj);}
   //
   ///////////////////////////////
+
 
   ///////////////////////////////
   //
   // Dynamic histograms. Specify the name of the histograms you would like
   // to monitor as they are filled by PROOF
-  vector<TString> dynamicHistograms;
+  std::vector<TString> dynamicHistograms;
   void AddDynamicHistogram(const char* histo) {dynamicHistograms.push_back(histo);}
-  vector<TString> GetDynamicHistograms() const {return dynamicHistograms;}
+  std::vector<TString> GetDynamicHistograms() const {return dynamicHistograms;}
   unsigned int GetNDynamicHistograms() const {return dynamicHistograms.size();}
   //
   ///////////////////////////////
@@ -195,8 +213,8 @@ class PAFOptions {
   ///////////////////////////////
   //
   // Name of analysis class. 
-  void SetAnalysis(const char* analysis) const { myAnalysis = analysis;}
-  TString GetAnalysis() const {return myAnalysis;}
+  void SetAnalysis(const char* analysis) { fAnalysisFile = analysis;}
+  TString GetAnalysis() const {return fAnalysisFile;}
   //
   ///////////////////////////////
 
@@ -206,11 +224,11 @@ class PAFOptions {
   // Packages to be uploaded to PROOF. The mandatory ones are
   // added automatically in packages
   void AddPackage(const char* package) {packages.push_back(TString(package));}
-  vector<TString> GetPackages() const {return packages;}
+  std::vector<TString> GetPackages() const {return packages;}
   unsigned int GetNPackages() const {return packages.size();}
 
   void AddSelectorPackage(const char* spackage) {selectorpackages.push_back(TString(spackage));}
-  vector<TString> GetSelectorPackages() const {return selectorpackages;}
+  std::vector<TString> GetSelectorPackages() const {return selectorpackages;}
   unsigned int GetNSelectorPackages() const {return selectorpackages.size();}
   //
   ///////////////////////////////
@@ -222,7 +240,6 @@ class PAFOptions {
   /////////////////////////////
   //
   // Some extra settings to control the output and checks
-  bool checkVersion;
   bool reopenOutputFile;
   bool createSelector;
   //
@@ -230,46 +247,69 @@ class PAFOptions {
 
 
 
-  static PAFOptions* Instance() {
-    if (!thePAFOptions)
-      thePAFOptions = new PAFOptions();
-    return thePAFOptions;
-  }
-
-
  public:
   
   /////////////////////////////
+  // Merge through file: Important for TTrees
+  void SetMergeThroughFile(bool merge=true) {fMergeThroughFile = merge;}
+  bool GetMergeThroughFile() const {return fMergeThroughFile;}
   //
-  // PROOF Session. Don't mess with it!
-  TProof* proofSession;
-  TProof* GetPROOFSession() const {return proofSession;}
+  ///////////////////////////////
+
+  /////////////////////////////
+  //
+  // PROOF Session.
+  TProof* GetPROOFSession() const {return fProofSession;}
+  void SetPROOFSession(TProof* ps)  {fProofSession = ps;}
   //
   ///////////////////////////////
 
 
 
+  /////////////////////////////
+  //
+  // Get the PAFOptions instance since this is a singleton
+  static PAFOptions* Instance() {
+    if (!thePAFOptions)
+      thePAFOptions = new PAFOptions();
+    return thePAFOptions;
+  }
+  //
+  ///////////////////////////////
+
+
+
+
  protected:
   // Name of analysis class. 
-  TString myAnalysis;
+  TString fAnalysisFile;
+
+  // Output file name.
+  TString fOutputFile;
 
   // Tree type. It defines the data formats that may be used. See TreeType
   // enum for details. Default is kMiniTrees
-  TreeType treeType;
-  TString  treeDir;
-  TString  treeName;
+  ETreeType fTreeType;
+  TString  fTreeDir;
+  TString  fTreeName;
 
 
   // Packages to be uploaded to PROOF. The mandatory ones are
   // added automatically in packages
-  vector<TString> packages;
-  vector<TString> selectorpackages;
+  std::vector<TString> packages;
+  std::vector<TString> selectorpackages;
 
 
   // Max time we will wait to get all slots
   // when using PoD to set up our proof cluster
-  int PoD_Timeout;
+  int fPoDTimeout;
 
+
+  // Merge through file: Important for TTrees
+  bool fMergeThroughFile;
+
+  // PROOF Session. Don't mess with it!
+  TProof* fProofSession;
 
   PAFOptions():
     // PROOF Mode
@@ -280,31 +320,35 @@ class PAFOptions {
     proofServerPort(1093),
     proofRequest(true),
     maxSlavesPerNode(9999),
-    pafSessionDir(""),
-    // Tree type
-    treeType(kMiniTrees),
     // Output file name
-    outputFile("histofile.root"),
+    fOutputFile("histofile.root"),
+    // Input Parameters
+    inputParameters(0),
     // Number of events and first event
     nEvents(TChain::kBigNumber),
     firstEvent(0),
-    // Analysis Class
-    myAnalysis(""),
-    // Input Parameters
-    inputParameters(0),
     // Extra options
-    checkVersion(false),
     reopenOutputFile(false),
     createSelector(true),
+    // Analysis Class
+    fAnalysisFile(""),
+    // Output file name.
+    fOtputFile("outputfile.root"),
+    // Tree type
+    fTreeType(kMiniTrees),
+    fTreeDir(""),
+    fTreeName("Tree"),
     //Timeout when using PoD and asking for slots
-    PoD_Timeout (20),
+    fPoDTimeout(20),
+    // Merge through file: Important for TTrees
+    fMergeThroughFile(false),
     // Other internal stuff
-    proofSession(0)
+    fProofSession(0)
       {
 	AddPackage("TCounterUI");
 	AddPackage("InputParameters");
 	AddPackage("PAFBaseSelector");
-    // XXX Trying to make this run more than once. 
+	// XXX Trying to make this run more than once. 
 	//AddPackage("PAFAnalysis");
       }
     

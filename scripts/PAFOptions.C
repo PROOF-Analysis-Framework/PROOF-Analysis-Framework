@@ -8,64 +8,56 @@
 ///////////////////////////////////////////////////////////////////////
 #include "PAFOptions.h"
 
+//#include "../packages/InputParameters/InputParameters.h"
+
+#include <iostream>
+
+using namespace std;
+
 PAFOptions* PAFOptions::thePAFOptions = 0;
 
 //Global variable with parameters
 PAFOptions* gPAFOptions = PAFOptions::Instance();
 
-void PAFOptions::SetInputString(std::string s) {
+InputParameters* PAFOptions::GetInputParameters() {
   if (!inputParameters)
     inputParameters = new InputParameters;
-  inputParameters->SetString(s);
+  return inputParameters;
+}
+
+void PAFOptions::SetInputString(std::string s) {
+  GetInputParameters()->SetString(s);
 }
 void PAFOptions::SetInputInt(int i) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetInt(i);
+  GetInputParameters()->SetInt(i);
 }
 void PAFOptions::SetInputFloat(float f) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetFloat(f);
+  GetInputParameters()->SetFloat(f);
 }
 void PAFOptions::SetInputDouble(double d) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetDouble(d);
+  GetInputParameters()->SetDouble(d);
 }
 void PAFOptions::SetInputBool(bool b) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetBool(b);
+  GetInputParameters()->SetBool(b);
 }
 void PAFOptions::SetInputNamedString(std::string n, std::string m) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetNamedString(n, m);
+  GetInputParameters()->SetNamedString(n, m);
 }
 void PAFOptions::SetInputNamedInt(std::string n, int i) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetNamedInt(n, i);
+  GetInputParameters()->SetNamedInt(n, i);
 }
 void PAFOptions::SetInputNamedFloat(std::string n, float f) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetNamedFloat(n, f);
+  GetInputParameters()->SetNamedFloat(n, f);
 }
 void PAFOptions::SetInputNamedDouble(std::string n, double d) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetNamedDouble(n, d);
+  GetInputParameters()->SetNamedDouble(n, d);
 }
 void PAFOptions::SetInputNamedBool(std::string n, bool b) {
-  if (!inputParameters)
-    inputParameters = new InputParameters;
-  inputParameters->SetNamedBool(n, b);
+  GetInputParameters()->SetNamedBool(n, b);
 }
 void PAFOptions::SetPoDTimeOut(int timeout) {
   PoD_Timeout = timeout;
-
+  
   if(timeout < 1)
     PoD_Timeout = 1;
 }
@@ -78,4 +70,58 @@ void PAFOptions::AddDataFiles(const vector<TString>& files) {
 void PAFOptions::PrintDataFiles() const {
   for (unsigned int i = 0; i < dataFiles.size(); i++)
     cout << "* " << dataFiles[i] << endl;
+}
+
+
+void PAFOptions::Dump() const {
+  cout << PAFINFO << "++===============================================++" << endl;
+  cout << PAFINFO << "|| PAF OPTIONS                                   ||" << endl;
+  cout << PAFINFO << "++-----------------------------------------------++" << endl;
+  cout << PAFINFO << "++ PAF                                           ||" << endl;
+  cout << PAFINFO << "|| ---                                           ||" << endl;
+  cout << PAFINFO << "++ * PAF Mode: " << kCProofMode[proofMode] << endl;
+  cout << PAFINFO << "++ * N. Slots: " << NSlots << endl;
+  cout << PAFINFO << "++ * PROOF Session: " << fProofSession << endl;
+  cout << PAFINFO << "++ PROOF Cluster                                 ||" << endl;
+  cout << PAFINFO << "|| -------------                                 ||" << endl;
+  cout << PAFINFO << "++ * Server: " << proofServer << endl;
+  cout << PAFINFO << "++ * Server port: " << proofServerPort << endl;
+  cout << PAFINFO << "++ * Request: " << proofRequest << endl;
+  cout << PAFINFO << "++ * Max. Number of Slaves per Node: " << maxSlavesPerNode << endl;
+  cout << PAFINFO << "++ PoD                                           ||" << endl;
+  cout << PAFINFO << "|| ---                                           ||" << endl;
+  cout << PAFINFO << "++ * Time out: " << fPoDTimeout << endl;
+  cout << PAFINFO << "++ TREE                                          ||" << endl;
+  cout << PAFINFO << "|| -------------                                 ||" << endl;
+  cout << PAFINFO << "++ * Type: " << kCTreeType[fTreeType] << endl;
+  cout << PAFINFO << "++ * Dir: " <<  fTreeDir << endl;
+  cout << PAFINFO << "++ * Name: " << fTreeName << endl;
+  cout << PAFINFO << "++ INPUT                                         ||" << endl;
+  cout << PAFINFO << "|| -----                                         ||" << endl;
+  cout << PAFINFO << "++ * Data Files:" << endl;
+  for (unsigned int i = 0; i < dataFiles.size(); i++)
+    cout << PAFINFO << "++   + " << dataFiles[i] << endl;
+  cout << PAFINFO << "++ * Events to process: " << nEvents << endl;
+  cout << PAFINFO << "++ * First Event> " << firstEvent << endl;
+  cout << PAFINFO << "++ CODE                                          ||" << endl;
+  cout << PAFINFO << "|| ----                                          ||" << endl;
+  cout << PAFINFO << "++ * Analysis File: " << fAnalysisFile << endl;
+  cout << PAFINFO << "++ * Create Selector: " << createSelector << endl;
+  cout << PAFINFO << "++ * Packages:" << endl;
+  for (unsigned int i = 0; i < packages.size(); i++)
+    cout << PAFINFO << "++   + " << packages[i] << endl;
+  cout << PAFINFO << "++ OUTPUT                                        ||" << endl;
+  cout << PAFINFO << "|| ------                                        ||" << endl;
+  cout << PAFINFO << "++ * Output File: " << fOutputFile << endl;
+  cout << PAFINFO << "++ * Reopen output file: " << reopenOutputFile << endl;
+  cout << PAFINFO << "++ * Dynamic Histograms:" << endl;
+  for (unsigned int i = 0; i < dynamicHistograms.size(); i++)
+    cout << PAFINFO << "++   + " << dynamicHistograms[i] << endl;
+  cout << PAFINFO << "++ * Merge through file: " << fMergeThroughFile << endl;
+  /*
+  cout << PAFINFO << "++ * " <<  << endl;
+  cout << PAFINFO << "++ * " <<  << endl;
+  */
+  cout << PAFINFO << "++===============================================++" << endl;
+
 }
