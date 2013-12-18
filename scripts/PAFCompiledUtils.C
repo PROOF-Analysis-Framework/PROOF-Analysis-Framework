@@ -83,7 +83,7 @@ bool CreateSelector(const char* filename,
 		    const TString& treeName,
 		    const TString& analysis,
 		    const vector<TString>& packages) {
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "==> CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ")" << endl;
 #endif
@@ -94,7 +94,7 @@ bool CreateSelector(const char* filename,
   TString selectorpath;
   selectorpath.Form("%s/%s", gSystem->GetBuildDir(), selectorname.Data());
   
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "Creating directory " << selectorpath << endl;
 #endif
   gSystem->mkdir(selectorpath);
@@ -104,7 +104,7 @@ bool CreateSelector(const char* filename,
 				analysis,packages);
 
   pkgName = selectorname;
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "<== " << " CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ")" << endl;
 #endif
@@ -127,7 +127,7 @@ bool CreateSelector(const char* filename,
 		    const char* selectorname,
 		    const TString& analysis,
 		    const vector<TString>& packages) {
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "==> CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ", "  << selectorpath << ", " 
        << selectorname << ")" << endl;
@@ -161,7 +161,7 @@ bool CreateSelector(const char* filename,
   TString cfinalselector;
   cfinalselector.Form("%s/%s.C", selectorpath, selectorname);
 
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "Selector .h file:    " << selectorfile << endl
        << PAFDEBUG << "Temp Selector:       " << tmpselector << endl
        << PAFDEBUG << "Final .h selector:   " << finalselector << endl
@@ -227,13 +227,13 @@ bool CreateSelector(const char* filename,
     TString command;
     command.Form("diff -q %s %s",tmpselector.Data(), finalselector.Data());
 
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
     cerr << PAFDEBUG << "Executing \"" << command << "\"" << endl;
 #endif
 
     int res = GetFromPipe(command.Data(), coutput);
 
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
     cerr << PAFDEBUG << "Output from command: \"" << coutput << "\"" << endl;
 #endif
 
@@ -287,7 +287,7 @@ bool CreateSelector(const char* filename,
     TString commandline(".!$PAFPATH/bin/MakeParFile.sh -f ");
     commandline += "-s ";
     commandline += selectorname;
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
     cerr << endl << "       DEBUG: Executing " << commandline << endl;
 #endif
     gROOT->ProcessLine(commandline);
@@ -300,7 +300,7 @@ bool CreateSelector(const char* filename,
   //Delete temporary file
   gSystem->Unlink(tmpselector);
 
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "<== CreateSelector(" << filename << ", " 
        << treeDir << ", " << treeName << ", "  << selectorpath << ", " 
        << selectorname << ")" << endl;
@@ -951,32 +951,36 @@ void UploadAndEnablePackages(TProof* proofSession,
     cout << PAFINFO << "Enabling package " << packages[i] << endl;
 
     // (1) Construct the .par file for the package
+#ifdef DEBUGUTILS    
+    cerr << PAFDEBUG << "+ Making par file for " << packages[i] << endl;
+#endif
     BuildParFile(packages[i], isSelector);
 
 
 
     // (2) Upload the .par file to the slaves
-#if DEBUGUTILS    
-    cerr << PAFDEBUG << "Uploading " << packages[i] << endl;
+#ifdef DEBUGUTILS    
+    cerr << PAFDEBUG << "+ Uploading " << packages[i] << endl;
 #endif
     Int_t up = 999;
+
     up=proofSession->UploadPackage(packages_dir + packages[i] + ".par",
 				   TProof::kRemoveOld);
 
-#if DEBUGUTILS    
-    cerr << PAFDEBUG << "Result of uploading -> " << up << endl;
+#ifdef DEBUGUTILS    
+    cerr << PAFDEBUG << "+ Result of uploading -> " << up << endl;
 #endif
 
 
     // (3) Enable (load) the package in each of the slaves.
     //     We try a couple of times since we have seen that from time to time
     //     it fails under PoD.
-#if DEBUGUTILS    
-    cerr << PAFDEBUG << "Enabling " << packages[i] << endl;
+#ifdef DEBUGUTILS    
+    cerr << PAFDEBUG << "+ Enabling " << packages[i] << endl;
 #endif
     Int_t ep = proofSession->EnablePackage(packages[i]);
 #ifdef DEBUGUTILS
-    cerr << PAFDEBUG << "Result of first enabling -> " << ep << endl;
+    cerr << PAFDEBUG << "+ Result of first enabling -> " << ep << endl;
 #endif
     
     if (ep == -1) {
@@ -992,9 +996,9 @@ void UploadAndEnablePackages(TProof* proofSession,
 	//XXX Should exit or propagate the error up??
 	exit(-333);
       }
-#if DEBUGUTILS    
+#ifdef DEBUGUTILS    
       else
-	cerr << PAFINFO << "Enabling the package " << packages[i] 
+	cerr << PAFINFO << "+ Enabling the package " << packages[i] 
 	     << " worked this time" << endl;
 #endif
     }
@@ -1004,7 +1008,7 @@ void UploadAndEnablePackages(TProof* proofSession,
     gSystem->AddIncludePath("-I" + packages_dir + packages[i]);
   }
   
-#if DEBUGUTILS    
+#ifdef DEBUGUTILS    
   cerr << PAFDEBUG << "Show Packages" << endl;
   proofSession->ShowPackages(kTRUE);
   cerr << PAFDEBUG << "Enabled Packages" << endl;
@@ -1022,7 +1026,7 @@ void UploadAndEnablePackages(TProof* proofSession,
  *
  ************************/
 bool ShouldBuildParFile(const TString& dir, const TString& module) {
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "==> ShouldBuildParFile(" << dir
             << "," << module << ")" << endl;
 #endif
@@ -1037,7 +1041,7 @@ bool ShouldBuildParFile(const TString& dir, const TString& module) {
 
   bool rebuild = gSystem->GetPathInfo(parfile, &id, &size, &flag, &modtime) == 1;
   
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   if (rebuild) {
     cerr << PAFDEBUG << parfile << " does not exist. Rebuild!" 
 	 << endl;
@@ -1046,7 +1050,7 @@ bool ShouldBuildParFile(const TString& dir, const TString& module) {
   }
 #endif
 
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "<== ShouldBuildParFile(" << dir
        << "," << module << ")" << endl;
 #endif
@@ -1061,13 +1065,13 @@ bool ShouldBuildParFile(const TString& dir, const TString& module) {
  *
  ************************/
 bool BuildParFile(const TString& module, bool isSelector) {
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "==> BuildParFile(" << module 
 	    << "," << isSelector << ")" << endl;
 #endif
 
   TString packages_dir;
-  packages_dir.Form("%s/packages", gSystem->GetBuildDir());
+  packages_dir.Form("%s/packages/", gSystem->GetBuildDir());
   gSystem->MakeDirectory(packages_dir);
 
   bool shouldbuild = ShouldBuildParFile(packages_dir, module);
@@ -1082,13 +1086,13 @@ bool BuildParFile(const TString& module, bool isSelector) {
           command += " ";
       }
       command += module;
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
       cerr << PAFDEBUG << "Executing \"" << command << "\"" << endl;
 #endif
       //gROOT->ProcessLine(command);
       gSystem->Exec(command);
     }
-#if DEBUGUTILS
+#ifdef DEBUGUTILS
     else
       cerr << PAFDEBUG << "No need to build package " << module << endl;
     
