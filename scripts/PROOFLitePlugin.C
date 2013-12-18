@@ -25,8 +25,8 @@ PROOFLitePlugin::PROOFLitePlugin(int nSlots):fNSlots(nSlots) {
 
 
 #ifdef DEBUGPROOFLITE
-  std::cout << PAFDEBUG << "<= PROOFLitePlugin::PROOFLitePlugin(" << nSlots << "," 
-	    << timeOut << ")" << std::endl;
+  std::cout << PAFDEBUG << "<= PROOFLitePlugin::PROOFLitePlugin(" << nSlots
+	    << ")" << std::endl;
 #endif
 }
 
