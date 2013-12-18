@@ -65,8 +65,8 @@ class PAFOptions {
   ///////////////////////////////
   //
   // PROOF Mode. See EProofMode enum for details
-  EProofMode proofMode; 
-  EProofMode GetPAFMode() const {return proofMode;}
+  void SetPAFMode(EProofMode pm) {fProofMode = pm;}
+  EProofMode GetPAFMode() const {return fProofMode;}
   //
   ///////////////////////////////
 
@@ -75,9 +75,8 @@ class PAFOptions {
   //
   // Number of slots you would like to use
   // + The default value depends on PROOF Mode
-  void SetNSlots(int nslots) {NSlots = nslots;}
-  int  GetNSlots() const {return NSlots;}
-  int NSlots;
+  void SetNSlots(int nslots) {fNSlots = nslots;}
+  int  GetNSlots() const {return fNSlots;}
   //
   ///////////////////////////////
 
@@ -197,15 +196,17 @@ class PAFOptions {
   /////////////////////////////
   //
   // Number of events. Specifies the number of events to process.
-  // Set it to -1 to use the full sample.
-  Long64_t nEvents;
-  // First event to be processed
-  Long64_t firstEvent;
+  // Set it to -1 or TChain::kBigNumber to use the full sample.
 
-  void SetNEvents(Long64_t nevents = TChain::kBigNumber) {nEvents = nevents; if (nEvents<0) nEvents = TChain::kBigNumber;}
-  Long64_t GetNEvents() const {return nEvents;}
-  void SetFirstEvent(Long64_t firstevent = 0) {firstEvent = firstevent;}
-  Long64_t GetFirstEvent() const {return firstEvent;}
+  void SetNEvents(Long64_t nevents = TChain::kBigNumber) {
+    fNEvents = (nevents<0?(TChain::kBigNumber):nevents);
+  }
+  Long64_t GetNEvents() const {return fNEvents;}
+
+  // First event to be processed
+  void SetFirstEvent(Long64_t firstevent = 0) {fFirstEvent = firstevent;}
+  Long64_t GetFirstEvent() const {return fFirstEvent;}
+
   //
   ///////////////////////////////
   
@@ -240,15 +241,22 @@ class PAFOptions {
   /////////////////////////////
   //
   // Some extra settings to control the output and checks
-  bool reopenOutputFile;
-  bool createSelector;
+
+  // If true and in interactive mode reopen the output file
+  // after the whole processing
+  void ReopenOutputFile(bool ro = true) {fReopenOutputFile = ro;}
+  bool ShouldReopenOutputFile() const {return fReopenOutputFile;}
+
+  // Decides weather the Selector has to be recreated or used from previous
+  // sessions
+  void CreateSelector(bool cs = true) {fCreateSelector = cs;}
+  bool ShouldCreateSelector() const {return fCreateSelector;}
+
   //
   ///////////////////////////////
 
 
 
- public:
-  
   /////////////////////////////
   // Merge through file: Important for TTrees
   void SetMergeThroughFile(bool merge=true) {fMergeThroughFile = merge;}
@@ -281,6 +289,17 @@ class PAFOptions {
 
 
  protected:
+  // PROOF Mode. See EProofMode enum for details
+  EProofMode fProofMode; 
+
+  // Number of slots you would like to use
+  int fNSlots;
+
+  // Number of events. Specifies the number of events to process.
+  Long64_t fNEvents;
+  // First event to be processed
+  Long64_t fFirstEvent;
+
   // Name of analysis class. 
   TString fAnalysisFile;
 
@@ -305,6 +324,13 @@ class PAFOptions {
   int fPoDTimeout;
 
 
+  // If true and in interactive mode reopen the output file
+  // after the whole processing
+  bool fReopenOutputFile;
+  // Decides weather the Selector has to be recreated or used from previous
+  // sessions
+  bool fCreateSelector;
+
   // Merge through file: Important for TTrees
   bool fMergeThroughFile;
 
@@ -313,9 +339,10 @@ class PAFOptions {
 
   PAFOptions():
     // PROOF Mode
-    proofMode(kLite),
+    fProofMode(kLite),
+    // Number of slots you would like to use
+    fNSlots(-1), 
     // PROOF Cluster or Cloud
-    NSlots(-1), 
     proofServer("proof.ifca.es"), 
     proofServerPort(1093),
     proofRequest(true),
@@ -325,11 +352,11 @@ class PAFOptions {
     // Input Parameters
     inputParameters(0),
     // Number of events and first event
-    nEvents(TChain::kBigNumber),
-    firstEvent(0),
+    fNEvents(TChain::kBigNumber),
+    fFirstEvent(0),
     // Extra options
-    reopenOutputFile(false),
-    createSelector(true),
+    fReopenOutputFile(false),
+    fCreateSelector(true),
     // Analysis Class
     fAnalysisFile(""),
     // Output file name.
