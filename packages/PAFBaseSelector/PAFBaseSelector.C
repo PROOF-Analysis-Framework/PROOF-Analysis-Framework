@@ -39,7 +39,7 @@
 
 // Uncomment the following line to get some debug information in the output
 // Set the value to 2 to get even more debug information
-//#define DEBUGCMSANALYSISSELECTOR 1
+#define DEBUGCMSANALYSISSELECTOR 1
 
 #ifdef DEBUG
 #define DEBUGCMSANALYSISSELECTOR
@@ -49,7 +49,7 @@
 void PAFBaseSelector::Begin(TTree * /*tree*/)
 {
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: ==> PAFBaseSelector::Begin()" << std::endl;
+  std::cerr << "PAF [D] ==> PAFBaseSelector::Begin()" << std::endl;
 #endif
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
@@ -59,9 +59,17 @@ void PAFBaseSelector::Begin(TTree * /*tree*/)
 
    // Find InputParameters object at the client
    fInputParameters = ((InputParameters*) FindInput("Set Of Parameters"));
+
+   // Find out if merge through file is activated
+   TNamed* mergeThroughFile = (TNamed*) FindInput("PAF_MergeThroughFile");
+   if (mergeThroughFile) {
+     fMergeThroughFile = strcmp(mergeThroughFile->GetTitle(), "false");
+     std::cerr << "PAF [D] fMergeThroughFile = " << fMergeThroughFile << std::endl;
+   }
+
    // if (fInputParameters) fInputParameters->DumpParms();
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: <== PAFBaseSelector::Begin()" << std::endl;
+  std::cerr << "PAF [D] <== PAFBaseSelector::Begin()" << std::endl;
 #endif
 }
 
@@ -69,7 +77,7 @@ void PAFBaseSelector::Begin(TTree * /*tree*/)
 void PAFBaseSelector::SlaveBegin(TTree * /*tree*/)
 {
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: ==> PAFBaseSelector::SlaveBegin()" << std::endl;
+  std::cerr << "PAF [D] ==> PAFBaseSelector::SlaveBegin()" << std::endl;
 #endif
    // The SlaveBegin() function is called after the Begin() function.
    // When running with PROOF SlaveBegin() is called on each slave server.
@@ -94,7 +102,7 @@ void PAFBaseSelector::SlaveBegin(TTree * /*tree*/)
    Initialise();
 
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: <== PAFBaseSelector::SlaveBegin()" << std::endl;
+  std::cerr << "PAF [D] <== PAFBaseSelector::SlaveBegin()" << std::endl;
 #endif
 }
 
@@ -103,7 +111,7 @@ void PAFBaseSelector::SlaveBegin(TTree * /*tree*/)
 Bool_t PAFBaseSelector::Process(Long64_t entry)
 {
 #if (DEBUGCMSANALYSISSELECTOR >= 2 )
-  std::cerr << "DEBUG: ==> PAFBaseSelector::SlaveBegin()" << std::endl;
+  std::cerr << "PAF [D] ==> PAFBaseSelector::SlaveBegin()" << std::endl;
 #endif
    // The Process() function is called for each entry in the tree (or possibly
    // keyed object in the case of PROOF) to be processed. The entry argument
@@ -136,7 +144,7 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
    InsideLoop();
 
 #if (DEBUGCMSANALYSISSELECTOR >= 2 )
-  std::cerr << "DEBUG: <== PAFBaseSelector::SlaveBegin()" << std::endl;
+  std::cerr << "PAF [D] <== PAFBaseSelector::SlaveBegin()" << std::endl;
 #endif
    return kTRUE;
 }
@@ -145,21 +153,21 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 void PAFBaseSelector::SlaveTerminate()
 {
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: ==> PAFBaseSelector::SlaveTerminate()" << std::endl;
+  std::cerr << "PAF [D] ==> PAFBaseSelector::SlaveTerminate()" << std::endl;
 #endif
    // The SlaveTerminate() function is called after all entries or objects
    // have been processed. When running with PROOF SlaveTerminate() is called
    // on each slave server.
 
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: <== PAFBaseSelector::SlaveTerminate()" << std::endl;
+  std::cerr << "PAF [D] <== PAFBaseSelector::SlaveTerminate()" << std::endl;
 #endif
 }
 
 void PAFBaseSelector::Terminate()
 {
 #ifdef DEBUGCMSANALYSISSELECTOR
-  std::cerr << "DEBUG: ==> PAFBaseSelector::Terminate()" << std::endl;
+  std::cerr << "PAF [D] ==> PAFBaseSelector::Terminate()" << std::endl;
 #endif
 
    // The Terminate() function is the last function to be called during
@@ -169,22 +177,45 @@ void PAFBaseSelector::Terminate()
    //Initialise parameters here so they can be used in Initialise()
    InitialiseParameters();
 
-   // Get the number of events processed
-   fNEventsProcessed = ((TCounterUI*) FindOutput("fNEventsProcessed"));
 
-   // Now call the method that sets the user variables at the end
-   SetDataMembersAtTermination();
 
    // XXX this should be PAFINFO
+   TFile::Open("histofile.root");
    std::cout << "PAF [I] == SUMMARY ==" << std::endl;
    if (fPrintInputParameters && fInputParameters) {
-       fInputParameters->DumpParms();
+     fInputParameters->DumpParms();
    }
-   std::cout << "PAF [I] " << *fNEventsProcessed << " events processed" << std::endl;
 
-   Summary();
+
+   // XXX This can probably be fixed by reopening the file
+   // If we are using merging through files, we cannot find out the objects
+   // in the output list. They are already gone
+   // Find out if merge through file is activated
+   TNamed* mergeThroughFile = (TNamed*) FindInput("PAF_MergeThroughFile");
+   if (!mergeThroughFile) {
+     
+    // Get the number of events processed and print it
+    fNEventsProcessed = ((TCounterUI*) FindOutput("fNEventsProcessed"));
+    if (fNEventsProcessed)
+      std::cout << "PAF [I] " << *fNEventsProcessed << " events processed" 
+		<< std::endl;
+    else
+      std::cout << "PAF [E] Could not find out the number of events processed" 
+		<< std::endl;
+    
+    
+    // Now call the method that sets the user variables at the end
+    SetDataMembersAtTermination();
+    
+    
+    // Call the user specialized method Summary where information is printed
+    Summary();
+  }
+  else {
+    std::cout << "PAF [I] No summary of output object will be printed in merge through file mode" << std::endl;
+  }
 #ifdef DEBUGCMSANALYSISSELECTOR
-   std::cerr << "DEBUG: <== PAFBaseSelector::Terminate()" << std::endl;
+   std::cerr << "PAF [D] <== PAFBaseSelector::Terminate()" << std::endl;
 #endif
 }
 
@@ -192,16 +223,47 @@ void PAFBaseSelector::Terminate()
 ///////////////////////////////////////////////////////////////////
 //
 TObject* PAFBaseSelector::FindOutput(TString name, TString classname) {
+#ifdef DEBUGCMSANALYSISSELECTOR
+  std::cerr << "PAF [D] ==> PAFBaseSelector::FindOutput(" 
+	    << name << ", " << classname << ")" << std::endl;
+#endif
+
+  // The object we will return
   TObject* object = 0;
-  TObject* tmpobj = 0 ;
-  for (int i = 0; i < fOutput->GetEntries(); i++) {
-    tmpobj = fOutput->At(i);
-    if (name == tmpobj->GetName())
-      if (classname == "" || classname == tmpobj->IsA()->GetName()) {
-        object = tmpobj;
-        break;
-      }
+
+  // XXX This can probably be fixed by reopening the file
+  // If we are using merging through files, we cannot find out the objects
+  // in the output list. They are already gone
+  TNamed* mergeThroughFile = (TNamed*) FindInput("PAF_MergeThroughFile");
+  if (!mergeThroughFile) {
+    TObject* tmpobj = 0 ;
+#if DEBUGCMSANALYSISSELECTOR > 1
+    std::cerr << "PAF [D] There are " << fOutput->GetEntries()
+	      << " entries in fOutput" << std::endl;
+    std::cerr << "PAF [D] ";
+    fOutput->Print();
+#endif
+    for (int i = 0; i < fOutput->GetEntries(); i++) {
+      tmpobj = fOutput->At(i);
+      if (name == tmpobj->GetName())
+	if (classname == "" || classname == tmpobj->IsA()->GetName()) {
+	  object = tmpobj;
+	  break;
+	}
+    }
   }
+  else {
+    std::cerr << "PAF [D] Cannot find out variables when merging through file"
+	      << std::endl
+	      << "        Returning 0"
+	      << std::endl;
+  }
+
+#ifdef DEBUGCMSANALYSISSELECTOR
+    std::cerr << "PAF [D] <== PAFBaseSelector::FindOutput(" 
+	      << name << ", " << classname << ")" 
+	      << " --> " << object << std::endl;
+#endif
   return object;
 }
 

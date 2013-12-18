@@ -34,7 +34,7 @@ class PAFBaseSelector : public TSelector {
  public :
   /////////////////////////////////////////////////////////
   //Methods from TSelector
-  PAFBaseSelector(TTree * /*tree*/ =0):fNEventsProcessed(0),fPrintInputParameters(false) { }
+  PAFBaseSelector(TTree * /*tree*/ =0):fInputParameters(0),fMergeThroughFile(false),fNEventsProcessed(0),fPrintInputParameters(false) { }
   virtual ~PAFBaseSelector() { }
   virtual Int_t   Version() const { return 2; }
   virtual void    Begin(TTree *tree);
@@ -136,6 +136,7 @@ class PAFBaseSelector : public TSelector {
 
  protected:
   InputParameters* fInputParameters;
+  bool             fMergeThroughFile;
   TCounterUI*      fNEventsProcessed;
   bool             fPrintInputParameters;
 
