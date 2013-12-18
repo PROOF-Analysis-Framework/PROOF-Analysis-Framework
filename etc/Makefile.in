@@ -52,14 +52,17 @@ endif
 endif
 endif
 	@echo "$@ done"
+	@sync
 
 clean:
 	@rm -f $(OBJS) core
+	@sync
 
 distclean:       clean
 	@rm -f $(TARGETO) $(TARGETLIB) *Dict.* *.def *.exp \
 		*.so *.lib *.dll *.d *.log .def so_locations
 	@rm -rf cxx_repository
+	@sync
 
 # Dependencies
 
@@ -68,7 +71,9 @@ $(TARGET).$(ObjSuf): $(TARGETHEAD)
 $(TARGET)Dict.$(SrcSuf): $(TARGETHEAD)
 	@echo "Generating dictionary $@..."
 	@rootcint -f $@ -c $(MYINCLUDES) $^
+	@sync
 
 
 .$(SrcSuf).$(ObjSuf):
 	$(CXX) $(CXXFLAGS) -c $<
+	@sync
