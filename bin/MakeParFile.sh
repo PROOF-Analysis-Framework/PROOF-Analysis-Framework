@@ -269,3 +269,4 @@ if [ $forcesetup -eq 1 ]; then
     writemakefile 
 fi
 createparfile $basepath $parpackagename
+sync
