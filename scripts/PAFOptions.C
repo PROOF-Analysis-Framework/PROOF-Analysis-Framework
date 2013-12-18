@@ -90,7 +90,7 @@ void PAFOptions::Dump() const {
   cout << PAFINFO << "++ * Max. Number of Slaves per Node: " << maxSlavesPerNode << endl;
   cout << PAFINFO << "++ PoD                                           ||" << endl;
   cout << PAFINFO << "|| ---                                           ||" << endl;
-  cout << PAFINFO << "++ * Time out: " << fPoDTimeout << endl;
+  cout << PAFINFO << "++ * Timeout: " << fPoDTimeout << endl;
   cout << PAFINFO << "++ TREE                                          ||" << endl;
   cout << PAFINFO << "|| -------------                                 ||" << endl;
   cout << PAFINFO << "++ * Type: " << kCTreeType[fTreeType] << endl;
@@ -102,7 +102,7 @@ void PAFOptions::Dump() const {
   for (unsigned int i = 0; i < dataFiles.size(); i++)
     cout << PAFINFO << "++   + " << dataFiles[i] << endl;
   cout << PAFINFO << "++ * Events to process: " << nEvents << endl;
-  cout << PAFINFO << "++ * First Event> " << firstEvent << endl;
+  cout << PAFINFO << "++ * First Event: " << firstEvent << endl;
   cout << PAFINFO << "++ CODE                                          ||" << endl;
   cout << PAFINFO << "|| ----                                          ||" << endl;
   cout << PAFINFO << "++ * Analysis File: " << fAnalysisFile << endl;
