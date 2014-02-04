@@ -28,6 +28,9 @@
 // Header include
 #include "PAFBaseSelector.h"
 
+// PAF includes
+#include "PAF.h"
+
 // ROOT includes
 #include "TTree.h"
 #include "TProfile.h"
