@@ -54,6 +54,8 @@ double PAFTime7; //Processing data
 double PAFTime8; //Output file
 #endif
 
+//#define DEBUGUTILS 2
+
 // The PAF Mode Plugin that will be used depending on the 
 // PAF Mode selected
 PAFModePlugin* gPAFModePlugin = 0;
@@ -61,34 +63,62 @@ PAFModePlugin* gPAFModePlugin = 0;
 // Creates a session dir and sets the build dir there
 bool CreateSessionDir() {
   cout << PAFINFO << "Creating buildir and proof sand box" << endl;
-  // XXX: errors are not properly catched here!
-  TString tmpdir = gSystem->GetFromPipe("mktemp -d");
-  // - And let's set the build dir there so nothing interferes in the
-  //   PAF directory installation
-  if (tmpdir == "") {
-    return false;
-  }
-  TString ProofSandboxDir = Form("%s/.proof", tmpdir.Data());
-  TString builddir = tmpdir;
-
-
   
-  //XXX I.G. Why not set everything to ~/.paf... so we avoid problems in
-  //    cleaning the tmp area?
-  //    This does not work directly like that
-  //TString builddir = "~/.paf/BuildDir";
-  //TString ProofSandboxDir = "~/.paf/Sandbox";
-  //gSystem->mkdir(builddir.Data(),true);
-  //gSystem->mkdir(ProofSandboxDir.Data(),true);
+  TString buildDir        = Form("%s/.paf/BuildDir",gSystem->pwd());
+  TString proofSandboxDir = Form("%s/.paf/ProofSandbox",gSystem->pwd());
   
+
+  TString lockFilePath    =  Form("%s/.paf",gSystem->pwd());
+  TString lockFileName    = "paf.lock";
+  
+  
+  // Check if the lock file is there. If so, use temporary paths
+  // since this hints that another PROOF session is already running
+  // and we need not to interfere with it.
 #if DEBUGUTILS
-  cerr << PAFDEBUG << "BuilDir set to " << builddir << endl;
-  cerr << PAFDEBUG << "Sandbox set to " << ProofSandboxDir << endl;
+  cerr << PAFDEBUG << "   + Looking for file \"" << lockFilePath 
+       << "\" in \"" << lockFileName << "\"..." << endl;
+#endif
+  char* found = gSystem->Which(lockFilePath, lockFileName);
+
+#if DEBUGUTILS
+  cerr << PAFDEBUG << "   + Found \"" << found << "\"" << endl;
 #endif
   
-  gSystem->SetBuildDir(builddir);
-  gEnv->SetValue("Proof.Sandbox", ProofSandboxDir);
+  if (found) {
+    // XXX: errors are not properly catched here!
+    TString tmpdir = gSystem->GetFromPipe("mktemp -d");
+    if (tmpdir == "") {
+      return false;
+    }
+    
+    cerr << PAFWARN << "   + Another sessions seems to be already running." << endl
+	 << PAFWARN << "     We will use a temporary directory for compilation" << endl
+	 << PAFWARN << "     and packages. Run 'resetpaf' to clean it." << endl;
+    
+    proofSandboxDir = Form("%s/ProofSandbox", tmpdir.Data());
+    buildDir = Form("%s/BuildDir",tmpdir.Data());
+    
+  }
+  else {
+    ofstream os(Form("%s/%s", lockFilePath.Data(), lockFileName.Data()));
+  }
   
+  cout << PAFINFO << "   + Build Directory set to " << buildDir << endl;
+  cout << PAFINFO << "   + PROOF Sandbox set to   " << proofSandboxDir << endl;
+  
+  gSystem->SetBuildDir(buildDir);
+  gEnv->SetValue("Proof.Sandbox", proofSandboxDir.Data());
+  gEnv->SetValue("ProofLite.Sandbox", proofSandboxDir.Data());
+
+  gSystem->AddIncludePath(Form("-I%s/scripts", gSystem->Getenv("PAFPATH")));
+
+#if DEBUGUTILS
+  cerr << PAFDEBUG << "   + Include path: " << gSystem->GetIncludePath()
+       << endl;
+#endif
+  
+
   return true;
 }
 
@@ -231,8 +261,9 @@ TProof* InitProof() {
   ip.push_back("InputParameters");
   if (gPAFOptions->GetPAFMode() == kSequential) {
     LoadPackages(ip, false);
-  } else if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
-				      ip, false)) {
+  } 
+  else if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
+				    ip, false)) {
     return 0;
   }
   
@@ -279,30 +310,39 @@ void SetIncludePath() {
 void LoadPackages(const vector<TString>& packages, bool isSelector) {
   TString packages_dir;
   packages_dir.Form("%s/packages/", gSystem->GetBuildDir());
+
+  //XXX IG is this really needed?
+  gSystem->AddIncludePath("-I" + packages_dir);
+  //XXX
+
   gSystem->MakeDirectory(packages_dir);
 
   TString pwddir = gSystem->pwd();
+  //  gPAFOptions->Dump();
   for (unsigned int i = 0; i < packages.size(); i++) {
     cout << PAFINFO << "Creating package " << packages[i] << "... " << endl; 
     
 #if DEBUGUTILS
     cerr << PAFDEBUG << "+ par file... " << endl;
 #endif
-    BuildParFile(packages[i], isSelector);
+    bool shouldbuild = BuildParFile(packages[i], isSelector);
     
     //This is equivalent to enable package
     gSystem->ChangeDirectory(packages_dir + packages[i]);
-
+    
 #if DEBUGUTILS    
     cerr << PAFDEBUG << "In directory " << gSystem->pwd() << endl;
 #endif
-
-    // + First execute BUILD.sh
+    if (shouldbuild) {
+      //Build package file only if it has changed from previous sessions    
+      // + First execute BUILD.sh
 #if DEBUGUTILS    
-    cerr << PAFDEBUG << "building... " << endl;
+      cerr << PAFDEBUG << "building... " << endl;
 #endif
-    gSystem->Exec("./PROOF-INF/BUILD.sh");
-    // + Then load and execute SETUP.C
+      gSystem->Exec("./PROOF-INF/BUILD.sh");
+      // + Then load and execute SETUP.C
+    }
+
 #if DEBUGUTILS    
     cerr << PAFDEBUG << "loading... " << endl;
 #endif
@@ -315,6 +355,11 @@ void LoadPackages(const vector<TString>& packages, bool isSelector) {
     // Changes for root 5.34: add the package to the include path
     gSystem->AddIncludePath("-I" + packages_dir + packages[i]);
     
+
+#if DEBUGUTILS    
+    cerr << PAFDEBUG << "Include path set to \"" 
+	 << gSystem->GetIncludePath() << "\"" << endl;
+#endif
     //Back to the pwd directory
     gSystem->ChangeDirectory(pwddir);
   }
@@ -383,6 +428,7 @@ bool RunAnalysis() {
   PAFTimer.Start();
 #endif
 
+
   //
   //Make selector
   if (gPAFOptions->ShouldCreateSelector()) {
@@ -398,10 +444,15 @@ bool RunAnalysis() {
     } else {
         gPAFOptions->AddSelectorPackage(pkgName); 
     }
-  } else {
+  } 
+  else {
     // XXX try to use an already existing PAFAnalysis package !?
-    cerr << PAFWARN << "No Selector created, your code will probably fail!" << endl;
+    cerr << PAFWARN 
+	 << "No Selector created, your code will probably fail!" 
+	 << endl;
   }
+  
+
 
 #ifdef TIMERS
   //PAFTIME2
@@ -425,17 +476,26 @@ bool RunAnalysis() {
   //
   // Upload and enable packages / Load packages
   cout << PAFINFO << ">> Loading packages ..." << endl;
-  if (gPAFOptions->GetPAFMode() == kSequential) {
-    LoadPackages(gPAFOptions->GetPackages(), false);
+  vector<TString> corepackages;
+  corepackages.push_back("TCounterUI");
+  corepackages.push_back("InputParameters");
+  corepackages.push_back("PAFBaseSelector");
+
+  if (gPAFOptions->GetPAFMode() == kSequential) { 
+    LoadPackages(corepackages, false);
     LoadPackages(gPAFOptions->GetSelectorPackages(), true);
+    LoadPackages(gPAFOptions->GetPackages(), false);
   }
   else {
     if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
-				 gPAFOptions->GetPackages(), false))
+				 corepackages, false))
       return false; 
     if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
 				 gPAFOptions->GetSelectorPackages(), true))
       return false;
+    if (!UploadAndEnablePackages(gPAFOptions->GetPROOFSession(), 
+				 gPAFOptions->GetPackages(), false))
+      return false; 
   }
 
 
@@ -449,6 +509,7 @@ bool RunAnalysis() {
   //
   // Compile Selector
   //
+  cout << PAFINFO << ">> Compiling selector " << selector << " ..." << endl;
   TString selectorcfile = selector + ".C";
   TString selectorhfile = selector + ".h";
 
@@ -456,15 +517,17 @@ bool RunAnalysis() {
   dest += "/";
   dest += selectorcfile;
 
-  if (gSystem->CopyFile(selectorcfile, dest)) {
-      cerr << PAFERROR << "Could not copy " << selectorcfile << " to temp directory" << endl;
+  if (gSystem->CopyFile(selectorcfile, dest, true)) {
+      cerr << PAFERROR << "Could not copy " << selectorcfile 
+	   << " to build directory (" << dest << ")" << endl;
       return false;
   }
 
   if (gSystem->FindFile(".", selectorhfile)) {
     dest.Replace(dest.Length() - 1, dest.Length(), "h");
-    if (gSystem->CopyFile(selectorhfile, dest)) {
-      cerr << PAFERROR << "ERROR: Could not copy " << selectorhfile << " to temp directory" << endl;
+    if (gSystem->CopyFile(selectorhfile, dest, true)) {
+      cerr << PAFERROR << "ERROR: Could not copy " << selectorhfile 
+	   << " to build directory" << endl;
       return false;
     }
   }
@@ -610,8 +673,8 @@ bool RunAnalysis() {
       TList* lo = 0;
       if (gPAFOptions->GetPAFMode() == kSequential) {
 	//XXX Is this working???
-	li = pafbaseselector->GetInputList()
-	  lo = pafbaseselector->GetOutputList();
+	li = pafbaseselector->GetInputList();
+	lo = pafbaseselector->GetOutputList();
       }
       else {
 	li = gPAFOptions->GetPROOFSession()->GetInputList();
@@ -625,6 +688,15 @@ bool RunAnalysis() {
       cerr << PAFERROR << "  + Could not open output file \"" << of 
 	   << "\"" << endl;
     }
+  }
+
+  //
+  // Clean lock file
+  //
+  char* found = gSystem->Which(".paf", "paf.lock");
+  if (found) {
+    cout << PAFINFO << ">> Cleaning lock file..." << endl;
+    gSystem->Unlink(".paf/paf.lock");
   }
 
   //
