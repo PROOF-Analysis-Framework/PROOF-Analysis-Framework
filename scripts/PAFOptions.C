@@ -117,6 +117,9 @@ void PAFOptions::Dump() const {
   cout << PAFINFO << "|| * Packages:" << endl;
   for (unsigned int i = 0; i < packages.size(); i++)
     cout << PAFINFO << "||   + " << packages[i] << endl;
+  cout << PAFINFO << "|| * Selector Packages:" << endl;
+  for (unsigned int i = 0; i < selectorpackages.size(); i++)
+    cout << PAFINFO << "||   + " << selectorpackages[i] << endl;
   cout << PAFINFO << "||                                           ||" << endl;
   cout << PAFINFO << "|| OUTPUT                                    ||" << endl;
   cout << PAFINFO << "++ ------                                    ||" << endl;
