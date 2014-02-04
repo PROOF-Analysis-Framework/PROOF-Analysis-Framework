@@ -372,9 +372,9 @@ class PAFOptions {
     // Other internal stuff
     fProofSession(0)
       {
-	AddPackage("TCounterUI");
-	AddPackage("InputParameters");
-	AddPackage("PAFBaseSelector");
+/* 	AddPackage("TCounterUI"); */
+/* 	AddPackage("InputParameters"); */
+/* 	AddPackage("PAFBaseSelector"); */
 	// XXX Trying to make this run more than once. 
 	//AddPackage("PAFAnalysis");
       }
