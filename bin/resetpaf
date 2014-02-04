@@ -92,6 +92,6 @@ if [ $? -eq 0 ] ; then
 fi
 
 # Removing proof caches
-echo ">> Removing .proof and ~/.proof"
-rm -rf ~/.proof .proof proof-package-lock-$USER
+echo ">> Removing .paf, .proof and ~/.proof"
+rm -rf ~/.proof .paf .proof proof-package-lock-$USER
 
