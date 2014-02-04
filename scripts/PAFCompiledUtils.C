@@ -237,7 +237,7 @@ bool CreateSelector(const char* filename,
 #endif
 
   //Open the first file
-  cout << PAFINFO << "Opening first file (" << filename 
+  cout << PAFINFO << "+ Opening first file (" << filename 
        << ") to study the structure..." << endl;
   TFile* file = TFile::Open(filename);
   if (!file) {
@@ -258,13 +258,14 @@ bool CreateSelector(const char* filename,
   
 
   //Create the selector in tmp
-  cout << PAFINFO << "Creating the selector..." << endl;
+  cout << PAFINFO << "+ Studying input file to write the selector "
+       << selectorname << "..."  << endl;
   MakeSimpleSelector(tree, tmpselectorfp, selectorname);
 
 
   //Slim the selector by removing unneeded branches
 
-  cout << PAFINFO << "Slimming the selector... " << endl;
+  cout << PAFINFO << "+ Slimming the selector... " << endl;
   TString slimcommand;
   slimcommand.Form("slimselector -v -s %s %s.C %s.h", 
 		   tmpselector.Data(), analysis.Data(), analysis.Data());
@@ -275,10 +276,14 @@ bool CreateSelector(const char* filename,
     slimcommand += tmppack;
     slimcommand += ".h ";
   }
-  cout << PAFDEBUG << "Executing " << slimcommand << endl;
+#ifdef DEBUGUTILS
+  cerr << PAFDEBUG << "Executing " << slimcommand << endl;
+#endif
   TString slimout("-");
   int slimres = GetFromPipe(slimcommand.Data(), slimout);
+#ifdef DEBUGUTILS
   cerr << PAFDEBUG << "Output from command: \"" << slimout << "\"" << endl;
+#endif
   if (slimres < 0) {
     cerr << PAFERROR << "Could not execute \"'" << slimcommand << "\"" << endl;
     return false;
@@ -290,7 +295,7 @@ bool CreateSelector(const char* filename,
   //If there is already a selector, compare it with the new one
   TString coutput("-");
   if (gSystem->FindFile(selectorpath, selectorfile)) {
-    cout << PAFINFO << "Comparing with previous selector..." << endl;
+    cout << PAFINFO << "+ Comparing with previous selector..." << endl;
     TString command;
     command.Form("diff -q %s %s",tmpselector.Data(), finalselector.Data());
 
@@ -366,6 +371,9 @@ bool CreateSelector(const char* filename,
 
   //Delete temporary file
   gSystem->Unlink(tmpselector);
+
+  //Add include path so others can use this
+  gSystem->AddIncludePath(Form("-I%s",selectorpath));
 
 #ifdef DEBUGUTILS
   cerr << PAFDEBUG << "<== CreateSelector(" << filename << ", " 
@@ -1015,7 +1023,7 @@ bool UploadAndEnablePackages(TProof* proofSession,
   packages_dir.Form("%s/packages/", gSystem->GetBuildDir());
 
   for (unsigned int i = 0; i < packages.size(); i++) {
-    cout << PAFINFO << "Enabling package " << packages[i] << endl;
+    cout << PAFINFO << "+ Enabling package " << packages[i] << endl;
 
     // (1) Construct the .par file for the package
 #ifdef DEBUGUTILS    
@@ -1135,8 +1143,8 @@ bool UploadAndEnablePackages(TProof* proofSession,
  ************************/
 bool ShouldBuildParFile(const TString& dir, const TString& module) {
 #ifdef DEBUGUTILS
-  cerr << PAFDEBUG << "==> ShouldBuildParFile(" << dir
-            << "," << module << ")" << endl;
+  cerr << PAFDEBUG << "==> ShouldBuildParFile(\"" << dir
+       << "\", \"" << module << "\")" << endl;
 #endif
 
   TString parfile;
@@ -1159,8 +1167,8 @@ bool ShouldBuildParFile(const TString& dir, const TString& module) {
 #endif
 
 #ifdef DEBUGUTILS
-  cerr << PAFDEBUG << "<== ShouldBuildParFile(" << dir
-       << "," << module << ")" << endl;
+  cerr << PAFDEBUG << "<== ShouldBuildParFile(\"" << dir
+       << "\", \"" << module << "\") --> " << rebuild<< endl;
 #endif
   return rebuild;
 }
@@ -1175,7 +1183,7 @@ bool ShouldBuildParFile(const TString& dir, const TString& module) {
 bool BuildParFile(const TString& module, bool isSelector) {
 #ifdef DEBUGUTILS
   cerr << PAFDEBUG << "==> BuildParFile(" << module 
-	    << "," << isSelector << ")" << endl;
+       << "," << isSelector << ")" << endl;
 #endif
 
   TString packages_dir;
