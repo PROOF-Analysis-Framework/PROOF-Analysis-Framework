@@ -48,7 +48,7 @@ else
 endif
 endif
 else
-	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(EXPLLINKLIBS)
+	$(LD) $(SOFLAGS) $(LDFLAGS) $(LIBS) $^ $(OutPutOpt) $@ $(EXPLLINKLIBS)
 endif
 endif
 endif

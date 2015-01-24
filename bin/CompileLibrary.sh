@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ####################################################################
-#     FILE: MakeParFile.sh
-# AUTHORS: I. Gonzalez Caballero, A.Y. Rodriguez Marrero
-#    DATE: 2010
+#     FILE: CompileLibrary.sh
+# AUTHORS: I. Gonzalez Caballero, J. Delgado Fernández
+#    DATE: 2015-01-24
 #
-# CONTENT: Makes .par files for a given package 
-#          Use MakeParFile.sh -help for more information
+# CONTENT: Compile the specified package.
+#          Use CompileLibrary.sh -help for more information
 ####################################################################
 
 
@@ -22,8 +22,7 @@ basepath="."
 # Print some information on how to use this script
 usage() {
     cat << EOF
-`basename $0`: This script creates the .par file for a given package. Par 
-                files used by PROOF to transfer the code to the slaves.
+`basename $0`: This script compile a package already created to so object.
 
 SYNTAX: 
   `basename $0` [--help] [-s|--silent] [-n|--nosetup] [-r|--remote path] packagename
@@ -35,16 +34,10 @@ OPTIONS:
   -s, --silent
        Do not print output (by default it is printed)
 
-  XXX: WHAT?
-  -n, --nosetup
-       Do not try to create PROOF-INF/SETUP.C file. By default it will be
-       created if it is not found.
 
   -v, --verbose
        Include debug output when making the packages
 
-  -r, --remote path
-       Get package from specified path
 
   -d, --dest path
        Create packages at specified path (default: .)
@@ -68,9 +61,10 @@ myerror() {
     echo -e "\033[0m" 1>&2
 }
 
+
 ######################################################################
-# Create the par file in $1 for package $3 which is located in $2
-createparfile() {
+# Compile specified package in -d destination.
+compilepackage() {
     myecho ">> Creating $parpackagename for package in $basepath..."
 
     if [ ! -d $destpath/PROOF-INF -o ! -e $destpath/PROOF-INF/SETUP.C ] ; then
@@ -90,8 +84,12 @@ createparfile() {
         verbose="-v"
     fi
     # XXX Be aware of any missing files in this list (--exclude CVS does not work on Mac)
-    tar $verbose -c -z -f $basepath/$parpackagename -C $basepath $packagename
+    #tar $verbose -c -z -f $basepath/$parpackagename -C $basepath $packagename
+    echo $basepath$packagename
+	cd $basepath$packagename
+	make
 }
+
 
 ######################################################################
 # Process command line
@@ -122,8 +120,6 @@ while [ "$1" != "" ]; do
     shift
 done
 
-
-parpackagename=$packagename.par
 origppath=packages/$packagename
 packagelibname=$packagename
 
@@ -132,10 +128,9 @@ myecho "Setup = $setup"
 myecho "Debug = $debugoutput"
 myecho "Package Name = $packagename"
 myecho "Package Par file = $parpackagename"
-myecho "Package orig = $packagedir"
 myecho "Package dest = $basepath"
 
 destpath=$basepath/$packagename
 
-createparfile $basepath $parpackagename
+compilepackage $basepath $parpackagename
 sync

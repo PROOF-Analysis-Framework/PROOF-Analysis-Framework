@@ -1,0 +1,8 @@
+2015-01-24
+	xSolve Makefile hardcode.
+	xCheck CompileLibrary:143, an error with unary operator.
+	-Update Git.
+	-Solve "DataSet is empty" when run with only one file.
+	-Solve compilation on slaves when PoD.
+	-Improve the way that we load PAF library on client.
+	-Discuss about PAF folders disposition.
