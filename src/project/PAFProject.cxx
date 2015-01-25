@@ -7,6 +7,8 @@
 	@date 2014-12-04
 */
 
+#include "../PAF.h"
+
 #include "PAFProject.h"
 #include "MakeSimpleSelector.h"
 #include "../util/PAFNamedContainer.h"
@@ -125,6 +127,7 @@ void PAFProject::PrepareProject()
 
 void PAFProject::Run()
 {
+	PAF_DEBUG("Project", "Launching configured project");
 	PrepareEnvironment();
 	PrepareProject();
 	AddDynamicHistograms();
