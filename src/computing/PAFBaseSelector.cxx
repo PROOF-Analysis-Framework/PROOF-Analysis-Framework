@@ -14,10 +14,12 @@ ClassImp(PAFBaseSelector);
 
 void PAFBaseSelector::SlaveBegin(TTree* tree)
 {
+	fSelectorParams = new PAFVariableContainer();
+	
 	fPAFISelector = (PAFISelector*) (((PAFNamedContainer*)FindInput("PAFSelector"))->GetObject());	
 
 	fPAFISelector->SetPROOFData(fInput, fOutput);
-	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this);
+	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this, fSelectorParams);
 
 	fPAFISelector->Initialise();
 }
@@ -33,7 +35,7 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 void PAFBaseSelector::Terminate()
 {
 	fPAFISelector->SetPROOFData(fInput, fOutput);	
-	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this);
+	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this, fSelectorParams);
   	fPAFISelector->Summary();
 }
 

@@ -16,8 +16,8 @@ InputParameters* GetInputParameters()
 
 void RunPAFAnalysisMT() 
 {
-	PAFProject* myProject = new PAFProject(new PAFPoDEnvironment());
-  	//PAFProject* myProject = new PAFProject(new PAFPROOFLiteEnvironment(4));
+	//PAFProject* myProject = new PAFProject(new PAFPoDEnvironment());
+  	PAFProject* myProject = new PAFProject(new PAFPROOFLiteEnvironment(4));
 
 	//myProject->SetInputParameters(GetInputParameters());
 

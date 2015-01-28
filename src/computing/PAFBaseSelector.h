@@ -15,12 +15,13 @@
 
 #include "PAFISelector.h"
 #include "../input_parameters/InputParameters.h"
+#include "../variable_container/PAFVariableContainer.h"
 
 class PAFAnalysis;
 
 class PAFBaseSelector : public TSelector {
 	public:
-		PAFBaseSelector() : fChain(0), fInputParameters(0), fPAFISelector(0)  { }
+		PAFBaseSelector() : fChain(0), fInputParameters(0), fPAFISelector(0), fSelectorParams(0) { }
 		virtual ~PAFBaseSelector() { }
 		virtual Int_t   Version() const { return 2; }
 		virtual void    SlaveBegin(TTree* tree);
@@ -42,6 +43,7 @@ class PAFBaseSelector : public TSelector {
 	protected:
 		InputParameters*	fInputParameters;
 		PAFISelector* 		fPAFISelector;
+		PAFVariableContainer* fSelectorParams;
 
 	ClassDef(PAFBaseSelector, 1);
 };

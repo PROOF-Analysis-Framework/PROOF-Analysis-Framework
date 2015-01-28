@@ -23,8 +23,8 @@ class PAFChainSelector : public PAFISelector
 		virtual void InsideLoop();
 		virtual void Summary();
 		
-		virtual void SetPROOFData(TList* fInput, TSelectorList* fOutput);
-		virtual void SetPAFData(InputParameters* fInputParameters, PAFAnalysis* fData);
+		virtual void SetPROOFData(TList* input, TSelectorList* output);
+		virtual void SetPAFData(InputParameters* inputParameters, PAFAnalysis* data, PAFVariableContainer* selectorParams);
 
 	private:
 		std::vector<PAFISelector*> fSelectors;

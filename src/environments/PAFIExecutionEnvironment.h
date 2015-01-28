@@ -21,6 +21,8 @@ class PAFIExecutionEnvironment
 {
 	public:
 		PAFIExecutionEnvironment() {}
+		virtual ~PAFIExecutionEnvironment() {}
+		
 		virtual void AddInput(TObject* obj) = 0;
 		virtual void AddFeedback(const char* name) = 0;
 		virtual TDrawFeedback* CreateDrawFeedback() = 0;

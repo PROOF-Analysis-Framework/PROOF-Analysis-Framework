@@ -19,7 +19,7 @@
 class PAFChainItemSelector : public PAFISelector
 {
 	public:
-		PAFChainItemSelector() : fInput(0), fOutput(0), fInputParameters(0), fData(0) {}
+		PAFChainItemSelector() : fInput(0), fOutput(0), fInputParameters(0), fData(0), fSelectorParams(0) {}
 		virtual ~PAFChainItemSelector() {}
 		
 		virtual void Initialise() {}
@@ -27,8 +27,8 @@ class PAFChainItemSelector : public PAFISelector
 		virtual void InsideLoop() {}
 		virtual void Summary() {}	
 
-		void SetPROOFData(TList* fInput, TSelectorList* fOutput);
-		void SetPAFData(InputParameters* fInputParameters, PAFAnalysis* fData);
+		void SetPROOFData(TList* input, TSelectorList* output);
+		void SetPAFData(InputParameters* inputParameters, PAFAnalysis* data, PAFVariableContainer* selectorParams);
 
 	/*	TCounterUI* InitCounterUI(const char* name, const char* title,
                             unsigned int init);
@@ -39,12 +39,23 @@ class PAFChainItemSelector : public PAFISelector
 		TObject* FindInput(TString name, TString classname = "");
 
 		TObject* FindOutputByClassName(TString classname);
-
+		
+		template<typename T>
+		T GetParam(TString& key);
+		
+		template<typename T>
+		void GetParam(TString& key, T& target);
+		
+		template<typename T>
+		void SetParam(TString& key, T object);
+		
 	protected:		
 		TList* fInput;
 		TSelectorList* fOutput;
 		InputParameters* fInputParameters; //! Do not stream
 		PAFAnalysis* fData; //! Do not stream
+		PAFVariableContainer* fSelectorParams;
+		
 		//bool fMergeThroughFile;
 		//TCounterUI* fNEventsProcessed;
 		//bool fPrintInputParameters;
@@ -56,3 +67,20 @@ class PAFChainItemSelector : public PAFISelector
 	ClassDef(PAFChainItemSelector, 1);
 };
 
+template <typename T>
+inline T PAFChainItemSelector::GetParam(TString& key)
+{
+	return fSelectorParams->Get<T>(key);
+}
+
+template <typename T>
+inline void PAFChainItemSelector::GetParam(TString& key, T& target)
+{
+	target = GetParam<T>(key);
+}
+
+template <typename T>
+inline void PAFChainItemSelector::SetParam(TString& key, T object)
+{
+	fSelectorParams->Add(key, object);
+}

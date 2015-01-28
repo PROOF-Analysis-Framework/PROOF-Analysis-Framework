@@ -118,8 +118,9 @@ void PAFChainItemSelector::SetPROOFData(TList* input, TSelectorList* output)
 	fOutput = output;
 }
 
-void PAFChainItemSelector::SetPAFData(InputParameters* inputParameters, PAFAnalysis* data)
+void PAFChainItemSelector::SetPAFData(InputParameters* inputParameters, PAFAnalysis* data, PAFVariableContainer* selectorParams)
 {
 	fInputParameters = inputParameters;
 	fData = data;
+	fSelectorParams = selectorParams;
 }
