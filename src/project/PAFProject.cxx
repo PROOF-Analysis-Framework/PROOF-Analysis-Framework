@@ -95,13 +95,11 @@ void PAFProject::PrepareEnvironment()
 	UploadAndEnablePackages(fPackages);
 	UploadAndEnablePackages(fSelectorPackages);
 
-	LoadLibraries();	
+	LoadLibraries();
 }
 
-void PAFProject::PrepareProject()
+void PAFProject::PreparePAFSelector()
 {
-	fExecutionEnvironment->AddInput(fInputParameters); //FIXME
-	
 	PAFISelector* result = NULL;
 
 	if(fSelectorPackages.size() == 0)
@@ -122,18 +120,23 @@ void PAFProject::PrepareProject()
 	}
 
 	fPAFSelector = result;
-	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFSelector", fPAFSelector));
 }
 
 void PAFProject::Run()
 {
 	PAF_DEBUG("Project", "Launching configured project");
 	PrepareEnvironment();
-	PrepareProject();
+	PreparePAFSelector();
 	AddDynamicHistograms();
-	PAFBaseSelector* selector = CreateObject<PAFBaseSelector*>(PAFANALYSIS_NAME); 
 
-	selector->SetPAFSelector(fPAFSelector);	
+	PAFBaseSelector* selector = CreateObject<PAFBaseSelector*>(PAFANALYSIS_NAME); 
+	
+	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFParams", fInputParameters));
+	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFSelector", fPAFSelector));
+	
+	selector->SetSelectorParams(fInputParameters);
+	selector->SetPAFSelector(fPAFSelector);
+	
 	if(fOutputFile.Length() == 0)
 		fExecutionEnvironment->Process(fDataFiles, selector);
 	else

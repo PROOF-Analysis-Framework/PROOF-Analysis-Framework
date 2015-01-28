@@ -12,9 +12,9 @@ void PAFTestParamsPrinter::Initialise()
 void PAFTestParamsPrinter::InsideLoop()
 {
    if (fH1F) {
-		TString t("random");
-		Double_t x = GetParam<Double_t>(t);
-		if(x > 0.4)
+		Double_t x = 0;
+		GetParam("random", x);
+		if(x > GetParam<int>("min") )
 			fH1F->Fill(x);
    }
 }

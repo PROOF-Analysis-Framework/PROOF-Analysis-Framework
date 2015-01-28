@@ -12,10 +12,9 @@
 ClassImp(PAFChainItemSelector);
 
 TTree* PAFChainItemSelector::CreateTree(const char* name, const char* title) {
-
-  TTree* h = new TTree(name, title);
-  fOutput->Add(h);
-  return h;
+	TTree* h = new TTree(name, title);
+	fOutput->Add(h);
+	return h;
 }
 
 TH1F* PAFChainItemSelector::CreateH1F(const char* name, const char* title,
@@ -27,9 +26,9 @@ TH1F* PAFChainItemSelector::CreateH1F(const char* name, const char* title,
 
 TH1F* PAFChainItemSelector::CreateH1F(const char* name, const char* title,
                                      Int_t nbinsx, Axis_t xlow, Axis_t xup) {
-  TH1F* h = new TH1F(name, title, nbinsx, xlow, xup);
-  fOutput->Add(h);
-  return h;
+	TH1F* h = new TH1F(name, title, nbinsx, xlow, xup);
+	fOutput->Add(h);
+	return h;
 }
 
 TObject* PAFChainItemSelector::FindInput(TString name, TString classname) {
@@ -118,9 +117,8 @@ void PAFChainItemSelector::SetPROOFData(TList* input, TSelectorList* output)
 	fOutput = output;
 }
 
-void PAFChainItemSelector::SetPAFData(InputParameters* inputParameters, PAFAnalysis* data, PAFVariableContainer* selectorParams)
+void PAFChainItemSelector::SetPAFData(PAFAnalysis* data, PAFVariableContainer* selectorParams)
 {
-	fInputParameters = inputParameters;
 	fData = data;
 	fSelectorParams = selectorParams;
 }

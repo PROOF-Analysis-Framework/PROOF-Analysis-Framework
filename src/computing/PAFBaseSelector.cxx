@@ -10,17 +10,26 @@
 #include "PAFBaseSelector.h"
 #include "../util/PAFNamedContainer.h"
 
+#include "../PAF.h"
+#include "TString.h"
+
 ClassImp(PAFBaseSelector);
 
 void PAFBaseSelector::SlaveBegin(TTree* tree)
 {
-	fSelectorParams = new PAFVariableContainer();
+	PAF_DEBUG("PAFBaseSelector", "Searching for PAFParams");
+	fSelectorParams = FindPAFInput<PAFVariableContainer*>("PAFParams");
 	
-	fPAFISelector = (PAFISelector*) (((PAFNamedContainer*)FindInput("PAFSelector"))->GetObject());	
+	PAF_DEBUG("PAFBaseSelector", "Searching for PAFSelector");
+	fPAFISelector = FindPAFInput<PAFISelector*>("PAFSelector");
 
+	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetPROOFData(fInput, fOutput);
-	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this, fSelectorParams);
+	
+	PAF_DEBUG("PAFBaseSelector", "Setting up PAF data");
+	fPAFISelector->SetPAFData((PAFAnalysis*)this, fSelectorParams);
 
+	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
 	fPAFISelector->Initialise();
 }
 
@@ -33,24 +42,8 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 }
 
 void PAFBaseSelector::Terminate()
-{
+{	
 	fPAFISelector->SetPROOFData(fInput, fOutput);	
-	fPAFISelector->SetPAFData(fInputParameters, (PAFAnalysis*)this, fSelectorParams);
+	fPAFISelector->SetPAFData((PAFAnalysis*)this, fSelectorParams);
   	fPAFISelector->Summary();
 }
-
-TObject* PAFBaseSelector::FindInput(TString name, TString classname) {              
-  TObject* object = 0;                                                              
-  TObject* tmpobj = 0 ;                                                             
-  for (int i = 0; i < fInput->GetEntries(); i++) {                                  
-    tmpobj = fInput->At(i);                                                         
-    if (name == tmpobj->GetName())                                                  
-      if (classname == "" || classname == tmpobj->IsA()->GetName()) {               
-        object = tmpobj;                                                            
-        break;                                                                      
-      }
-  }                                                                                 
-  return object;                                                                    
-}     
-
-

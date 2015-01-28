@@ -12,4 +12,5 @@
 	-Add log messages.
 	-Implements PROOFCluster environment.
 	-Implements PFOOFCloud environment.
-
+2015-01-28
+	-Add primitive types, pointers and TObject to the following LinkDef: PAFProject, variable_container/PAFGenericItemVariableContainer.

@@ -13,7 +13,6 @@
 #include <TSelectorList.h>
 #include <TObject.h>
 
-#include "../input_parameters/InputParameters.h"
 #include "../variable_container/PAFVariableContainer.h"
 
 class PAFAnalysis;
@@ -30,7 +29,7 @@ class PAFISelector : public TObject
 		virtual void Summary() {}
 		
 		virtual void SetPROOFData(TList*, TSelectorList* ) {}
-		virtual void SetPAFData(InputParameters* inputParameters, PAFAnalysis* data, PAFVariableContainer* selectorParams) {}
+		virtual void SetPAFData(PAFAnalysis* data, PAFVariableContainer* selectorParams) {}
 
 	ClassDef(PAFISelector, 1);
 };

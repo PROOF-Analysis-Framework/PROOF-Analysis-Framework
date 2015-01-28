@@ -24,7 +24,7 @@
 #include "../computing/PAFChainSelector.h"
 #include "../computing/PAFChainItemSelector.h"
 #include "../computing/PAFBaseSelector.h"
-#include "../input_parameters/InputParameters.h"
+#include "../variable_container/PAFVariableContainer.h"
 
 #define PAFANALYSIS_NAME "PAFAnalysis"
 #define DEFAULT_COMPILE_ON_SLAVES false
@@ -32,9 +32,9 @@
 class PAFProject 
 {
 	public:
-		PAFProject() : fExecutionEnvironment(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fInputParameters(new InputParameters()), fDynamicHistograms(), fPAFSelector(0), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
+		PAFProject() : fExecutionEnvironment(0), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
 
-		PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(executionEnvironment), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fInputParameters(new InputParameters()), fDynamicHistograms(), fPAFSelector(0), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
+		PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(executionEnvironment), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
 
 		virtual ~PAFProject() {}
 
@@ -57,8 +57,10 @@ class PAFProject
 		void SetOutputFile(const char* fileName) {fOutputFile = TString(fileName);}
 		TString GetOutputFile() {return fOutputFile;}
 
-		void SetInputParameters(InputParameters* inputParameters) {fInputParameters = inputParameters;}
-		InputParameters* GetInputParameters() {return fInputParameters;}
+		void SetInputParameters(PAFVariableContainer* inputParameters) {fInputParameters = inputParameters;}
+		PAFVariableContainer* GetInputParameters() {return fInputParameters;}
+		template <typename T>
+		void SetInputParam(const char* key, T param);
 
 		void AddDynamicHistogram(const char* histo) {fDynamicHistograms.push_back(histo);}
 		std::vector<TString> GetDynamicHistograms() {return fDynamicHistograms;}
@@ -69,15 +71,15 @@ class PAFProject
 		void Run();      
 
 	private:
-		PAFIExecutionEnvironment*            fExecutionEnvironment;
+		PAFIExecutionEnvironment*           fExecutionEnvironment;
+		PAFVariableContainer*				fInputParameters;
+		PAFISelector*                       fPAFSelector;
 		std::vector<PAFPackage*>            fPackages; //!
 		std::vector<PAFPackageSelector*>    fSelectorPackages; //! FIXME: Why we should comment this to ClassDef and ClassImp?
 		std::vector<PAFLibrary*>			fLibraries; //!
 		TFileCollection*                    fDataFiles;
 		TString                             fOutputFile;
-		InputParameters*                    fInputParameters;
 		std::vector<TString>				fDynamicHistograms;
-		PAFISelector*                       fPAFSelector;
 		bool								fCompileOnSlaves;
 
 	private:
@@ -90,10 +92,18 @@ class PAFProject
 		T CreateObject(const char* className);
 	
 		void PreparePAFAnalysis();
+		
 		void PrepareEnvironment();
-		void PrepareProject();
+		void PreparePAFSelector();
 		void AddDynamicHistograms();
 		
 	ClassDef(PAFProject, 1);
 };
+
+template <typename T>
+inline void PAFProject::SetInputParam(const char* key, T param)
+{
+	TString tkey(key);
+	fInputParameters->Add(tkey, param);
+}
 

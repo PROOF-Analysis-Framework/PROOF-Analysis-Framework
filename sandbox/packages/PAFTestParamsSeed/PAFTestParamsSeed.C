@@ -13,6 +13,5 @@ void PAFTestParamsSeed::Initialise()
 
 void PAFTestParamsSeed::InsideLoop()
 {
-	TString t("random");
-	SetParam(t, fRandom->Gaus(0.,1.));
+	SetParam("random", fRandom->Gaus(0.,1.));
 }

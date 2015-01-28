@@ -15,6 +15,7 @@ template <class T>
 class PAFGenericItemVariableContainer : public PAFItemVariableContainer
 {
 	public:
+		PAFGenericItemVariableContainer() : PAFItemVariableContainer(), fObject() {}
 		PAFGenericItemVariableContainer(T object) : PAFItemVariableContainer(), fObject(object) {}
 		virtual ~PAFGenericItemVariableContainer() {}
 		
