@@ -1,5 +1,4 @@
 #include "Benchmark.h"
-#include "../PAFAnalysis/PAFAnalysis.h"
 
 void Benchmark::Initialise() {
 	etHisto		= CreateH1F("etHistogram","EtHistogram", 100, 0., 200.);

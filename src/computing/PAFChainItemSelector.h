@@ -126,6 +126,13 @@ template <typename T>
 T PAFChainItemSelector::GetVariable(const char* key)
 {
 	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
+	TBranch* branch = leaf->GetBranch();
+	
+	if(branch->TestBit(kDoNotProcess)){
+		PAF_DEBUG("PAFChainItemSelector", TString::Format("Key not found: %s", key));
+		branch->SetStatus(kTRUE);
+		branch->GetEntry(branch->GetReadEntry());
+	}
 	return leaf->GetTypedValue<T>();
 }
 
