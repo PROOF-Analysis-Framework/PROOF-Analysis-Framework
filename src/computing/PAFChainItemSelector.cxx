@@ -31,86 +31,6 @@ TH1F* PAFChainItemSelector::CreateH1F(const char* name, const char* title,
 	return h;
 }
 
-TObject* PAFChainItemSelector::FindInput(TString name, TString classname) {
-  TObject* object = 0;
-  TObject* tmpobj = 0 ;
-  for (int i = 0; i < fInput->GetEntries(); i++) {
-    tmpobj = fInput->At(i);
-    if (name == tmpobj->GetName())
-      if (classname == "" || classname == tmpobj->IsA()->GetName()) {
-        object = tmpobj;
-        break;
-      }
-  }
-  return object;
-}
-
-TObject* PAFChainItemSelector::FindOutput(TString name, TString classname) {
-#ifdef DEBUGPAFBASESELECTOR
-  std::cerr << PAFDEBUG << "==> PAFBaseSelector::FindOutput("
-            << name << ", " << classname << ")" << std::endl;
-#endif
-
-  // The object we will return
-  TObject* object = 0;
-  // XXX This can probably be fixed by reopening the file
-  // If we are using merging through files, we cannot find out the objects
-  // in the output list. They are already gone
-  TNamed* mergeThroughFile = (TNamed*) FindInput("PAF_MergeThroughFile");
-  if (!mergeThroughFile) {
-    TObject* tmpobj = 0 ;
-#if DEBUGPAFBASESELECTOR > 1
-    std::cerr << PAFDEBUG << "There are " << fOutput->GetEntries()
-              << " entries in fOutput" << std::endl;
-    std::cerr << PAFDEBUG << "";
-    fOutput->Print();
-#endif
-    for(int i = 0; i < fOutput->GetEntries(); i++) {
-      tmpobj = fOutput->At(i);
-      if (name == tmpobj->GetName())
-        if (classname == "" || classname == tmpobj->IsA()->GetName()) {
-          object = tmpobj;
-          break;
-        }
-      }
-    }
-    else {
-/*
-      std::cerr << PAFDEBUG << "Cannot find out variables when merging through file"
-                << std::endl
-                << "        Returning 0"
-                << std::endl;*/
-    }
-
-#ifdef DEBUGPAFBASESELECTOR
-    std::cerr << PAFDEBUG << "<== PAFBaseSelector::FindOutput("
-              << name << ", " << classname << ")"
-              << " --> " << object << std::endl;
-#endif
-  return object;
-}
-
-
-TObject* PAFChainItemSelector::FindOutputByClassName(TString classname) {
-  TObject* object = 0;
-  TObject* tmpobj = 0 ;
-  for (int i = 0; i < fOutput->GetEntries(); i++) {
-    tmpobj = fOutput->At(i);
-    if (classname == tmpobj->IsA()->GetName()) {
-      object = tmpobj;
-      break;
-    }
-  }
-  return object;
-}
-
-/*TCounterUI* PAFChainItemSelector::InitCounterUI(const char* name, const char* title,
-						unsigned int init) {
-	TCounterUI* result = new TCounterUI(name, title, init);
-	fOutput->Add(result);
-	return result;
-}*/
-
 void PAFChainItemSelector::SetPROOFData(TList* input, TSelectorList* output)
 {
 	fInput = input;
@@ -121,4 +41,25 @@ void PAFChainItemSelector::SetPAFData(PAFVariableContainer* variables, PAFVariab
 {
 	fVariables = variables;
 	fSelectorParams = selectorParams;
+}
+
+TBranch* PAFChainItemSelector::GetBranch(const char* key)
+{
+	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
+	return leaf->GetBranch();
+}
+
+TBranch* PAFChainItemSelector::GetBranch(TString& key)
+{
+	return GetBranch(key.Data());
+}
+
+void PAFChainItemSelector::GetBranch(TString& key, TBranch*& target)
+{
+	target = GetBranch(key);
+}
+
+void PAFChainItemSelector::GetBranch(const char* key, TBranch*& target)
+{
+	target = GetBranch(key);
 }

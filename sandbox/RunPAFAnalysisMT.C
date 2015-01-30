@@ -1,8 +1,8 @@
 void RunPAFAnalysisMT() 
 {
 	gSystem->Load("libPAF.so");
-	PAFProject* myProject = new PAFProject(new PAFPoDEnvironment());
-  	//PAFProject* myProject = new PAFProject(new PAFPROOFLiteEnvironment(4));
+	//PAFProject* myProject = new PAFProject(new PAFPoDEnvironment());
+  	PAFProject* myProject = new PAFProject(new PAFPROOFLiteEnvironment(4));
 
 	//myProject->AddDynamicHistogram("etHistogram");
 	//myProject->AddDynamicHistogram("phiHistogram");

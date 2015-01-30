@@ -9,15 +9,14 @@
 
 #pragma once
 
-#include <TH1F.h>
-
-#include <TTree.h>
-#include <TObject.h>
 #include "TLeaf.h"
-#include "PAFISelector.h"
-
-#include "../PAF.h"
 #include "TString.h"
+
+#include "TH1F.h"
+#include "TTree.h"
+
+#include "PAFISelector.h"
+#include "../PAF.h"
 
 class PAFChainItemSelector : public PAFISelector
 {
@@ -33,47 +32,48 @@ class PAFChainItemSelector : public PAFISelector
 		void SetPROOFData(TList* input, TSelectorList* output);
 		void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams);
 
-		TTree* CreateTree(const char* name, const char* title);
-
-		TObject* FindOutput(TString name, TString classname = "");
-		TObject* FindInput(TString name, TString classname = "");
-
-		TObject* FindOutputByClassName(TString classname);
-		
 		template<typename T>
 		T GetParam(TString& key);
-		
-		template<typename T>
-		void GetParam(const char* key, T& target);
-		
-		template<typename T>
-		void GetParam(TString& key, T& target);
-		
 		template<typename T>
 		T GetParam(const char* key);
 		
 		template<typename T>
+		void GetParam(TString& key, T& target);	
+		template<typename T>
+		void GetParam(const char* key, T& target);	
+		
+		template<typename T>
 		void SetParam(TString& key, T object);
-
 		template<typename T>
 		void SetParam(const char* key, T object);
 		
 		template<typename T>
+		T GetVariable(TString& key);
+		template<typename T>
+		T GetVariable(const char* key);
+		
+		template<typename T>
+		void GetVariable(TString& key, T& target);
+		template<typename T>
 		void GetVariable(const char* key, T& target);
 		
-	protected:		
-		TList* fInput;
-		TSelectorList* fOutput;
-		PAFVariableContainer* fVariables; //! Do not stream
-		PAFVariableContainer* fSelectorParams;
+		TBranch* GetBranch(TString& key);
+		TBranch* GetBranch(const char* key);
 		
-		//bool fMergeThroughFile;
-		//TCounterUI* fNEventsProcessed;
-		//bool fPrintInputParameters;
+		void GetBranch(TString& key, TBranch*& branch);
+		void GetBranch(const char* key, TBranch*& branch);
+		
+	protected:		
+		TList* 					fInput;
+		TSelectorList* 			fOutput;
+		PAFVariableContainer* 	fVariables; //! Do not stream
+		PAFVariableContainer* 	fSelectorParams;
+
 		TH1F* CreateH1F(const char* name, const char* title,
 				Int_t nbinsx, Double_t* bins);
 		TH1F* CreateH1F(const char* name, const char* title,
                   Int_t nbinsx, Axis_t xlow, Axis_t xup);
+		TTree* CreateTree(const char* name, const char* title);
 
 	ClassDef(PAFChainItemSelector, 1);
 };
@@ -100,8 +100,7 @@ inline void PAFChainItemSelector::GetParam(TString& key, T& target)
 template <typename T>
 inline void PAFChainItemSelector::GetParam(const char* key, T& target)
 {
-	TString tkey(key);
-	GetParam(tkey, target);
+	target = GetParam<T>(key);
 }
 
 template <typename T>
@@ -118,9 +117,26 @@ inline void PAFChainItemSelector::SetParam(const char* key, T object)
 }
 
 template <typename T>
-inline void PAFChainItemSelector::GetVariable(const char* key, T& target)
+T PAFChainItemSelector::GetVariable(TString& key)
 {
-	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
-	target = leaf->GetTypedValue<T>();
+	return GetVariable<T>(key.Data());
 }
 
+template <typename T>
+T PAFChainItemSelector::GetVariable(const char* key)
+{
+	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
+	return leaf->GetTypedValue<T>();
+}
+
+template <typename T>
+inline void PAFChainItemSelector::GetVariable(TString& key, T& target)
+{
+	target = GetVariable<T>(key.Data());
+}
+
+template <typename T>
+inline void PAFChainItemSelector::GetVariable(const char* key, T& target)
+{
+	target = GetVariable<T>(key);
+}
