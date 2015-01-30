@@ -26,7 +26,6 @@
 #include "../computing/PAFBaseSelector.h"
 #include "../variable_container/PAFVariableContainer.h"
 
-#define PAFANALYSIS_NAME "PAFAnalysis"
 #define DEFAULT_COMPILE_ON_SLAVES false
 
 class PAFProject 

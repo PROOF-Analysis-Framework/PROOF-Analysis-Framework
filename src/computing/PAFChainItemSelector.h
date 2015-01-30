@@ -13,13 +13,16 @@
 
 #include <TTree.h>
 #include <TObject.h>
-
+#include "TLeaf.h"
 #include "PAFISelector.h"
+
+#include "../PAF.h"
+#include "TString.h"
 
 class PAFChainItemSelector : public PAFISelector
 {
 	public:
-		PAFChainItemSelector() : fInput(0), fOutput(0), fData(0), fSelectorParams(0) {}
+		PAFChainItemSelector() : fInput(0), fOutput(0), fVariables(0), fSelectorParams(0) {}
 		virtual ~PAFChainItemSelector() {}
 		
 		virtual void Initialise() {}
@@ -28,7 +31,7 @@ class PAFChainItemSelector : public PAFISelector
 		virtual void Summary() {}	
 
 		void SetPROOFData(TList* input, TSelectorList* output);
-		void SetPAFData(PAFAnalysis* data, PAFVariableContainer* selectorParams);
+		void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams);
 
 		TTree* CreateTree(const char* name, const char* title);
 
@@ -55,10 +58,13 @@ class PAFChainItemSelector : public PAFISelector
 		template<typename T>
 		void SetParam(const char* key, T object);
 		
+		template<typename T>
+		void GetVariable(const char* key, T& target);
+		
 	protected:		
 		TList* fInput;
 		TSelectorList* fOutput;
-		PAFAnalysis* fData; //! Do not stream
+		PAFVariableContainer* fVariables; //! Do not stream
 		PAFVariableContainer* fSelectorParams;
 		
 		//bool fMergeThroughFile;
@@ -98,7 +104,6 @@ inline void PAFChainItemSelector::GetParam(const char* key, T& target)
 	GetParam(tkey, target);
 }
 
-
 template <typename T>
 inline void PAFChainItemSelector::SetParam(TString& key, T object)
 {
@@ -111,3 +116,11 @@ inline void PAFChainItemSelector::SetParam(const char* key, T object)
 	TString tkey(key);
 	SetParam(tkey, object);
 }
+
+template <typename T>
+inline void PAFChainItemSelector::GetVariable(const char* key, T& target)
+{
+	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
+	target = leaf->GetTypedValue<T>();
+}
+

@@ -10,7 +10,6 @@
 #include "../PAF.h"
 
 #include "PAFProject.h"
-#include "MakeSimpleSelector.h"
 #include "../util/PAFNamedContainer.h"
 
 ClassImp(PAFProject);
@@ -48,23 +47,6 @@ void PAFProject::LoadLibraries()
 		fExecutionEnvironment->LoadLibrary(fLibraries[i]);
 }
 
-void PAFProject::PreparePAFAnalysis()
-{ 
-	TFile* file = new TFile(((TFileInfo*)fDataFiles->GetList()->At(0))->GetCurrentUrl()->GetFile()); //FIXME Smells too bad.
-	TTree* tree = (TTree*)file->Get("Tree");
-	TString dest = gSystem->GetBuildDir();
-	dest += "/PAFAnalysis/";
-	gSystem->mkdir(dest.Data());
-
-	MakeSimpleSelector(tree, dest);
-	file->Close();
-
-	PAFPackage* package = new PAFPackageTSelector(PAFANALYSIS_NAME);
-	UploadAndEnablePackage(package);
-
-	delete file;
-}
-
 void PAFProject::AddDynamicHistograms()
 {
     for (unsigned int i = 0; i < fDynamicHistograms.size(); i++) {
@@ -90,8 +72,7 @@ void CreateSessionDir()
 void PAFProject::PrepareEnvironment()
 {
 	CreateSessionDir();
-	PreparePAFAnalysis();
-
+	
 	UploadAndEnablePackages(fPackages);
 	UploadAndEnablePackages(fSelectorPackages);
 
@@ -129,7 +110,7 @@ void PAFProject::Run()
 	PreparePAFSelector();
 	AddDynamicHistograms();
 
-	PAFBaseSelector* selector = CreateObject<PAFBaseSelector*>(PAFANALYSIS_NAME); 
+	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	
 	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFSelector", fPAFSelector));

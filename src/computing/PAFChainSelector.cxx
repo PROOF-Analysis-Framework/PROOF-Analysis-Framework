@@ -42,9 +42,9 @@ void PAFChainSelector::SetPROOFData(TList* input, TSelectorList* output)
 }
 
 
-void PAFChainSelector::SetPAFData(PAFAnalysis* data, PAFVariableContainer* selectorParams)
+void PAFChainSelector::SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams)
 {
 	for(unsigned int i = 0; i < fSelectors.size(); i++)
-		fSelectors[i]->SetPAFData(data, selectorParams);
+		fSelectors[i]->SetPAFData(variables, selectorParams);
 }
 

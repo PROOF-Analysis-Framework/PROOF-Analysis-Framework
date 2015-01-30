@@ -27,7 +27,13 @@ class PAFVariableContainer : public TObject
 		void Add(TString& key, T value);
 		
 		template<typename T>
+		void Add(const char* key, T value);
+		
+		template<typename T>
 		T Get(TString& key);
+		
+		template<typename T>
+		T Get(const char* key);
 	private:
 		std::map<TString, PAFItemVariableContainer*> fPairs;
 		
@@ -41,9 +47,22 @@ inline void PAFVariableContainer::Add(TString& key, T value)
 }
 
 template <typename T>
+inline void PAFVariableContainer::Add(const char* key, T value)
+{
+	TString tkey(key);
+	Add(tkey, value);
+}
+
+template <typename T>
 inline T PAFVariableContainer::Get(TString& key)
 {
 	PAFItemVariableContainer* result = fPairs[key];
-	
 	return ((PAFGenericItemVariableContainer<T>*)result)->Get();
+}
+
+template <typename T>
+inline T PAFVariableContainer::Get(const char* key)
+{
+	TString tkey(key);
+	return Get<T>(tkey);
 }

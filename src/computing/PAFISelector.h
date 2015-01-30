@@ -15,8 +15,6 @@
 
 #include "../variable_container/PAFVariableContainer.h"
 
-class PAFAnalysis;
-
 class PAFISelector : public TObject
 {
 	public:
@@ -29,7 +27,7 @@ class PAFISelector : public TObject
 		virtual void Summary() {}
 		
 		virtual void SetPROOFData(TList*, TSelectorList* ) {}
-		virtual void SetPAFData(PAFAnalysis* data, PAFVariableContainer* selectorParams) {}
+		virtual void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams) {}
 
 	ClassDef(PAFISelector, 1);
 };

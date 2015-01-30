@@ -9,11 +9,28 @@
 
 #include "PAFBaseSelector.h"
 #include "../util/PAFNamedContainer.h"
+#include "TLeaf.h"
 
 #include "../PAF.h"
 #include "TString.h"
 
 ClassImp(PAFBaseSelector);
+
+void PAFBaseSelector::Init(TTree* tree)
+{
+	delete fVariables;
+	fVariables = new PAFVariableContainer();
+	
+	fTree = tree;
+	
+	TObjArray* leaves = tree->GetListOfLeaves();
+	Int_t nb = leaves->GetEntriesFast();
+	for (Int_t i = 0; i < nb; ++i) {
+		TObject* leaf = leaves->UncheckedAt(i);
+		fVariables->Add(leaf->GetName(), leaf);
+	}
+	PAF_DEBUG("PAFBaseSelector", "Successfully ROOT File configuration");
+}
 
 void PAFBaseSelector::SlaveBegin(TTree* tree)
 {
@@ -27,7 +44,7 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 	fPAFISelector->SetPROOFData(fInput, fOutput);
 	
 	PAF_DEBUG("PAFBaseSelector", "Setting up PAF data");
-	fPAFISelector->SetPAFData((PAFAnalysis*)this, fSelectorParams);
+	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 
 	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
 	fPAFISelector->Initialise();
@@ -35,8 +52,8 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 
 Bool_t PAFBaseSelector::Process(Long64_t entry)
 {
-	fChain->GetTree()->GetEntry(entry);
-
+	fTree->GetEntry(entry);
+	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 	fPAFISelector->InsideLoop();
 	return kTRUE;
 }
@@ -44,6 +61,6 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 void PAFBaseSelector::Terminate()
 {	
 	fPAFISelector->SetPROOFData(fInput, fOutput);	
-	fPAFISelector->SetPAFData((PAFAnalysis*)this, fSelectorParams);
+	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
   	fPAFISelector->Summary();
 }

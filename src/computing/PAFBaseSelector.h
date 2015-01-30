@@ -13,6 +13,7 @@
 #include <TChain.h>
 #include <TSelector.h>
 #include "TString.h"
+#include "TTree.h"
 
 #include "PAFISelector.h"
 #include "../util/PAFNamedContainer.h"
@@ -20,17 +21,14 @@
 
 #include "../PAF.h"
 
-class PAFAnalysis;
-
 class PAFBaseSelector : public TSelector {
 	public:
-		PAFBaseSelector() : fChain(0), fPAFISelector(0), fSelectorParams(0) { }
+		PAFBaseSelector() : fTree(0), fPAFISelector(0), fSelectorParams(0), fVariables(0) { }
 		virtual ~PAFBaseSelector() { }
 		virtual Int_t   Version() const { return 2; }
+		virtual void 	Init(TTree* tree);
 		virtual void    SlaveBegin(TTree* tree);
-		virtual Bool_t  Notify() { return kTRUE; }
 		virtual Bool_t  Process(Long64_t entry);
-		virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
 		virtual void    Terminate();
 
 		void SetPAFSelector(PAFISelector* pafiselector) { fPAFISelector = pafiselector; }
@@ -47,12 +45,12 @@ class PAFBaseSelector : public TSelector {
 		
 		template <typename T>
 		T FindPAFInput(const char* name);
-		
-		TTree* 	        fChain; //!
 	
 	protected:
+		TTree*					fTree;
 		PAFISelector* 			fPAFISelector;
 		PAFVariableContainer* 	fSelectorParams;
+		PAFVariableContainer*	fVariables;//!
 
 	ClassDef(PAFBaseSelector, 1);
 };
@@ -64,7 +62,6 @@ inline T PAFBaseSelector::FindInput(TString& name)
 	for(int i = 0; i < fInput->GetEntries(); i++)
 	{
 		tmpobj = fInput->At(i);
-		PAF_DEBUG("PAFBaseSelector", TString::Format("Checking: %s", tmpobj->GetName()).Data());
 		if(name.EqualTo(tmpobj->GetName()))
 			return (T)tmpobj;
 	}
