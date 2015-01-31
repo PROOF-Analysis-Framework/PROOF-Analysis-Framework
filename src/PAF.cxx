@@ -8,6 +8,7 @@
 */
 
 #include "PAF.h"
+
 #include "logger/PAFLogger.h"
 
 void PAF_DEBUG(const char* module, const char* msg)

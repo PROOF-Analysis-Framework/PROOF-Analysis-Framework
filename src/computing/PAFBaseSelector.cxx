@@ -8,11 +8,10 @@
 */
 
 #include "PAFBaseSelector.h"
-#include "../util/PAFNamedContainer.h"
+
 #include "TLeaf.h"
 
 #include "../PAF.h"
-#include "TString.h"
 
 ClassImp(PAFBaseSelector);
 

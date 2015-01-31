@@ -1,5 +1,5 @@
 /**
-	@brief Abstract class where the users should place his own code using inheritance.
+	@brief Abstract class where users should place his own code using inheritance.
 	@file PAFChainItemSelector.h
 	@class PAFChainItemSelector
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
@@ -9,13 +9,14 @@
 
 #pragma once
 
+#include "PAFISelector.h"
+
 #include "TLeaf.h"
 #include "TString.h"
 
 #include "TH1F.h"
 #include "TTree.h"
 
-#include "PAFISelector.h"
 #include "../PAF.h"
 
 class PAFChainItemSelector : public PAFISelector

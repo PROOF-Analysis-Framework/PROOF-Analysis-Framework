@@ -8,6 +8,7 @@
 */
 
 #include "PAFLogger.h"
+
 #include "PAFConsoleLogger.h"
 
 //Default values

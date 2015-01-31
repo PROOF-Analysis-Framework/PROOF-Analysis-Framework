@@ -1,13 +1,13 @@
 /**
 	@brief Container class which allow us a dynamic name assign to any TObject.
-	@file PAFNamedContainer.cxx
-	@class PAFNamedContainer
+	@file PAFNamedItem.cxx
+	@class PAFNamedItem
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2015-01-22
 */
 
-#include "PAFNamedContainer.h"
+#include "PAFNamedItem.h"
 
-ClassImp(PAFNamedContainer);
+ClassImp(PAFNamedItem);
 

@@ -9,14 +9,12 @@
 
 #pragma once
 
-#include <TROOT.h>
-#include <TChain.h>
-#include <TSelector.h>
-#include "TString.h"
 #include "TTree.h"
+#include "TSelector.h"
+#include "TString.h"
 
 #include "PAFISelector.h"
-#include "../util/PAFNamedContainer.h"
+#include "../util/PAFNamedItem.h"
 #include "../variable_container/PAFVariableContainer.h"
 
 #include "../PAF.h"
@@ -72,7 +70,7 @@ inline T PAFBaseSelector::FindInput(TString& name)
 template <typename T>
 inline T PAFBaseSelector::FindPAFInput(TString& name)
 {
-	PAFNamedContainer* result = FindInput<PAFNamedContainer*>(name);
+	PAFNamedItem* result = FindInput<PAFNamedItem*>(name);
 	
 	if(!result)
 		return NULL;

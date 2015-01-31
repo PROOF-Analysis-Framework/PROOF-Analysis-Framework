@@ -9,10 +9,11 @@
 
 #pragma once
 
-#include <TProof.h>
-#include <TString.h>
+#include "TObject.h"
 
-class PAFPackage {
+#include "TString.h"
+
+class PAFPackage : public TObject {
 	public:
 		PAFPackage() : fName() {}
 		PAFPackage(const char* name) : fName(name) {}

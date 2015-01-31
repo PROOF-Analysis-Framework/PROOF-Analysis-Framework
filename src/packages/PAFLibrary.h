@@ -9,10 +9,11 @@
 
 #pragma once
 
-#include <TProof.h>
-#include <TString.h>
+#include "TObject.h"
 
-class PAFLibrary {
+#include "TString.h"
+
+class PAFLibrary : public TObject {
 	public:
 		PAFLibrary() : fFileName() {}
 		PAFLibrary(const char* fileName) : fFileName(fileName) {}

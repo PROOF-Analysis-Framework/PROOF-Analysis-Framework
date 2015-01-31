@@ -11,8 +11,7 @@
 
 #include "PAFPackage.h"
 
-class PAFPackageSelector : public PAFPackage
-{
+class PAFPackageSelector : public PAFPackage {
 	public:
 		PAFPackageSelector() : PAFPackage() {}
 		PAFPackageSelector(const char* name) : PAFPackage(name) {}

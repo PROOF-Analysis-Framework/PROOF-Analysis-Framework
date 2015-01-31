@@ -16,3 +16,6 @@
 	xAdd primitive types, pointers and TObject to the following LinkDef: PAFProject, variable_container/PAFGenericItemVariableContainer.
 2015-01-29
 	-Implement PAFVariableContainer destructor.
+2015-01-31
+	-#define to const replacements
+	-Use templates in PAFNamedItem.

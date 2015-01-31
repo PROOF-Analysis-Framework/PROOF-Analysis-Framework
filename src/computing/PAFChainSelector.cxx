@@ -47,4 +47,3 @@ void PAFChainSelector::SetPAFData(PAFVariableContainer* variables, PAFVariableCo
 	for(unsigned int i = 0; i < fSelectors.size(); i++)
 		fSelectors[i]->SetPAFData(variables, selectorParams);
 }
-

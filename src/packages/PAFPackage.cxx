@@ -9,6 +9,8 @@
 
 #include "PAFPackage.h"
 
+#include "TSystem.h"
+
 ClassImp(PAFPackage);
 
 void PAFPackage::PreparePackage()

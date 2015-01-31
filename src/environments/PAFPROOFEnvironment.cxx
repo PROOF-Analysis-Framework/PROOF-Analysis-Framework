@@ -8,6 +8,7 @@
 */
 
 #include "PAFPROOFEnvironment.h"
+
 #include "TString.h"
 
 PAFPROOFEnvironment::~PAFPROOFEnvironment()

@@ -1,5 +1,5 @@
 /**
-	@brief Abstract class where the users should place his own code using inheritance.
+	@brief Abstract class where users should place his own code using inheritance.
 	@file PAFChainItemSelector.cxx
 	@class PAFChainItemSelector
 	@author I. Gonzalez Caballero, J. Delgado Fernandez

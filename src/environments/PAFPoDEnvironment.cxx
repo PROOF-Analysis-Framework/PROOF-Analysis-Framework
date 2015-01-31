@@ -9,6 +9,7 @@
 
 #include "PAFPoDEnvironment.h"
 
+#include "TSystem.h"
 #include "TMath.h"
 
 PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeOut)

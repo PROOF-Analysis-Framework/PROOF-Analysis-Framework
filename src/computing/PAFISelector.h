@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include <TList.h>
-#include <TSelectorList.h>
-#include <TObject.h>
+#include "TObject.h"
+
+#include "TList.h"
+#include "TSelectorList.h"
 
 #include "../variable_container/PAFVariableContainer.h"
 
@@ -26,7 +27,7 @@ class PAFISelector : public TObject
 		virtual void InsideLoop() {}
 		virtual void Summary() {}
 		
-		virtual void SetPROOFData(TList*, TSelectorList* ) {}
+		virtual void SetPROOFData(TList* fInput, TSelectorList* fOutput) {}
 		virtual void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams) {}
 
 	ClassDef(PAFISelector, 1);

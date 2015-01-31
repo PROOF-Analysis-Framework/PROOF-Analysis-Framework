@@ -7,10 +7,13 @@
 	@date 2014-12-04
 */
 
-#include "../PAF.h"
-
 #include "PAFProject.h"
-#include "../util/PAFNamedContainer.h"
+
+#include "TSystem.h"
+
+#include "../util/PAFNamedItem.h"
+
+#include "../PAF.h"
 
 ClassImp(PAFProject);
 
@@ -112,8 +115,8 @@ void PAFProject::Run()
 
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	
-	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFParams", fInputParameters));
-	fExecutionEnvironment->AddInput(new PAFNamedContainer("PAFSelector", fPAFSelector));
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
 	
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
