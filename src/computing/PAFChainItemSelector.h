@@ -17,6 +17,8 @@
 #include "TH1F.h"
 #include "TTree.h"
 
+#include "../computing_helpers/PAFFindHelper.h"
+
 #include "../PAF.h"
 
 class PAFChainItemSelector : public PAFISelector
@@ -63,6 +65,9 @@ class PAFChainItemSelector : public PAFISelector
 		
 		void GetBranch(TString& key, TBranch*& branch);
 		void GetBranch(const char* key, TBranch*& branch);
+		
+		TObject* FindInput(TString& name) { return PAFFindHelper::Find<TObject*>(fInput, name); }
+		TObject* FindOutput(TString& name) { return PAFFindHelper::Find<TObject*>(fOutput, name); }
 		
 	protected:		
 		TList* 					fInput;

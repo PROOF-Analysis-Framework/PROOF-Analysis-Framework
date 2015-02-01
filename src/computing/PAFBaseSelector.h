@@ -35,15 +35,6 @@ class PAFBaseSelector : public TSelector {
 		void SetSelectorParams(PAFVariableContainer* selectorparams) { fSelectorParams = selectorparams; }
 		PAFVariableContainer* GetSelectorParams() { return fSelectorParams; }
 		
-		template <typename T>
-		T FindInput(TString& name);
-		
-		template <typename T>
-		T FindPAFInput(TString& name);
-		
-		template <typename T>
-		T FindPAFInput(const char* name);
-	
 	protected:
 		TTree*					fTree;
 		PAFISelector* 			fPAFISelector;
@@ -52,35 +43,3 @@ class PAFBaseSelector : public TSelector {
 
 	ClassDef(PAFBaseSelector, 1);
 };
-
-template <typename T>
-inline T PAFBaseSelector::FindInput(TString& name)
-{
-	TObject* tmpobj = 0;
-	for(int i = 0; i < fInput->GetEntries(); i++)
-	{
-		tmpobj = fInput->At(i);
-		if(name.EqualTo(tmpobj->GetName()))
-			return (T)tmpobj;
-	}
-	PAF_ERROR("PAFBaseSelector", "Object not found");
-	return NULL;
-}
-
-template <typename T>
-inline T PAFBaseSelector::FindPAFInput(TString& name)
-{
-	PAFNamedItem* result = FindInput<PAFNamedItem*>(name);
-	
-	if(!result)
-		return NULL;
-	
-	return (T)result->GetObject();
-}
-
-template <typename T>
-inline T PAFBaseSelector::FindPAFInput(const char* name)
-{
-	TString tname(name);
-	return FindPAFInput<T>(tname);
-}

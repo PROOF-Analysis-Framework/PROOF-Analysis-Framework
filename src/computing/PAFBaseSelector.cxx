@@ -11,6 +11,8 @@
 
 #include "TLeaf.h"
 
+#include "../computing_helpers/PAFFindHelper.h"
+
 #include "../PAF.h"
 
 ClassImp(PAFBaseSelector);
@@ -36,10 +38,10 @@ void PAFBaseSelector::Init(TTree* tree)
 void PAFBaseSelector::SlaveBegin(TTree* tree)
 {
 	PAF_DEBUG("PAFBaseSelector", "Searching for PAFParams");
-	fSelectorParams = FindPAFInput<PAFVariableContainer*>("PAFParams");
+	fSelectorParams = PAFFindHelper::FindPAFNamed<PAFVariableContainer*>(fInput, "PAFParams");
 	
 	PAF_DEBUG("PAFBaseSelector", "Searching for PAFSelector");
-	fPAFISelector = FindPAFInput<PAFISelector*>("PAFSelector");
+	fPAFISelector = PAFFindHelper::FindPAFNamed<PAFISelector*>(fInput, "PAFSelector");
 
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetPROOFData(fInput, fOutput);
