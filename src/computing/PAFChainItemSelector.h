@@ -15,6 +15,9 @@
 #include "TString.h"
 
 #include "TH1F.h"
+#include "TH1D.h"
+#include "TH2F.h"
+#include "TProfile.h"
 #include "TTree.h"
 
 #include "../computing_helpers/PAFFindHelper.h"
@@ -65,21 +68,48 @@ class PAFChainItemSelector : public PAFISelector
 		
 		void GetBranch(TString& key, TBranch*& branch);
 		void GetBranch(const char* key, TBranch*& branch);
+
+		//Helpers methods
 		
-		TObject* FindInput(TString& name) { return PAFFindHelper::Find<TObject*>(fInput, name); }
-		TObject* FindOutput(TString& name) { return PAFFindHelper::Find<TObject*>(fOutput, name); }
+		TObject* FindInput(TString& name);
+		TObject* FindOutput(TString& name);
+		
+		TTree* CreateTree(const char* name, const char* title);
+
+		TH1F* CreateH1F(const char* name, const char* title, 
+						Int_t nbinsx, Axis_t xlow, Axis_t xup);
+		TH1F* CreateH1F(const char* name, const char* title,
+						Int_t nbinsx, Float_t* bins);
+		TH1F* CreateH1F(const char* name, const char* title,
+						Int_t nbinsx, Double_t* bins);
+
+		TH1D* CreateH1D(const char* name, const char* title,
+						Int_t nbinsx, Axis_t xlow, Axis_t xup);
+		TH1D* CreateH1D(const char* name, const char* title,
+						Int_t nbinsx, Double_t* bins);
+
+		TH2F* CreateH2F(const char* name, const char* title,
+						Int_t nbinsx, Float_t* xbins,
+						Int_t nbinsy, Float_t* ybins);
+		TH2F* CreateH2F(const char* name, const char* title,
+						Int_t nbinsx, Double_t* xbins,
+						Int_t nbinsy, Double_t* ybins);
+		TH2F* CreateH2F(const char* name, const char* title,
+						Int_t nbinsx, Double_t* xbins,
+						Int_t nbinsy, Axis_t ylow, Axis_t yup);
+		TH2F* CreateH2F(const char* name, const char* title,
+						Int_t nbinsx, Axis_t xlow, Axis_t xup,
+						Int_t nbinsy, Axis_t ylow, Axis_t yup);
+  
+		TProfile* CreateProfile(const char* name, const char* title,
+						Int_t nbinsx, Axis_t xlow, Axis_t xup,
+						Axis_t ylow, Axis_t yup);
 		
 	protected:		
 		TList* 					fInput;
 		TSelectorList* 			fOutput;
 		PAFVariableContainer* 	fVariables; //! Do not stream
 		PAFVariableContainer* 	fSelectorParams;
-
-		TH1F* CreateH1F(const char* name, const char* title,
-				Int_t nbinsx, Double_t* bins);
-		TH1F* CreateH1F(const char* name, const char* title,
-                  Int_t nbinsx, Axis_t xlow, Axis_t xup);
-		TTree* CreateTree(const char* name, const char* title);
 
 	ClassDef(PAFChainItemSelector, 1);
 };

@@ -56,13 +56,14 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 Bool_t PAFBaseSelector::Process(Long64_t entry)
 {
 	fTree->GetEntry(entry);
+	fPAFISelector->SetPROOFData(fInput, fOutput);
 	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 	fPAFISelector->InsideLoop();
 	return kTRUE;
 }
 
 void PAFBaseSelector::Terminate()
-{	
+{
 	fPAFISelector->SetPROOFData(fInput, fOutput);	
 	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
   	fPAFISelector->Summary();
