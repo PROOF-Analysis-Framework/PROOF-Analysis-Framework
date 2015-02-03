@@ -44,6 +44,27 @@ void PAFChainItemSelector::GetBranch(const char* key, TBranch*& target)
 	target = GetBranch(key);
 }
 
+bool PAFChainItemSelector::ExistsBranch(TString& key)
+{
+	return fVariables->Exists(key);
+}
+
+bool PAFChainItemSelector::ExistsBranch(const char* key)
+{
+	TString tkey(key);
+	return  ExistsBranch(tkey);
+}
+
+bool PAFChainItemSelector::ExistsVariable(TString& key)
+{
+	return ExistsBranch(key);
+}
+
+bool PAFChainItemSelector::ExistsVariable(const char* key)
+{
+	return ExistsBranch(key);
+}
+
 TObject* PAFChainItemSelector::FindInput(TString& name)
 {
 	return PAFFindHelper::Find<TObject*>(fInput, name);

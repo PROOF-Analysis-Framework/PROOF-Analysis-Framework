@@ -68,6 +68,12 @@ class PAFChainItemSelector : public PAFISelector
 		
 		void GetBranch(TString& key, TBranch*& branch);
 		void GetBranch(const char* key, TBranch*& branch);
+		
+		bool ExistsVariable(TString& key);
+		bool ExistsVariable(const char* key);
+		
+		bool ExistsBranch(TString& key);
+		bool ExistsBranch(const char* key);
 
 		//Helpers methods
 		
@@ -165,7 +171,7 @@ T PAFChainItemSelector::GetVariable(const char* key)
 	TBranch* branch = leaf->GetBranch();
 	
 	if(branch->TestBit(kDoNotProcess)){
-		PAF_DEBUG("PAFChainItemSelector", TString::Format("Key not found: %s", key));
+		PAF_DEBUG("PAFChainItemSelector", TString::Format("Variable not loaded: %s", key));
 		branch->SetStatus(kTRUE);
 		branch->GetEntry(branch->GetReadEntry());
 	}

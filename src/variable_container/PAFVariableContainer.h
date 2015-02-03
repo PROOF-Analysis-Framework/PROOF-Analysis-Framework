@@ -36,6 +36,9 @@ class PAFVariableContainer : public TObject
 		template<typename T>
 		T Get(const char* key);
 		
+		bool Exists(TString& key);
+		bool Exists(const char* key);
+		
 		std::vector<TString>* GetKeys();
 		
 	private:

@@ -11,7 +11,7 @@
 
 class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 	public:
-		PAFSequentialEnvironment() : PAFIExecutionEnvironment(), fInputList(), fFeedback() {}
+		PAFSequentialEnvironment() : PAFIExecutionEnvironment(), fInputList(), fFeedbackCanvas() {}
 		virtual ~PAFSequentialEnvironment() {}
 
 		virtual void AddInput(TObject* obj);
@@ -30,6 +30,5 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 
 	protected:
 		TList 					fInputList;
-		TList 					fFeedback;
 		PAFVariableContainer 	fFeedbackCanvas;
 };

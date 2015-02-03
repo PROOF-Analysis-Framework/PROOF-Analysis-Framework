@@ -2,6 +2,8 @@
 
 #include "../PAF/computing/PAFChainItemSelector.h"
 
+#include "../PAF/PAF.h"
+
 #include <TH1F.h>
 
 class Benchmark : public PAFChainItemSelector {

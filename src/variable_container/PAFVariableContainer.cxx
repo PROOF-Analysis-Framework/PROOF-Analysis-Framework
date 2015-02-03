@@ -11,6 +11,17 @@
 
 ClassImp(PAFVariableContainer);
 
+bool PAFVariableContainer::Exists(TString& key)
+{
+	return fPairs[key] != NULL;
+}
+
+bool PAFVariableContainer::Exists(const char* key)
+{
+	TString tkey (key);
+	return Exists(tkey);
+}
+
 std::vector< TString >* PAFVariableContainer::GetKeys()
 {
 	std::vector<TString>* result = new std::vector<TString>();
