@@ -1,3 +1,4 @@
 # Compiled objects
 *.so
 *.o
+*.kdev4

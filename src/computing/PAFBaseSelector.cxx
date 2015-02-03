@@ -21,7 +21,8 @@ void PAFBaseSelector::Init(TTree* tree)
 {
 	delete fVariables;
 	fVariables = new PAFVariableContainer();
-	
+	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
+
 	fTree = tree;
 	
 	fTree->SetBranchStatus("*", 0);
@@ -45,9 +46,6 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetPROOFData(fInput, fOutput);
-	
-	PAF_DEBUG("PAFBaseSelector", "Setting up PAF data");
-	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 
 	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
 	fPAFISelector->Initialise();
@@ -56,8 +54,6 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 Bool_t PAFBaseSelector::Process(Long64_t entry)
 {
 	fTree->GetEntry(entry);
-	fPAFISelector->SetPROOFData(fInput, fOutput);
-	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 	fPAFISelector->InsideLoop();
 	return kTRUE;
 }
