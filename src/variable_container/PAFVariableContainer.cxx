@@ -10,3 +10,14 @@
 #include "PAFVariableContainer.h"
 
 ClassImp(PAFVariableContainer);
+
+std::vector< TString >* PAFVariableContainer::GetKeys()
+{
+	std::vector<TString>* result = new std::vector<TString>();
+	
+	for (std::map<TString,PAFItemVariableContainer*>::iterator it=fPairs.begin();
+		 it!=fPairs.end(); ++it)
+		 result->push_back(it->first);
+    
+    return result;
+}

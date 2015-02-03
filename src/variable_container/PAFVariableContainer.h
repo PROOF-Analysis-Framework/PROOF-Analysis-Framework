@@ -10,6 +10,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include "TObject.h"
 #include "TString.h"
@@ -34,6 +35,9 @@ class PAFVariableContainer : public TObject
 		
 		template<typename T>
 		T Get(const char* key);
+		
+		std::vector<TString>* GetKeys();
+		
 	private:
 		std::map<TString, PAFItemVariableContainer*> fPairs;
 		

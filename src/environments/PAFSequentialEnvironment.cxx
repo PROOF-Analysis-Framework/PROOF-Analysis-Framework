@@ -4,13 +4,18 @@
 	@class PAFSequentialEnvironment
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
-	@date 2014-02-02
+	@date 2015-02-02
 */
 
 #include "PAFSequentialEnvironment.h"
+
+#include <vector>
+
 #include "TSystem.h"
 #include "TFile.h"
 #include "TFileInfo.h"
+#include "TCanvas.h"
+#include "TH1.h"
 
 #include "../PAF.h"
 
@@ -21,12 +26,12 @@ void PAFSequentialEnvironment::AddInput(TObject* obj)
 
 void PAFSequentialEnvironment::AddFeedback(const char* name)
 {
-	//TODO
+	TObject* result = new TCanvas(name, name);
+	fFeedbackCanvas.Add(name, result);
 }
 
 TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
 {
-	//TODO
 	return NULL;
 }
 
@@ -43,8 +48,10 @@ void PAFSequentialEnvironment::Process(TFileCollection* dataFiles,
 
 		selector->Init(tree);
 		
-		for(int entry = 0; entry < tree->GetEntriesFast(); entry++)
+		for(int entry = 0; entry < tree->GetEntriesFast(); entry++){
 			selector->Process(entry);
+			DrawFeedback(selector);
+		}
 		
 		delete tree;
 	}
@@ -56,6 +63,20 @@ void PAFSequentialEnvironment::Process(TFileCollection* dataFiles,
 										PAFBaseSelector* selector,
 										TString& outputFile)
 {
+	
+}
+
+void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)
+{
+	std::vector<TString>* feedbacks = fFeedbackCanvas.GetKeys();
+	for(unsigned int i = 0; i < feedbacks->size(); i++){
+		TString item = feedbacks->at(i);
+		TCanvas* canvas = fFeedbackCanvas.Get<TCanvas*>(item);
+		canvas->cd();
+		TH1* th1 = dynamic_cast<TH1*>(selector->GetOutputList()->FindObject(item));
+		if(th1) th1->Draw();
+		canvas->Update();
+	}
 }
 
 bool PAFSequentialEnvironment::UploadPackage(PAFPackage* package)

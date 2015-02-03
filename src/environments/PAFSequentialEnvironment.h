@@ -4,14 +4,14 @@
 	@class PAFSequentialEnvironment
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
-	@date 2014-02-02
+	@date 2015-02-02
 */
 
 #include "PAFIExecutionEnvironment.h"
 
 class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 	public:
-		PAFSequentialEnvironment() : PAFIExecutionEnvironment(), fInputList() {}
+		PAFSequentialEnvironment() : PAFIExecutionEnvironment(), fInputList(), fFeedback() {}
 		virtual ~PAFSequentialEnvironment() {}
 
 		virtual void AddInput(TObject* obj);
@@ -26,5 +26,10 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 		virtual bool LoadLibrary(PAFLibrary* library);
 
 	protected:
-		TList fInputList;
+		virtual void DrawFeedback(TSelector* selector);
+
+	protected:
+		TList 					fInputList;
+		TList 					fFeedback;
+		PAFVariableContainer 	fFeedbackCanvas;
 };
