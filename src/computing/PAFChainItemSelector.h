@@ -175,7 +175,9 @@ T PAFChainItemSelector::GetVariable(const char* key)
 		branch->SetStatus(kTRUE);
 		branch->GetEntry(branch->GetReadEntry());
 	}
-	return leaf->GetTypedValue<T>();
+
+	void* result = branch->GetAddress() ? branch->GetAddress() : leaf->GetValuePointer();
+	return *((T*)result);
 }
 
 template <typename T>

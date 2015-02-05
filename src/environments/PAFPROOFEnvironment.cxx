@@ -68,6 +68,7 @@ bool PAFPROOFEnvironment::LoadLibrary(PAFLibrary* library)
 
 void PAFPROOFEnvironment::LoadPAF()
 {
+	fSession->Exec("TH1* th1 = 0"); //TODO Remove this trick. Needed in Ubuntu.
 	PAFLibrary* paf = new PAFLibrary("$PAFPATH/build/libPAF.so");
 	LoadLibrary(paf);
 	delete paf;

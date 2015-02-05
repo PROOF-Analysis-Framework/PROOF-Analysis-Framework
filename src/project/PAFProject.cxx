@@ -121,6 +121,8 @@ void PAFProject::Run()
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
 	
+	fDataFiles->SetDefaultTreeName("TTree");
+	
 	if(fOutputFile.Length() == 0)
 		fExecutionEnvironment->Process(fDataFiles, selector);
 	else

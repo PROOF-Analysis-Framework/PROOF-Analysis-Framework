@@ -46,6 +46,8 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetPROOFData(fInput, fOutput);
+	fPAFISelector->SetPAFData(fVariables, fSelectorParams); //TODO Should be replaced
+
 
 	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
 	fPAFISelector->Initialise();

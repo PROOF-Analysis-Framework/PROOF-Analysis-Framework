@@ -14,6 +14,7 @@
 #include "TString.h"
 #include "TFileInfo.h"
 #include "TFileCollection.h"
+#include "TDataSetManager.h"
 
 #include "../environments/PAFIExecutionEnvironment.h"
 #include "../packages/PAFPackage.h"

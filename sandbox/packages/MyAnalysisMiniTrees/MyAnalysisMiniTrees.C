@@ -1,5 +1,4 @@
 #include "MyAnalysisMiniTrees.h"
-#include "../PAFAnalysis/PAFAnalysis.h"
 
 #include <iostream>
 
