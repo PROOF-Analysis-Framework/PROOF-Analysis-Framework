@@ -11,16 +11,16 @@
 
 ClassImp(PAFChainItemSelector);
 
-void PAFChainItemSelector::SetPROOFData(TList* input, TSelectorList* output)
+void PAFChainItemSelector::SetStaticData(TList* input, TSelectorList* output, PAFVariableContainer* selectorParams)
 {
 	fInput = input;
 	fOutput = output;
+	fSelectorParams = selectorParams;
 }
 
-void PAFChainItemSelector::SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams)
+void PAFChainItemSelector::SetDynamicData(PAFVariableContainer* variables)
 {
 	fVariables = variables;
-	fSelectorParams = selectorParams;
 }
 
 TBranch* PAFChainItemSelector::GetBranch(const char* key)

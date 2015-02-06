@@ -22,7 +22,7 @@
 class PAFBaseSelector : public TSelector {
 	public:
 		PAFBaseSelector() : fTree(0), fPAFISelector(0), fSelectorParams(0), fVariables(0) { }
-		virtual ~PAFBaseSelector() { }
+		virtual ~PAFBaseSelector();
 		virtual Int_t   Version() const { return 2; }
 		virtual void 	Init(TTree* tree);
 		virtual void    SlaveBegin(TTree* tree);

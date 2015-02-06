@@ -12,7 +12,7 @@
 
 ####################################################################
 # Default values of some variables
-silent=0
+silent=1
 setup=1
 debugoutput=0
 isremote=0
@@ -85,9 +85,8 @@ compilepackage() {
     fi
     # XXX Be aware of any missing files in this list (--exclude CVS does not work on Mac)
     #tar $verbose -c -z -f $basepath/$parpackagename -C $basepath $packagename
-    echo $basepath$packagename
 	cd $basepath$packagename
-	make
+	make -s
 }
 
 

@@ -17,11 +17,15 @@
 
 ClassImp(PAFBaseSelector);
 
+PAFBaseSelector::~PAFBaseSelector()
+{
+	delete fVariables;
+}
+
 void PAFBaseSelector::Init(TTree* tree)
 {
 	delete fVariables;
 	fVariables = new PAFVariableContainer();
-	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
 
 	fTree = tree;
 	
@@ -33,6 +37,7 @@ void PAFBaseSelector::Init(TTree* tree)
 		TObject* leaf = leaves->UncheckedAt(i);
 		fVariables->Add(leaf->GetName(), leaf);
 	}
+	fPAFISelector->SetDynamicData(fVariables);
 	PAF_DEBUG("PAFBaseSelector", "Successfully ROOT File configuration");
 }
 
@@ -45,9 +50,7 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 	fPAFISelector = PAFFindHelper::FindPAFNamed<PAFISelector*>(fInput, "PAFSelector");
 
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
-	fPAFISelector->SetPROOFData(fInput, fOutput);
-	fPAFISelector->SetPAFData(fVariables, fSelectorParams); //TODO Should be replaced
-
+	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
 
 	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
 	fPAFISelector->Initialise();
@@ -62,7 +65,7 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 
 void PAFBaseSelector::Terminate()
 {
-	fPAFISelector->SetPROOFData(fInput, fOutput);	
-	fPAFISelector->SetPAFData(fVariables, fSelectorParams);
+	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);	
+	fPAFISelector->SetDynamicData(fVariables);
   	fPAFISelector->Summary();
 }

@@ -11,6 +11,13 @@
 
 ClassImp(PAFVariableContainer);
 
+PAFVariableContainer::~PAFVariableContainer()
+{
+	for (std::map<TString,PAFItemVariableContainer*>::iterator it=fPairs.begin();
+		 it!=fPairs.end(); ++it)
+		 delete it->second;
+}
+
 bool PAFVariableContainer::Exists(TString& key)
 {
 	return fPairs[key] != NULL;

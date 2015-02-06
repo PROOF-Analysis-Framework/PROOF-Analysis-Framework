@@ -35,15 +35,15 @@ void PAFChainSelector::Summary()
 		fSelectors[i]->Summary();
 }
 
-void PAFChainSelector::SetPROOFData(TList* input, TSelectorList* output)
+void PAFChainSelector::SetStaticData(TList* input, TSelectorList* output, PAFVariableContainer* selectorParams)
 {
 	for(unsigned int i = 0; i < fSelectors.size(); i++)
-		fSelectors[i]->SetPROOFData(input, output);
+		fSelectors[i]->SetStaticData(input, output, selectorParams);
 }
 
 
-void PAFChainSelector::SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams)
+void PAFChainSelector::SetDynamicData(PAFVariableContainer* variables)
 {
 	for(unsigned int i = 0; i < fSelectors.size(); i++)
-		fSelectors[i]->SetPAFData(variables, selectorParams);
+		fSelectors[i]->SetDynamicData(variables);
 }

@@ -27,8 +27,8 @@ class PAFISelector : public TObject
 		virtual void InsideLoop() {}
 		virtual void Summary() {}
 		
-		virtual void SetPROOFData(TList* fInput, TSelectorList* fOutput) {}
-		virtual void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams) {}
+		virtual void SetStaticData(TList* fInput, TSelectorList* fOutput, PAFVariableContainer* selectorParams) {}
+		virtual void SetDynamicData(PAFVariableContainer* variables) {}
 
 	ClassDef(PAFISelector, 1);
 };

@@ -35,8 +35,8 @@ class PAFChainItemSelector : public PAFISelector
 		virtual void InsideLoop() {}
 		virtual void Summary() {}	
 
-		void SetPROOFData(TList* input, TSelectorList* output);
-		void SetPAFData(PAFVariableContainer* variables, PAFVariableContainer* selectorParams);
+		void SetStaticData(TList* fInput, TSelectorList* fOutput, PAFVariableContainer* selectorParams);
+		void SetDynamicData(PAFVariableContainer* variables);
 
 		template<typename T>
 		T GetParam(TString& key);
@@ -171,7 +171,7 @@ T PAFChainItemSelector::GetVariable(const char* key)
 	TBranch* branch = leaf->GetBranch();
 	
 	if(branch->TestBit(kDoNotProcess)){
-		PAF_DEBUG("PAFChainItemSelector", TString::Format("Variable not loaded: %s", key));
+		PAF_DEBUG("PAFChainItemSelector", TString::Format("Loading variable: %s", key));
 		branch->SetStatus(kTRUE);
 		branch->GetEntry(branch->GetReadEntry());
 	}

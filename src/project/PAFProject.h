@@ -14,7 +14,6 @@
 #include "TString.h"
 #include "TFileInfo.h"
 #include "TFileCollection.h"
-#include "TDataSetManager.h"
 
 #include "../environments/PAFIExecutionEnvironment.h"
 #include "../packages/PAFPackage.h"
@@ -27,16 +26,14 @@
 #include "../computing/PAFBaseSelector.h"
 #include "../variable_container/PAFVariableContainer.h"
 
-#define DEFAULT_COMPILE_ON_SLAVES false
-
 class PAFProject 
 {
 	public:
-		PAFProject() : fExecutionEnvironment(0), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
+		PAFProject() : fExecutionEnvironment(0), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(COMPILE_ON_SLAVES) {}
 
-		PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(executionEnvironment), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(DEFAULT_COMPILE_ON_SLAVES) {}
+		PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(executionEnvironment), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(COMPILE_ON_SLAVES) {}
 
-		virtual ~PAFProject() {}
+		virtual ~PAFProject();
 
 		void SetExecutionEnvironment(PAFIExecutionEnvironment* executionEnvironment) {fExecutionEnvironment = executionEnvironment;}
 		PAFIExecutionEnvironment* GetExecutionEnvironment() {return fExecutionEnvironment;}

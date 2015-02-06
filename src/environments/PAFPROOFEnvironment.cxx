@@ -13,6 +13,7 @@
 
 PAFPROOFEnvironment::~PAFPROOFEnvironment()
 {
+	fSession->Close();
 	delete fSession;
 }
 

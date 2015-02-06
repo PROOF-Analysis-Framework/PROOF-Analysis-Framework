@@ -30,11 +30,12 @@ class PAFPackage : public TObject {
 		
 	protected:
 		virtual TString GetPreparePackageCommand();
-		TString fName;
 		
 		TString GetPackagesDir();
 		TString GetBuildDir();
 		
+	protected:
+		TString fName;
 		
 	ClassDef(PAFPackage, 1);
 };

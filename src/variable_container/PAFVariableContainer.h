@@ -22,7 +22,7 @@ class PAFVariableContainer : public TObject
 {
 	public:
 		PAFVariableContainer() : TObject(), fPairs() {}		
-		virtual ~PAFVariableContainer(){}
+		virtual ~PAFVariableContainer();
 		
 		template<typename T>
 		void Add(TString& key, T value);
