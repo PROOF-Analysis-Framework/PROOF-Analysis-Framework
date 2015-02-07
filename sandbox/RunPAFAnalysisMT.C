@@ -17,14 +17,6 @@ void RunPAFAnalysisMT()
 	//myProject->AddDataFile("/pool/ciencias/MC_Summer12_53X/Legacy/Tree_ZJets_Madgraph_1.root");
 	//myProject->AddDataFile("/pool/ciencias/MC_Summer12_53X/Legacy/Tree_ZJets_Madgraph_2.root");
 
-	//TString sample("sample");
-	//myProject->SetInputParam("sample", sample);
-	//myProject->SetInputParam("luminosity", 5311.0);
-	//myProject->SetInputParam("xs_weight", 1);
-	
-	//myProject->AddPackage(new PAFPackage("LeptonSF"));
-	//myProject->AddPackage(new PAFPackage("PUWeight"));
-	//myProject->AddSelectorPackage(new PAFPackageSelector("MyAnalysisWZ"));
 	myProject->AddSelectorPackage(new PAFPackageSelector("Benchmark"));
 	
 	myProject->Run();

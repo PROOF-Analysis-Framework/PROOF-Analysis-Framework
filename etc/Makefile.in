@@ -71,7 +71,7 @@ $(TARGET).$(ObjSuf): $(TARGETHEAD)
 
 $(TARGET)Dict.$(SrcSuf): $(TARGETHEAD)
 	@echo "Generating dictionary $@..."
-	@rootcint -f $@ -c $(MYINCLUDES) $^
+	@rootcint -v4 -f $@ -c $(MYINCLUDES) $^
 	@sync
 
 
