@@ -4,7 +4,7 @@
 	@class PAFISettings
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
-	@date 2014-02-07
+	@date 2015-02-07
 */
 
 #pragma once
@@ -18,7 +18,7 @@ class PAFISettings : public TObject {
 		PAFISettings() {}
 		virtual ~PAFISettings() {}
 
-		virtual TString& GetPAFPATH() = 0;
+		virtual TString* GetPAFPATH() = 0;
 		virtual std::vector<TString*>* GetPackagesDirectories()= 0;
 		
 	ClassDef(PAFISettings, 1);

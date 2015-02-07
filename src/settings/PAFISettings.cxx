@@ -4,7 +4,7 @@
 	@class PAFISettings
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
-	@date 2014-02-07
+	@date 2015-02-07
 */
 
 #include "PAFISettings.h"
