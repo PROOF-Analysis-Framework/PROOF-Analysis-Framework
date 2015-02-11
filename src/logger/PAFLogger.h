@@ -10,7 +10,6 @@
 #pragma once
 
 #include "PAFILogger.h"
-#include "PAFConsoleLogger.h"
 
 class PAFLogger
 {

@@ -11,27 +11,29 @@
 
 #include "logger/PAFLogger.h"
 
+PAFLogger* fLogger = new PAFLogger();
+
 void PAF_DEBUG(const char* module, const char* msg)
 {
-	PAFLogger::Log(Debug, module, msg);
+	fLogger->Log(DEBUG, module, msg);
 }
 
 void PAF_INFO(const char* module, const char* msg)
 {
-	PAFLogger::Log(Info, module, msg);
+	fLogger->Log(INFO, module, msg);
 }
 
 void PAF_WARN(const char* module, const char* msg)
 {
-	PAFLogger::Log(Warn, module, msg);
+	fLogger->Log(WARN, module, msg);
 }
 
 void PAF_ERROR(const char* module, const char* msg)
 {
-	PAFLogger::Log(Error, module, msg);
+	fLogger->Log(ERROR, module, msg);
 }
 
 void PAF_FATAL(const char* module, const char* msg)
 {
-	PAFLogger::Log(Fatal, module, msg);
+	fLogger->Log(FATAL, module, msg);
 }

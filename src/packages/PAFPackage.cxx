@@ -24,18 +24,18 @@ void PAFPackage::PreparePackage()
 
 TString PAFPackage::GetPreparePackageCommand()
 {
-	return TString::Format("$PAFPATH/bin/PreparePackage.sh -s -d %s %s", GetPackagesDir().Data(), GetName().Data());
+	return TString::Format("%s/bin/PreparePackage.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data() , GetPackagesDir().Data(), GetName().Data());
 }
 
 void PAFPackage::CreateParFile()
 {
-	TString creteparfile_command = TString::Format("$PAFPATH/bin/MakeParFile.sh -s -d %s %s", GetPackagesDir().Data(), GetName().Data());
+	TString creteparfile_command = TString::Format("%s/bin/MakeParFile.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data(), GetPackagesDir().Data(), GetName().Data());
 	gSystem->Exec(creteparfile_command);
 }
 
 void PAFPackage::CompileAsLibrary()
 {
-	TString compileaslibrary_command = TString::Format("$PAFPATH/bin/CompileLibrary.sh -s -d %s %s", GetPackagesDir().Data(), GetName().Data());
+	TString compileaslibrary_command = TString::Format("%s/bin/CompileLibrary.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data(),  GetPackagesDir().Data(), GetName().Data());
 	gSystem->Exec(compileaslibrary_command);
 }
 

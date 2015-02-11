@@ -14,5 +14,3 @@ void PAF_INFO(const char* module, const char* msg);
 void PAF_WARN(const char* module, const char* msg);
 void PAF_ERROR(const char* module, const char* msg);
 void PAF_FATAL(const char* module, const char* msg);
-
-const bool COMPILE_ON_SLAVES = false;

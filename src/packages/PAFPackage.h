@@ -12,11 +12,12 @@
 #include "TObject.h"
 
 #include "TString.h"
+#include "../settings/PAFISettings.h"
 
 class PAFPackage : public TObject {
 	public:
 		PAFPackage() : fName() {}
-		PAFPackage(const char* name) : fName(name) {}
+		PAFPackage(PAFISettings* pafsettings, const char* name) : fPAFSettings(pafsettings), fName(name) {}
 		virtual ~PAFPackage() {}
 
 		void PreparePackage();
@@ -24,9 +25,13 @@ class PAFPackage : public TObject {
 		void CompileAsLibrary();
 
 		TString GetName() { return fName; }
+		void SetName(const char* name) { fName = TString(name); }
 		
 		TString GetLibraryFileName();
 		TString GetParFileName();
+		
+		void SetSettings(PAFISettings* pafsettings) { fPAFSettings = pafsettings; }
+		PAFISettings* GetSettings() { return fPAFSettings; }
 		
 	protected:
 		virtual TString GetPreparePackageCommand();
@@ -35,6 +40,7 @@ class PAFPackage : public TObject {
 		TString GetBuildDir();
 		
 	protected:
+		PAFISettings* fPAFSettings;
 		TString fName;
 		
 	ClassDef(PAFPackage, 1);

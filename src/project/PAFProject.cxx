@@ -12,16 +12,46 @@
 #include "TSystem.h"
 
 #include "../util/PAFNamedItem.h"
+#include "../settings/PAFEnvironmentVariableSettings.h"
 
 #include "../PAF.h"
 
 ClassImp(PAFProject);
+
+PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
+bool			DEFAULT_COMPILE_ON_SLAVES = false;
+
+
+PAFProject::PAFProject() : fExecutionEnvironment(0), fInputParameters(0), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(0), fOutputFile(), fDynamicHistograms(), fPAFSettings(0), fCompileOnSlaves(false)
+{
+	fInputParameters = new PAFVariableContainer();
+	fDataFiles = new TFileCollection("PAFFiles");
+	fPAFSettings = DEFAULT_PAFISETTINGS;
+	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
+}
+
+PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(0), fInputParameters(0), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(0), fOutputFile(), fDynamicHistograms(), fPAFSettings(0), fCompileOnSlaves(false) 
+{
+	fExecutionEnvironment = executionEnvironment;
+	fInputParameters = new PAFVariableContainer();
+	fDataFiles = new TFileCollection("PAFFiles");
+	fPAFSettings = DEFAULT_PAFISETTINGS;
+	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
+}
+
 
 PAFProject::~PAFProject()
 {
 	delete fInputParameters;
 	delete fDataFiles;
 }
+
+void PAFProject::SetPAFSettings(PAFISettings* settings)
+{
+	delete fPAFSettings;
+	fPAFSettings = settings;
+}
+
 
 void PAFProject::UploadAndEnablePackage(PAFPackage* package)
 {
@@ -118,11 +148,11 @@ void PAFProject::Run()
 	PrepareEnvironment();
 	PreparePAFSelector();
 	AddDynamicHistograms();
-
-	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
+	
+	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);

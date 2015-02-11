@@ -13,7 +13,7 @@
 
 //Default values
 PAFILogger* PAFLogger::fLogger = new PAFConsoleLogger();
-PAFLogLevel PAFLogger::fLogLevel = Debug;
+PAFLogLevel PAFLogger::fLogLevel = DEBUG;
 
 void PAFLogger::Log(PAFLogLevel loglevel, const char* module, const char* msg)
 {

@@ -8,5 +8,5 @@
 
 #pragma once
 
-enum PAFLogLevel { Debug, Info, Warn, Error, Fatal};
+enum PAFLogLevel { DEBUG, INFO, WARN, ERROR, FATAL};
 static const char* PAFLogLevelStrings[] = { "DEBUG", "INFO", "WARN", "ERROR", "FATAL" };

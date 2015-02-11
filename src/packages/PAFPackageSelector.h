@@ -14,7 +14,7 @@
 class PAFPackageSelector : public PAFPackage {
 	public:
 		PAFPackageSelector() : PAFPackage() {}
-		PAFPackageSelector(const char* name) : PAFPackage(name) {}
+		PAFPackageSelector(PAFISettings* pafsettings, const char* name) : PAFPackage(pafsettings, name) {}
 	
 	ClassDef(PAFPackageSelector, 1);
 };

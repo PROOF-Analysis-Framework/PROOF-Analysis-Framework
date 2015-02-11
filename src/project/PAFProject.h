@@ -15,10 +15,10 @@
 #include "TFileInfo.h"
 #include "TFileCollection.h"
 
+#include "../settings/PAFISettings.h"
 #include "../environments/PAFIExecutionEnvironment.h"
 #include "../packages/PAFPackage.h"
 #include "../packages/PAFPackageSelector.h"
-#include "../packages/PAFPackageTSelector.h"
 #include "../packages/PAFLibrary.h"
 #include "../computing/PAFISelector.h"
 #include "../computing/PAFChainSelector.h"
@@ -29,9 +29,9 @@
 class PAFProject 
 {
 	public:
-		PAFProject() : fExecutionEnvironment(0), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection()), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(COMPILE_ON_SLAVES) {}
+		PAFProject();
 
-		PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(executionEnvironment), fInputParameters(new PAFVariableContainer()), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(new TFileCollection("PAFFiles")), fOutputFile(), fDynamicHistograms(), fCompileOnSlaves(COMPILE_ON_SLAVES) {}
+		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 
 		virtual ~PAFProject();
 
@@ -50,6 +50,9 @@ class PAFProject
 		void AddDataFile(const char* dataFile) {fDataFiles->Add(dataFile);}
 		void AddDataFile(TFileInfo* dataFile) {fDataFiles->Add(dataFile);}
 		TFileCollection* GetDataFiles() {return fDataFiles;}
+		
+		void SetPAFSettings(PAFISettings* settings);
+		PAFISettings* GetPAFSettings(){ return fPAFSettings; }
 
 		void SetOutputFile(const char* fileName) {fOutputFile = TString(fileName);}
 		TString GetOutputFile() {return fOutputFile;}
@@ -77,6 +80,7 @@ class PAFProject
 		TFileCollection*                    fDataFiles;
 		TString                             fOutputFile;
 		std::vector<TString>				fDynamicHistograms;
+		PAFISettings*						fPAFSettings;
 		bool								fCompileOnSlaves;
 
 	private:
