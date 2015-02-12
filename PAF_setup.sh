@@ -10,3 +10,5 @@ PAFPATH=$(cd ${THIS};pwd); export PAFPATH
 
 
 export PATH=$PATH:$PAFPATH/bin
+export PAFREPOSITORIES=~/Documents/PROOF-Analysis-Framework/sandbox/packages
+export ROOTSYS=~/Documents/ROOT/root-6.02.04/

@@ -17,7 +17,7 @@
 class PAFPackage : public TObject {
 	public:
 		PAFPackage() : fName() {}
-		PAFPackage(PAFISettings* pafsettings, const char* name) : fPAFSettings(pafsettings), fName(name) {}
+		PAFPackage(PAFISettings* pafsettings, const char* name);
 		virtual ~PAFPackage() {}
 
 		void PreparePackage();
@@ -36,8 +36,8 @@ class PAFPackage : public TObject {
 	protected:
 		virtual TString GetPreparePackageCommand();
 		
+		TString GetPackageDir();
 		TString GetPackagesDir();
-		TString GetBuildDir();
 		
 	protected:
 		PAFISettings* fPAFSettings;

@@ -11,7 +11,15 @@
 
 #include "TSystem.h"
 
+#include "../PAF.h"
+
 ClassImp(PAFPackage);
+
+PAFPackage::PAFPackage(PAFISettings* pafsettings, const char* name)
+ : fPAFSettings(pafsettings), fName(name)
+{
+	
+}
 
 void PAFPackage::PreparePackage()
 {
@@ -24,7 +32,10 @@ void PAFPackage::PreparePackage()
 
 TString PAFPackage::GetPreparePackageCommand()
 {
-	return TString::Format("%s/bin/PreparePackage.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data() , GetPackagesDir().Data(), GetName().Data());
+	TString package_dir = GetPackageDir();
+	if(package_dir == "")
+		PAF_ERROR("PAFPackage", "Package not found in repositories.");
+	return TString::Format("%s/bin/PreparePackage.sh -s -d %s -r %s %s", fPAFSettings->GetPAFPATH()->Data() , GetPackagesDir().Data(), package_dir.Data(), GetName().Data());
 }
 
 void PAFPackage::CreateParFile()
@@ -49,14 +60,20 @@ TString PAFPackage::GetParFileName()
 	return TString::Format("%s%s.par", GetPackagesDir().Data(), GetName().Data());
 }
 
+TString PAFPackage::GetPackageDir()
+{
+	std::vector<TString*>* package_directories = fPAFSettings->GetPackagesDirectories();
+	
+	for(int i = 0; i < package_directories->size(); i++){
+		TString package_filename = TString::Format("%s/%s", package_directories->at(i)->Data(), fName.Data());
+		if(gSystem->OpenDirectory(package_filename))
+			return *(package_directories->at(i));
+	}
+	return TString("");
+}
+
 TString PAFPackage::GetPackagesDir()
 {
 	return TString::Format("%s/packages/", gSystem->GetBuildDir());
 }
-
-TString PAFPackage::GetBuildDir()
-{
-	return TString::Format("%s/", gSystem->GetBuildDir());
-}
-
 
