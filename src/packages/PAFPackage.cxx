@@ -15,19 +15,14 @@
 
 ClassImp(PAFPackage);
 
-PAFPackage::PAFPackage(PAFISettings* pafsettings, const char* name)
- : fPAFSettings(pafsettings), fName(name)
-{
-	
-}
-
 void PAFPackage::PreparePackage()
 {
 	TString packages_dir = GetPackagesDir();
 	gSystem->MakeDirectory(packages_dir);
 
 	TString build_command = GetPreparePackageCommand();
-	gSystem->Exec(build_command);
+	TString response_build_command = gSystem->GetFromPipe(build_command);
+	PAF_DEBUG("PAFPackage", response_build_command);
 }
 
 TString PAFPackage::GetPreparePackageCommand()
@@ -41,13 +36,15 @@ TString PAFPackage::GetPreparePackageCommand()
 void PAFPackage::CreateParFile()
 {
 	TString creteparfile_command = TString::Format("%s/bin/MakeParFile.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data(), GetPackagesDir().Data(), GetName().Data());
-	gSystem->Exec(creteparfile_command);
+	TString response_createparfile_command = gSystem->GetFromPipe(creteparfile_command);
+	PAF_DEBUG("PAFPackage", response_createparfile_command);
 }
 
 void PAFPackage::CompileAsLibrary()
 {
 	TString compileaslibrary_command = TString::Format("%s/bin/CompileLibrary.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data(),  GetPackagesDir().Data(), GetName().Data());
-	gSystem->Exec(compileaslibrary_command);
+	TString response_compileaslibrary_command = gSystem->GetFromPipe(compileaslibrary_command);
+	PAF_DEBUG("PAFPackage", response_compileaslibrary_command);
 }
 
 TString PAFPackage::GetLibraryFileName()
@@ -64,7 +61,7 @@ TString PAFPackage::GetPackageDir()
 {
 	std::vector<TString*>* package_directories = fPAFSettings->GetPackagesDirectories();
 	
-	for(int i = 0; i < package_directories->size(); i++){
+	for(unsigned int i = 0; i < package_directories->size(); i++){
 		TString package_filename = TString::Format("%s/%s", package_directories->at(i)->Data(), fName.Data());
 		if(gSystem->OpenDirectory(package_filename))
 			return *(package_directories->at(i));

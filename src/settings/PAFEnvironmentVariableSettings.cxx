@@ -11,6 +11,8 @@
 
 #include "TSystem.h"
 
+#include "../util/PAFStringUtil.h"
+
 ClassImp(PAFEnvironmentVariableSettings);
 
 const char* PAFPATH_VARIABLE = "PAFPATH";
@@ -34,7 +36,7 @@ std::vector< TString* >* PAFEnvironmentVariableSettings::GetPackagesDirectories(
 	if(!fPackagesDirectories)
 	{
 		TString* variables = GetEnvironmentVariable(PAFPACKAGESDIRECTORIES);
-		fPackagesDirectories = Split(variables, ":");
+		fPackagesDirectories = PAFStringUtil::Split(variables, ":");
 	}
 	return fPackagesDirectories;
 }
@@ -42,20 +44,4 @@ std::vector< TString* >* PAFEnvironmentVariableSettings::GetPackagesDirectories(
 TString* PAFEnvironmentVariableSettings::GetEnvironmentVariable(const char* variable)
 {
 	return new TString(gSystem->Getenv(variable));
-}
-
-std::vector< TString* >* PAFEnvironmentVariableSettings::Split(TString* string, const char* cs)
-{
-	std::vector<TString*>* result = new std::vector<TString*>();
-	
-	while(string->Length() > 0)
-	{
-		int indexnext = string->First(cs);
-		indexnext = indexnext > 0 ? indexnext : string->Length();
-		TString* dir = new TString(string->Data(), indexnext);
-		result->push_back(dir);
-		string->Remove(0, indexnext + 1);
-	}
-	
-	return result;
 }

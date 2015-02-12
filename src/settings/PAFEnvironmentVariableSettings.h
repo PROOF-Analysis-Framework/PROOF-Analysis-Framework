@@ -23,7 +23,6 @@ class PAFEnvironmentVariableSettings : public PAFISettings {
 
 	protected:
 		TString* GetEnvironmentVariable(const char* variable);
-		std::vector<TString*>* Split(TString* string, const char* cs);
 		
 	protected:
 		TString* fPAFPATH;

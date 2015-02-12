@@ -21,8 +21,10 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 	int n_waits = timeOut / wait;
 
 	TString podserverstatus=gSystem->GetFromPipe("pod-server status 2>&1");
-	if (podserverstatus.Contains("NOT"))
-		gSystem->Exec("pod-server start");
+	if (podserverstatus.Contains("NOT")){
+		TString response_pod_start = gSystem->GetFromPipe("pod-server start");
+		PAF_DEBUG("PAFPoDEnvironment", response_pod_start);
+	}
 
 	//Find if there are already slots being used
 	int activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
@@ -33,7 +35,8 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 	if (missingSlots > 0) {
 		TString command = Form ("pod-submit -r pbs -n %d", missingSlots);
 
-		gSystem->Exec(command);
+		TString response_command = gSystem->GetFromPipe(command);
+		PAF_DEBUG("PAFPoDEnvironment", response_command);
 
 		int slotsReady = 0;
 		int srmsize = 1;

@@ -17,7 +17,7 @@
 class PAFPackage : public TObject {
 	public:
 		PAFPackage() : fName() {}
-		PAFPackage(PAFISettings* pafsettings, const char* name);
+		PAFPackage(PAFISettings* pafsettings, const char* name) : fPAFSettings(pafsettings), fName(name) {}
 		virtual ~PAFPackage() {}
 
 		void PreparePackage();
