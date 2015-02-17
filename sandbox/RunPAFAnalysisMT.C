@@ -19,5 +19,7 @@ void RunPAFAnalysisMT()
 
 	myProject->AddSelectorPackage(new PAFPackageSelector(new PAFEnvironmentVariableSettings(), "Benchmark"));
 	
+	
+	
 	myProject->Run();
 }

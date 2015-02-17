@@ -11,6 +11,8 @@
 
 #include "PAFISelector.h"
 
+#include <vector>
+
 #include "TLeaf.h"
 #include "TString.h"
 
@@ -62,6 +64,17 @@ class PAFChainItemSelector : public PAFISelector
 		void GetVariable(TString& key, T& target);
 		template<typename T>
 		void GetVariable(const char* key, T& target);
+		
+		template<typename T>
+		T GetVariableAt(TString& key, unsigned int i);
+		template<typename T>
+		T GetVariableAt(const char* key, unsigned int i);
+		
+		template<typename T>
+		void GetVariableAt(TString& key, unsigned int i, T& target);
+		template<typename T>
+		void GetVariableAt(const char* key, unsigned int i, T& target);
+		
 		
 		TBranch* GetBranch(TString& key);
 		TBranch* GetBranch(const char* key);
@@ -181,6 +194,19 @@ T PAFChainItemSelector::GetVariable(const char* key)
 }
 
 template <typename T>
+T PAFChainItemSelector::GetVariableAt(TString& key, unsigned int i)
+{
+	return GetVariable<T>(key.Data(), i);
+}
+
+template <typename T>
+T PAFChainItemSelector::GetVariableAt(const char* key, unsigned int i)
+{
+	std::vector<T>* vector_result = GetVariable<std::vector<T>*>(key);
+	return vector_result->at(i);
+}
+
+template <typename T>
 inline void PAFChainItemSelector::GetVariable(TString& key, T& target)
 {
 	target = GetVariable<T>(key.Data());
@@ -190,4 +216,16 @@ template <typename T>
 inline void PAFChainItemSelector::GetVariable(const char* key, T& target)
 {
 	target = GetVariable<T>(key);
+}
+
+template <typename T>
+void PAFChainItemSelector::GetVariableAt(TString& key, unsigned int i, T& target)
+{
+	target = GetVariable<T>(key, i);
+}
+
+template <typename T>
+void PAFChainItemSelector::GetVariableAt(const char* key, unsigned int i, T& target)
+{
+	target = GetVariable<T>(key, i);
 }
