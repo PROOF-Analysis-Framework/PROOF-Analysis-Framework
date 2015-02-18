@@ -11,6 +11,6 @@
 
 PAFPROOFLiteEnvironment::PAFPROOFLiteEnvironment(int nslots) 
 {
-	fSession = TProof::Open("lite:///?workers=" + nslots); //FIXME Smells bad.	
+	fSession = TProof::Open("lite:///?workers=" + nslots);
 	LoadPAF();
 }

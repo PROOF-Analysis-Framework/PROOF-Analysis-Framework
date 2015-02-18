@@ -1,3 +1,12 @@
+/**
+	@brief Extension of PAFPROOFCloudEnvironment to work over PROOFCloud environments.
+	@file PAFPROOFCloudEnvironment.cxx
+	@class PAFPROOFCloudEnvironment 
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-02-18
+*/
+
 #include "PAFPROOFCloudEnvironment.h"
 
 PAFPROOFCloudEnvironment::PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode, 
