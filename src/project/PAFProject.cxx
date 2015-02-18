@@ -46,12 +46,29 @@ PAFProject::~PAFProject()
 	delete fDataFiles;
 }
 
+void PAFProject::AddPackage(const char* packageName)
+{
+	PAFPackage* result = new PAFPackage(GetPAFSettings(), packageName);
+	AddPackage(result);
+}
+
+void PAFProject::AddSelectorPackage(const char* packageSelectorName)
+{
+	PAFPackageSelector* result = new PAFPackageSelector(GetPAFSettings(), packageSelectorName);
+	AddSelectorPackage(result);
+}
+
+void PAFProject::AddLibrary(const char* libraryName)
+{
+	PAFLibrary* result = new PAFLibrary(libraryName);
+	AddLibrary(result);
+}
+
 void PAFProject::SetPAFSettings(PAFISettings* settings)
 {
 	delete fPAFSettings;
 	fPAFSettings = settings;
 }
-
 
 void PAFProject::UploadAndEnablePackage(PAFPackage* package)
 {

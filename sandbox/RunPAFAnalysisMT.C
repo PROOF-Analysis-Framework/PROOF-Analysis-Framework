@@ -17,9 +17,7 @@ void RunPAFAnalysisMT()
 	//myProject->AddDataFile("/pool/ciencias/MC_Summer12_53X/Legacy/Tree_ZJets_Madgraph_1.root");
 	//myProject->AddDataFile("/pool/ciencias/MC_Summer12_53X/Legacy/Tree_ZJets_Madgraph_2.root");
 
-	myProject->AddSelectorPackage(new PAFPackageSelector(new PAFEnvironmentVariableSettings(), "Benchmark"));
-	
-	
+	myProject->AddSelectorPackage("Benchmark");
 	
 	myProject->Run();
 }

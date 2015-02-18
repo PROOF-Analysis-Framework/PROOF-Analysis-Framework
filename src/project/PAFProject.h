@@ -38,12 +38,15 @@ class PAFProject
 		void SetExecutionEnvironment(PAFIExecutionEnvironment* executionEnvironment) {fExecutionEnvironment = executionEnvironment;}
 		PAFIExecutionEnvironment* GetExecutionEnvironment() {return fExecutionEnvironment;}
 
+		void AddPackage(const char* packageName);
 		void AddPackage(PAFPackage* package) {fPackages.push_back(package);}
 		std::vector<PAFPackage*>* GetPackages() {return &fPackages;}
 
+		void AddSelectorPackage(const char* packageSelectorName);
 		void AddSelectorPackage(PAFPackageSelector* packageSelector) {fSelectorPackages.push_back(packageSelector);}
 		std::vector<PAFPackageSelector*>* GetSelectorPackages() {return &fSelectorPackages;}
 
+		void AddLibrary(const char* libraryName);
 		void AddLibrary(PAFLibrary* library) {fLibraries.push_back(library); }
 		std::vector<PAFLibrary*>* GetLibraries() {return &fLibraries;}
 
