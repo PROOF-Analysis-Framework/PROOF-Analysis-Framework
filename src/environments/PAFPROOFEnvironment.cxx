@@ -60,7 +60,7 @@ bool PAFPROOFEnvironment::EnablePackage(PAFPackage* package)
 
 bool PAFPROOFEnvironment::LoadLibrary(PAFLibrary* library)
 {
-	TString loader = TString::Format("gSystem->Load(\"%s\");", library->GetFileName().Data()); //TODO Improve with a correct way to load libraries.
+	TString loader = TString::Format("gSystem->Load(\"%s\");", library->GetFileName().Data());
 	gSystem->Load(library->GetFileName().Data());
 	fSession->Exec(loader.Data());	
 
