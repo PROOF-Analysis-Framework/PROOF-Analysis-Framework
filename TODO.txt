@@ -10,8 +10,8 @@
 	xAdd a logger.
 	-Clean the console output.
 	-Add log messages.
-	-Implements PROOFCluster environment.
-	-Implements PFOOFCloud environment.
+	xImplements PROOFCluster environment.
+	xImplements PFOOFCloud environment.
 2015-01-28
 	xAdd primitive types, pointers and TObject to the following LinkDef: PAFProject, variable_container/PAFGenericItemVariableContainer.
 2015-01-29
