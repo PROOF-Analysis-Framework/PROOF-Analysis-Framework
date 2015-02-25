@@ -18,20 +18,27 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		PAFPROOFEnvironment() {};
 		virtual ~PAFPROOFEnvironment();
 
+		void Initialise();
+		void Dispose();
+		
 		void AddInput(TObject* obj);
 		void AddFeedback(const char* name);
 		TDrawFeedback* CreateDrawFeedback();
-		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector);
-		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile);
-
+		
 		bool UploadPackage(PAFPackage* package);
 		bool EnablePackage(PAFPackage* package);
 
 		bool LoadLibrary(PAFLibrary* library);
+		
+		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector);
+		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile);
 
 	protected:
-		TProof* fSession;
-		void LoadPAF();
+		virtual TProof* doCreateTProof() = 0;
+		virtual void LoadPAF();
 		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, const char* options);
+		
+	protected:
+		TProof* fSession;
 };
 

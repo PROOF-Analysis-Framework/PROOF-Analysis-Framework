@@ -250,6 +250,7 @@ void PAFProject::PreparePAFSelector()
 void PAFProject::Run()
 {
 	PAF_DEBUG("Project", "Launching configured project.");
+	fExecutionEnvironment->Initialise();
 	PrepareEnvironment();
 	PreparePAFSelector();
 	AddDynamicHistograms();
@@ -272,5 +273,5 @@ void PAFProject::Run()
 		fExecutionEnvironment->Process(fDataFiles, selector, fOutputFile);
 	}
 	PAF_DEBUG("PAFProject", "Process completed.");
-	//gPAFModePlugin->Finish();
+	fExecutionEnvironment->Dispose();
 }

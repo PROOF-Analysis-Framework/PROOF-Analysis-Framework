@@ -13,12 +13,19 @@
 #include "TMath.h"
 
 PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeOut)
+	: PAFPROOFEnvironment(), fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode), fTimeOut(timeOut)
 {
+}
+
+TProof* PAFPoDEnvironment::doCreateTProof()
+{
+	TProof* result = 0;
+	
 	// Interval between checks in seconds
 	int wait = 1;
 
 	// Number of waiting cycles
-	int n_waits = timeOut / wait;
+	int n_waits = fTimeOut / wait;
 
 	TString podserverstatus=gSystem->GetFromPipe("pod-server status 2>&1");
 	if (podserverstatus.Contains("NOT")){
@@ -30,7 +37,7 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 	int activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
 
 	//Initially assume no slots have been allocated
-	int missingSlots = nSlots - activeSlots;
+	int missingSlots = fNSlots - activeSlots;
 
 	if (missingSlots > 0) {
 		TString command = Form ("pod-submit -r pbs -n %d", missingSlots);
@@ -40,7 +47,7 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 
 		int slotsReady = 0;
 		int srmsize = 1;
-		int trmsize = (int) TMath::Log10(timeOut) + 1;
+		int trmsize = (int) TMath::Log10(fTimeOut) + 1;
 		int rmsize  = srmsize + trmsize + 13;
 		do {
 			gSystem->Sleep(wait*1000);
@@ -49,17 +56,18 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 			srmsize = (slotsReady == 0?1:(int) TMath::Log10(slotsReady) + 1);
 			trmsize = (int) TMath::Log10(n_waits*wait) + 1;
 			rmsize = srmsize + trmsize + 13;
-		} while((slotsReady < nSlots) && (n_waits > 0) );
+		} while((slotsReady < fNSlots) && (n_waits > 0) );
 	}
 
-	fSession = TProof::Open(gSystem->GetFromPipe("pod-info -c"));
+	result = TProof::Open(gSystem->GetFromPipe("pod-info -c"));
 
 	//Use the maximum possible slaves in each node, independently on the number
 	//of real cores or the load. Not sure of the effect here.
-	if (fSession)
-		fSession->SetParameter("PROOF_MaxSlavesPerNode", maxSlavesPerNode);
+	if (result)
+		result->SetParameter("PROOF_MaxSlavesPerNode", fMaxSlavesPerNode);
 
-	LoadPAF();
+	return result;
 }
+
 
 

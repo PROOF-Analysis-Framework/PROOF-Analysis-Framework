@@ -2,4 +2,5 @@
 *.so
 *.o
 *.kdev4
+*.root
 sandbox/.paf/

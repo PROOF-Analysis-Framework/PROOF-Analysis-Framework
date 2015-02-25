@@ -15,5 +15,12 @@ class PAFPROOFClusterEnvironment : public PAFPROOFEnvironment
 {
 	public:
 		PAFPROOFClusterEnvironment(int nSlots, int maxSlavesPerNode);
+		
+	protected:
+		TProof* doCreateTProof();
+		
+	protected:
+		int fNSlots;
+		int fMaxSlavesPerNode;
 };
 

@@ -14,9 +14,16 @@
 class PAFPROOFCloudEnvironment : public PAFPROOFEnvironment 
 {
 	public:
-		PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode,
-									bool proofRequest,
-									const TString& proofServer, 
-									int proofServerPort);
+		PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode, bool proofRequest, const TString& proofServer, int proofServerPort);
+	
+	protected:
+		TProof* doCreateTProof();
+		
+	protected:
+		int fNSlots;
+		int fMaxSlavesPerNode;
+		int fProofRequest;
+		const TString& fProofServer;
+		int fProofServerPort;
 };
 

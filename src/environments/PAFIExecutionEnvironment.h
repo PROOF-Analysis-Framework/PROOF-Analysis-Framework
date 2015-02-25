@@ -22,15 +22,19 @@ class PAFIExecutionEnvironment
 	public:
 		PAFIExecutionEnvironment() {}
 		virtual ~PAFIExecutionEnvironment() {}
+
+		virtual void Initialise() = 0;
+		virtual void Dispose() = 0;
 		
 		virtual void AddInput(TObject* obj) = 0;
 		virtual void AddFeedback(const char* name) = 0;
 		virtual TDrawFeedback* CreateDrawFeedback() = 0;
-		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector) = 0;
-		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile) = 0; 
 
 		virtual bool UploadPackage(PAFPackage* package) = 0;
 		virtual bool EnablePackage(PAFPackage* package) = 0;
 
 		virtual bool LoadLibrary(PAFLibrary* library) = 0;
+		
+		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector) = 0;
+		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile) = 0; 
 };

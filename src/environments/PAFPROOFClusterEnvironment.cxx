@@ -13,32 +13,40 @@
 #include <string>
 
 PAFPROOFClusterEnvironment::PAFPROOFClusterEnvironment(int nSlots, int maxSlavesPerNode)
+	: fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode)
+{}
+
+TProof* PAFPROOFClusterEnvironment::doCreateTProof()
 {
-	if (nSlots < 0 )
-		nSlots = 10;
+	TProof* result = 0;
+	
+	if (fNSlots < 0 )
+		fNSlots = 10;
 	
 	// Ask the desired number of workers:
 	TString slots_petition;
-	slots_petition.Form("startproof -a %d", nSlots);
+	slots_petition.Form("startproof -a %d", fNSlots);
 	// XXX: think of a better way of doing this, 
 	// startproof returns the path where the paf_url file is located
 	TString fPAFSessionDir = gSystem->GetFromPipe(slots_petition);
-file:///home/javier/Documents/PROOF-Analysis-Framework/src/environments/PAFPROOFCloudEnvironmentLinkDef.h
 	ifstream paf_url;
 	paf_url.open(fPAFSessionDir + "/paf_url");
 	if (!paf_url.is_open()) {
-		return;
+		return NULL;
 	}
 	std::string line;
 	getline(paf_url, line);
 	TString proofserverchain(line); 
 
-	fSession = TProof::Open(proofserverchain);
+	result = TProof::Open(proofserverchain);
 
 
 	//Use the maximum possible slaves in each node, independently on the number
 	//of real cores or the load
-	if (fSession)
-		fSession->SetParameter("PROOF_MaxSlavesPerNode", maxSlavesPerNode);
+	if (result)
+		result->SetParameter("PROOF_MaxSlavesPerNode", fMaxSlavesPerNode);
+
+	return result;
 }
+
 

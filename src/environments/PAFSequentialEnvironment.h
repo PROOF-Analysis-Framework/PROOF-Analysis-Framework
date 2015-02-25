@@ -14,6 +14,9 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 		PAFSequentialEnvironment();
 		virtual ~PAFSequentialEnvironment();
 
+		void Initialise() {}
+		void Dispose() {}
+		
 		virtual void AddInput(TObject* obj);
 		virtual void AddFeedback(const char* name);
 		virtual TDrawFeedback* CreateDrawFeedback();

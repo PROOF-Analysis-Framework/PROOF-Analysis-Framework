@@ -9,8 +9,11 @@
 
 #include "PAFPROOFLiteEnvironment.h"
 
-PAFPROOFLiteEnvironment::PAFPROOFLiteEnvironment(int nslots) 
+PAFPROOFLiteEnvironment::PAFPROOFLiteEnvironment(int nSlots)
+	: fNSlots(nSlots)
+{}
+
+TProof* PAFPROOFLiteEnvironment::doCreateTProof()
 {
-	fSession = TProof::Open("lite:///?workers=" + nslots);
-	LoadPAF();
+	return TProof::Open("lite:///?workers=" + fNSlots);
 }

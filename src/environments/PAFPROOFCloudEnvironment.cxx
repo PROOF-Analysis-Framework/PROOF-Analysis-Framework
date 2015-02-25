@@ -9,30 +9,36 @@
 
 #include "PAFPROOFCloudEnvironment.h"
 
-PAFPROOFCloudEnvironment::PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode, 
-													bool proofRequest,
-													const TString& proofServer,
-													int proofServerPort)
+PAFPROOFCloudEnvironment::PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode, bool proofRequest, const TString& proofServer, int proofServerPort)
+	: PAFPROOFEnvironment(), fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode), fProofRequest(proofRequest), fProofServer(proofServer), fProofServerPort(proofServerPort)
+{}
+
+TProof* PAFPROOFCloudEnvironment::doCreateTProof()
 {
-	if (nSlots < 0)
-		nSlots = 10;
+	TProof* result = 0;
+	
+	if (fNSlots < 0)
+		fNSlots = 10;
 	
 	TString proofserverchain = "";
-	if ( proofRequest ) {  // User may disable the request
+	if ( fProofRequest ) {  // User may disable the request
 		if (gSystem->Exec("proofcloud start") != 0) {
-			return;
+			return NULL;
 		}
 		proofserverchain = gSystem->GetFromPipe("proofcloud getserver");
 	} else {
 		// Build the full user@proofserver:port string
 		proofserverchain = "proof@";
-		proofserverchain += proofServer;
+		proofserverchain += fProofServer;
 		proofserverchain += ":";
-		proofserverchain += proofServerPort;
+		proofserverchain += fProofServerPort;
 	}
 
-	fSession = TProof::Open(proofserverchain);
+	result = TProof::Open(proofserverchain);
 
-	if (fSession)
-		fSession->SetParameter("PROOF_MaxSlavesPerNode", maxSlavesPerNode);
+	if (result)
+		result->SetParameter("PROOF_MaxSlavesPerNode", fMaxSlavesPerNode);
+	
+	return result;
 }
+
