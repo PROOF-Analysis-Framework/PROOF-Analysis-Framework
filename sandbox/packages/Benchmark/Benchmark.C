@@ -7,11 +7,11 @@ void Benchmark::Initialise() {
 }
 
 void Benchmark::InsideLoop() {
-	AssignVariable("T_METPF_ET", tMetEt);
-	AssignVariable("T_METPF_Phi", tMetPhi);
-	AssignVariable("T_METPF_Sig", tMetSig);
-	AssignVariable("T_METgen_ET", tMetGenEt);
-	AssignVariable("T_METgen_Phi", tMetGenPhi);
+	Assign("T_METPF_ET", tMetEt);
+	Assign("T_METPF_Phi", tMetPhi);
+	Assign("T_METPF_Sig", tMetSig);
+	Assign("T_METgen_ET", tMetGenEt);
+	Assign("T_METgen_Phi", tMetGenPhi);
 	
 	etHisto->Fill(tMetEt/tMetGenEt);
 	phiHisto->Fill(tMetPhi/tMetGenPhi);

@@ -44,7 +44,6 @@ void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* s
 
 void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* selector, const char* options)
 {
-	//FIXME Why is this throwing a "DataSet name is empty"?.
 	fSession->Process(dataFiles, selector, options);
 }
 

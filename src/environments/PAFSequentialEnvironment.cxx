@@ -19,15 +19,33 @@
 
 #include "../PAF.h"
 
+PAFSequentialEnvironment::PAFSequentialEnvironment()
+	: PAFIExecutionEnvironment()
+{
+	InitMembers();
+}
+
+PAFSequentialEnvironment::~PAFSequentialEnvironment()
+{
+	delete fInputList;
+	delete fFeedbackCanvas;
+}
+
+void PAFSequentialEnvironment::InitMembers()
+{
+	 fInputList = new TList();
+	 fFeedbackCanvas = new PAFVariableContainer();
+}
+
 void PAFSequentialEnvironment::AddInput(TObject* obj)
 {
-	fInputList.Add(obj);
+	fInputList->Add(obj);
 }
 
 void PAFSequentialEnvironment::AddFeedback(const char* name)
 {
 	TObject* result = new TCanvas(name, name);
-	fFeedbackCanvas.Add(name, result);
+	fFeedbackCanvas->Add(name, result);
 }
 
 TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
@@ -38,24 +56,26 @@ TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
 void PAFSequentialEnvironment::Process(TFileCollection* dataFiles, 
 										PAFBaseSelector* selector)
 {
-	selector->SetInputList(&fInputList);
+	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
-	
-	for(int i = 0; i < dataFiles->GetNFiles(); i++){
+	for(int i = 0; i < dataFiles->GetNFiles(); i++)
+	{
 		TFileInfo* fileinfo = (TFileInfo*)dataFiles->GetList()->At(i);
 		TFile file(fileinfo->GetCurrentUrl()->GetFile());
 		TTree* tree = (TTree*)file.Get("Tree"); //TODO There is a dataFiles->GetDefaultTreeName();
 
 		selector->Init(tree);
 		
-		for(int entry = 0; entry < tree->GetEntriesFast(); entry++){
+		for(int entry = 0; entry < tree->GetEntriesFast(); entry++)
+		{
 			selector->Process(entry);
-			DrawFeedback(selector);
+			if(entry % 10000 == 0)
+				DrawFeedback(selector);
 		}
 		
 		delete tree;
 	}
-	
+	DrawFeedback(selector);
 	selector->Terminate();
 }
 
@@ -63,15 +83,15 @@ void PAFSequentialEnvironment::Process(TFileCollection* dataFiles,
 										PAFBaseSelector* selector,
 										TString& outputFile)
 {
-	
+	PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
 }
 
 void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)
 {
-	std::vector<TString>* feedbacks = fFeedbackCanvas.GetKeys();
+	std::vector<TString>* feedbacks = fFeedbackCanvas->GetKeys();
 	for(unsigned int i = 0; i < feedbacks->size(); i++){
 		TString item = feedbacks->at(i);
-		TCanvas* canvas = fFeedbackCanvas.Get<TCanvas*>(item);
+		TCanvas* canvas = fFeedbackCanvas->Get<TCanvas*>(item);
 		canvas->cd();
 		TH1* th1 = dynamic_cast<TH1*>(selector->GetOutputList()->FindObject(item));
 		if(th1) th1->Draw();

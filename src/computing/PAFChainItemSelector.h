@@ -41,38 +41,32 @@ class PAFChainItemSelector : public PAFISelector
 		void SetDynamicData(PAFVariableContainer* variables);
 
 		template<typename T>
-		T GetParam(TString& key);
-		template<typename T>
-		T GetParam(const char* key);
-		
-		template<typename T>
-		void GetParam(TString& key, T& target);	
-		template<typename T>
-		void GetParam(const char* key, T& target);	
-		
-		template<typename T>
 		void SetParam(TString& key, T object);
 		template<typename T>
 		void SetParam(const char* key, T object);
 		
-		int GetInt(TString& key) { return Get<int>(key); }
-		int GetInt(const char* key) { return Get<int>(key); }
+		template<typename T>
+		T GetParam(TString& key);
+		template<typename T>
+		T GetParam(const char* key);
 		
-		float GetFloat(TString& key) { return Get<float>(key); }
-		float GetFloat(const char* key) { return Get<float>(key); }
+		int GetParamInt(TString& key);
+		int GetParamInt(const char* key);
 		
-		double GetDouble(TString& key) { return Get<double>(key); }
-		double GetDouble(const char* key) { return Get<double>(key); }
+		float GetParamFloat(TString& key);
+		float GetParamFloat(const char* key);
 		
-		int GetInt(TString& key, unsigned int i) { return Get<int>(key, i); }
-		int GetInt(const char* key, unsigned int i) { return Get<int>(key, i); }
+		double GetParamDouble(TString& key);
+		double GetParamDouble(const char* key);
 		
-		float GetFloat(TString& key, unsigned int i) { return Get<float>(key, i); }
-		float GetFloat(const char* key, unsigned int i) { return Get<float>(key, i); }
+		TString GetParamString(TString& key);
+		TString GetParamString(const char* key);
 		
-		double GetDouble(TString& key, unsigned int i) { return Get<double>(key, i); }
-		double GetDouble(const char* key, unsigned int i) { return Get<double>(key, i); }
-		
+		template<typename T>
+		void AssignParam(TString& key, T& target);	
+		template<typename T>
+		void AssignParam(const char* key, T& target);	
+
 		template<typename T>
 		T Get(TString& key);
 		template<typename T>
@@ -83,27 +77,43 @@ class PAFChainItemSelector : public PAFISelector
 		template<typename T>
 		T Get(const char* key, unsigned int i);
 		
-		template<typename T>
-		void AssignVariable(TString& key, T& target);
-		template<typename T>
-		void AssignVariable(const char* key, T& target);
+		int GetInt(TString& key);
+		int GetInt(const char* key);
+		
+		float GetFloat(TString& key);
+		float GetFloat(const char* key);
+		
+		double GetDouble(TString& key);
+		double GetDouble(const char* key);
+		
+		int GetInt(TString& key, unsigned int i);
+		int GetInt(const char* key, unsigned int i);
+		
+		float GetFloat(TString& key, unsigned int i);
+		float GetFloat(const char* key, unsigned int i);
+		
+		double GetDouble(TString& key, unsigned int i);
+		double GetDouble(const char* key, unsigned int i);
 		
 		template<typename T>
-		void AssignVariable(TString& key, T& target, unsigned int i);
+		void Assign(TString& key, T& target);
 		template<typename T>
-		void AssignVariable(const char* key, T& target, unsigned int i);
+		void Assign(const char* key, T& target);
+		
+		template<typename T>
+		void Assign(TString& key, T& target, unsigned int i);
+		template<typename T>
+		void Assign(const char* key, T& target, unsigned int i);
+		
+		TLeaf* GetLeaf(TString& key);
+		TLeaf* GetLeaf(const char* key);
 		
 		TBranch* GetBranch(TString& key);
 		TBranch* GetBranch(const char* key);
 		
-		void GetBranch(TString& key, TBranch*& branch);
-		void GetBranch(const char* key, TBranch*& branch);
+		bool Exists(TString& key);
+		bool Exists(const char* key);
 		
-		bool ExistsVariable(TString& key);
-		bool ExistsVariable(const char* key);
-		
-		bool ExistsBranch(TString& key);
-		bool ExistsBranch(const char* key);
 
 		//Helpers methods
 		
@@ -151,31 +161,6 @@ class PAFChainItemSelector : public PAFISelector
 };
 
 template <typename T>
-inline T PAFChainItemSelector::GetParam(TString& key)
-{
-	return fSelectorParams->Get<T>(key);
-}
-
-template <typename T>
-inline T PAFChainItemSelector::GetParam(const char* key)
-{
-	TString tkey(key);
-	return GetParam<T>(tkey);
-}
-
-template <typename T>
-inline void PAFChainItemSelector::GetParam(TString& key, T& target)
-{
-	target = GetParam<T>(key);
-}
-
-template <typename T>
-inline void PAFChainItemSelector::GetParam(const char* key, T& target)
-{
-	target = GetParam<T>(key);
-}
-
-template <typename T>
 inline void PAFChainItemSelector::SetParam(TString& key, T object)
 {
 	fSelectorParams->Add(key, object);
@@ -189,60 +174,84 @@ inline void PAFChainItemSelector::SetParam(const char* key, T object)
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(TString& key)
+inline T PAFChainItemSelector::GetParam(TString& key)
 {
-	return Get<T>(key.Data());
+	return fSelectorParams->Get<T>(key);
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(const char* key)
+inline T PAFChainItemSelector::GetParam(const char* key)
 {
-	TLeaf* leaf = fVariables->Get<TLeaf*>(key);
+	TString tkey(key);
+	return GetParam<T>(tkey);
+}
+
+template <typename T>
+inline void PAFChainItemSelector::AssignParam(TString& key, T& target)
+{
+	target = GetParam<T>(key);
+}
+
+template <typename T>
+inline void PAFChainItemSelector::AssignParam(const char* key, T& target)
+{
+	TString tKey(key);
+	AssignParam(tKey, target);
+}
+
+template <typename T>
+inline T PAFChainItemSelector::Get(TString& key)
+{
+	TLeaf* leaf = GetLeaf(key);
 	TBranch* branch = leaf->GetBranch();
-	
-	if(branch->TestBit(kDoNotProcess)){
-		PAF_DEBUG("PAFChainItemSelector", TString::Format("Loading variable: %s", key));
-		branch->SetStatus(kTRUE);
-		branch->GetEntry(branch->GetReadEntry());
-	}
 
 	void* result = branch->GetAddress() ? branch->GetAddress() : leaf->GetValuePointer();
 	return *((T*)result);
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(TString& key, unsigned int i)
+inline T PAFChainItemSelector::Get(const char* key)
 {
-	return Get<T>(key.Data(), i);
+	TString tKey(key);
+	return Get<T>(tKey);
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(const char* key, unsigned int i)
+inline T PAFChainItemSelector::Get(TString& key, unsigned int i)
 {
 	std::vector<T>* vector_result = Get<std::vector<T>*>(key);
 	return vector_result->at(i);
 }
 
 template <typename T>
-inline void PAFChainItemSelector::AssignVariable(TString& key, T& target)
+inline T PAFChainItemSelector::Get(const char* key, unsigned int i)
 {
-	target = Get<T>(key.Data());
+	TString tKey(key);
+	return Get<T>(tKey);
 }
 
 template <typename T>
-inline void PAFChainItemSelector::AssignVariable(const char* key, T& target)
+inline void PAFChainItemSelector::Assign(TString& key, T& target)
 {
 	target = Get<T>(key);
 }
 
 template <typename T>
-inline void PAFChainItemSelector::AssignVariable(TString& key, T& target, unsigned int i)
+inline void PAFChainItemSelector::Assign(const char* key, T& target)
+{
+	TString tKey(key);
+	Assign(tKey, target);
+}
+
+template <typename T>
+inline void PAFChainItemSelector::Assign(TString& key, T& target, unsigned int i)
 {
 	target = Get<T>(key, i);
 }
 
 template <typename T>
-inline void PAFChainItemSelector::AssignVariable(const char* key, T& target, unsigned int i)
+inline void PAFChainItemSelector::Assign(const char* key, T& target, unsigned int i)
 {
-	target = Get<T>(key, i);
+	TString tKey(key);
+	Assign(tKey, target, i);
 }

@@ -56,6 +56,7 @@ void PAFProject::InitMembers()
 	fSelectorPackages = new std::vector<PAFPackageSelector*>();
 	fLibraries = new std::vector<PAFLibrary*>();
 	fDataFiles = new TFileCollection("PAFFiles");
+	fOutputFile = TString();
 	fDynamicHistograms = new std::vector<TString>();
 	fPAFSettings = DEFAULT_PAFISETTINGS;
 	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
@@ -115,8 +116,9 @@ void PAFProject::AddLibrary(PAFLibrary* library)
 
 void PAFProject::AddDataFile(TString& fileName)
 {
-	TFileInfo* result = new TFileInfo(fileName);
-	AddDataFile(result);
+	//TFileInfo* result = new TFileInfo(fileName);
+	//AddDataFile(result);
+	fDataFiles->Add(fileName);
 }
 
 void PAFProject::AddDataFile(const char* fileName)
@@ -252,12 +254,12 @@ void PAFProject::Run()
 	PreparePAFSelector();
 	AddDynamicHistograms();
 	
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
+	
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
-	
-	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
-	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
 	
 	PAF_DEBUG("PAFProject", "Launching process");
 	

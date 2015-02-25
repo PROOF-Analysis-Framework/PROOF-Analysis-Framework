@@ -11,8 +11,8 @@
 
 class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 	public:
-		PAFSequentialEnvironment() : PAFIExecutionEnvironment(), fInputList(), fFeedbackCanvas() {}
-		virtual ~PAFSequentialEnvironment() {}
+		PAFSequentialEnvironment();
+		virtual ~PAFSequentialEnvironment();
 
 		virtual void AddInput(TObject* obj);
 		virtual void AddFeedback(const char* name);
@@ -26,9 +26,11 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 		virtual bool LoadLibrary(PAFLibrary* library);
 
 	protected:
+		void InitMembers();
+		
 		virtual void DrawFeedback(TSelector* selector);
 
 	protected:
-		TList 					fInputList;
-		PAFVariableContainer 	fFeedbackCanvas;
+		TList* 					fInputList;
+		PAFVariableContainer* 	fFeedbackCanvas;
 };

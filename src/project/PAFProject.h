@@ -99,7 +99,6 @@ class PAFProject
 		void PrepareEnvironment();
 		void PreparePAFSelector();
 		void AddDynamicHistograms();
-
 		
 	protected:
 		PAFIExecutionEnvironment*           fExecutionEnvironment;
