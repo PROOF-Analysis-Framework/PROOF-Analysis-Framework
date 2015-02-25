@@ -30,84 +30,103 @@ class PAFProject
 {
 	public:
 		PAFProject();
-
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
-
 		virtual ~PAFProject();
 
 		void SetExecutionEnvironment(PAFIExecutionEnvironment* executionEnvironment) {fExecutionEnvironment = executionEnvironment;}
 		PAFIExecutionEnvironment* GetExecutionEnvironment() {return fExecutionEnvironment;}
 
+		void SetPackages(std::vector<PAFPackage*>* packages) { fPackages = packages; }
+		std::vector<PAFPackage*>* GetPackages() { return fPackages; }
+		void AddPackage(TString& packageName);
 		void AddPackage(const char* packageName);
-		void AddPackage(PAFPackage* package) {fPackages.push_back(package);}
-		std::vector<PAFPackage*>* GetPackages() {return &fPackages;}
+		void AddPackage(PAFPackage* package);
 
+		void SetSelectorPackages(std::vector<PAFPackageSelector*>* selectorPackages) { fSelectorPackages = selectorPackages; } 
+		std::vector<PAFPackageSelector*>* GetSelectorPackages() { return fSelectorPackages; }
+		void AddSelectorPackage(TString& packageSelectorName);
 		void AddSelectorPackage(const char* packageSelectorName);
-		void AddSelectorPackage(PAFPackageSelector* packageSelector) {fSelectorPackages.push_back(packageSelector);}
-		std::vector<PAFPackageSelector*>* GetSelectorPackages() {return &fSelectorPackages;}
-
+		void AddSelectorPackage(PAFPackageSelector* packageSelector);
+		
+		
+		void SetLibraries(std::vector<PAFLibrary*>* libraries) { fLibraries = libraries; }
+		std::vector<PAFLibrary*>* GetLibraries() {return fLibraries;}
+		void AddLibrary(TString& libraryName);
 		void AddLibrary(const char* libraryName);
-		void AddLibrary(PAFLibrary* library) {fLibraries.push_back(library); }
-		std::vector<PAFLibrary*>* GetLibraries() {return &fLibraries;}
-
-		void AddDataFile(const char* dataFile) {fDataFiles->Add(dataFile);}
-		void AddDataFile(TFileInfo* dataFile) {fDataFiles->Add(dataFile);}
-		TFileCollection* GetDataFiles() {return fDataFiles;}
+		void AddLibrary(PAFLibrary* library);
+		
+		void SetDataFiles(TFileCollection* dataFiles) { fDataFiles = dataFiles; }
+		TFileCollection* GetDataFiles() { return fDataFiles; }
+		void AddDataFile(TString& fileName);
+		void AddDataFile(const char* fileName);
+		void AddDataFile(TFileInfo* dataFile);
 		
 		void SetPAFSettings(PAFISettings* settings);
 		PAFISettings* GetPAFSettings(){ return fPAFSettings; }
 
-		void SetOutputFile(const char* fileName) {fOutputFile = TString(fileName);}
-		TString GetOutputFile() {return fOutputFile;}
+		void SetOutputFile(TString& fileName) { fOutputFile = fileName; }
+		void SetOutputFile(const char* fileName) { fOutputFile = TString(fileName); }
+		TString GetOutputFile() { return fOutputFile; }
 
-		void SetInputParameters(PAFVariableContainer* inputParameters) {fInputParameters = inputParameters;}
-		PAFVariableContainer* GetInputParameters() {return fInputParameters;}
+		void SetInputParameters(PAFVariableContainer* inputParameters) { fInputParameters = inputParameters; }
+		PAFVariableContainer* GetInputParameters() { return fInputParameters; }
+		template <typename T>
+		void SetInputParam(TString& key, T param);
 		template <typename T>
 		void SetInputParam(const char* key, T param);
 
-		void AddDynamicHistogram(const char* histo) {fDynamicHistograms.push_back(histo);}
-		std::vector<TString> GetDynamicHistograms() {return fDynamicHistograms;}
+		void SetDynamicHistograms(std::vector<TString>* dynamicHistograms) { fDynamicHistograms = dynamicHistograms; }
+		std::vector<TString>* GetDynamicHistograms() { return fDynamicHistograms; }
+		void AddDynamicHistogram(TString& histogram);
+		void AddDynamicHistogram(const char* histogram);
 		
-		bool GetCompileOnSlaves() {return fCompileOnSlaves;}
-		void SetCompileOnSlaves(bool compileOnSlaves) {fCompileOnSlaves = compileOnSlaves;}
+		bool GetCompileOnSlaves() { return fCompileOnSlaves; }
+		void SetCompileOnSlaves(bool compileOnSlaves) { fCompileOnSlaves = compileOnSlaves; }
 
 		void Run();      
 
-	private:
-		PAFIExecutionEnvironment*           fExecutionEnvironment;
-		PAFVariableContainer*				fInputParameters;
-		PAFISelector*                       fPAFSelector;
-		std::vector<PAFPackage*>            fPackages; //!
-		std::vector<PAFPackageSelector*>    fSelectorPackages; //! FIXME: Why we should comment this to ClassDef and ClassImp?
-		std::vector<PAFLibrary*>			fLibraries; //!
-		TFileCollection*                    fDataFiles;
-		TString                             fOutputFile;
-		std::vector<TString>				fDynamicHistograms;
-		PAFISettings*						fPAFSettings;
-		bool								fCompileOnSlaves;
-
-	private:
+	protected:
+		void InitMembers();
+		
 		void UploadAndEnablePackage(PAFPackage* package);
-		void UploadAndEnablePackages(std::vector<PAFPackage*> packages);
-		void UploadAndEnablePackages(std::vector<PAFPackageSelector*> packages);
+		void UploadAndEnablePackages(std::vector<PAFPackage*>* packages);
+		void UploadAndEnablePackages(std::vector<PAFPackageSelector*>* packages);
 		void LoadLibraries();
 
 		template<typename T>
 		T CreateObject(const char* className);
-	
-		void PreparePAFAnalysis();
 		
 		void PrepareEnvironment();
 		void PreparePAFSelector();
 		void AddDynamicHistograms();
+
+		
+	protected:
+		PAFIExecutionEnvironment*           fExecutionEnvironment;
+		PAFVariableContainer*				fInputParameters;
+		PAFISelector*                       fPAFSelector;
+		std::vector<PAFPackage*>*			fPackages; //!
+		std::vector<PAFPackageSelector*>*	fSelectorPackages; //!
+		std::vector<PAFLibrary*>*			fLibraries; //!
+		TFileCollection*                    fDataFiles;
+		TString                             fOutputFile;
+		std::vector<TString>*				fDynamicHistograms;
+		PAFISettings*						fPAFSettings;
+		bool								fCompileOnSlaves;
 		
 	ClassDef(PAFProject, 1);
 };
 
 template <typename T>
+inline void PAFProject::SetInputParam(TString& key, T param)
+{
+	fInputParameters->Add(key, param);
+}
+
+template <typename T>
 inline void PAFProject::SetInputParam(const char* key, T param)
 {
 	TString tkey(key);
-	fInputParameters->Add(tkey, param);
+	SetInputParam(tkey, param);
 }
 

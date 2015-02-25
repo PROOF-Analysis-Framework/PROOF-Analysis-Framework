@@ -22,52 +22,129 @@ PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
 bool			DEFAULT_COMPILE_ON_SLAVES = false;
 
 
-PAFProject::PAFProject() : fExecutionEnvironment(0), fInputParameters(0), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(0), fOutputFile(), fDynamicHistograms(), fPAFSettings(0), fCompileOnSlaves(false)
+
+PAFProject::PAFProject()
 {
-	fInputParameters = new PAFVariableContainer();
-	fDataFiles = new TFileCollection("PAFFiles");
-	fPAFSettings = DEFAULT_PAFISETTINGS;
-	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
+	InitMembers();
 }
 
-PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment) : fExecutionEnvironment(0), fInputParameters(0), fPAFSelector(0), fPackages(), fSelectorPackages(), fLibraries(), fDataFiles(0), fOutputFile(), fDynamicHistograms(), fPAFSettings(0), fCompileOnSlaves(false) 
+PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment) 
 {
+	InitMembers();
+	
 	fExecutionEnvironment = executionEnvironment;
-	fInputParameters = new PAFVariableContainer();
-	fDataFiles = new TFileCollection("PAFFiles");
-	fPAFSettings = DEFAULT_PAFISETTINGS;
-	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
 }
 
 
 PAFProject::~PAFProject()
 {
+	delete fExecutionEnvironment;
 	delete fInputParameters;
+	delete fPAFSelector;
+	delete fPackages;
+	delete fSelectorPackages;
+	delete fLibraries;
 	delete fDataFiles;
+	delete fDynamicHistograms;
+	delete fPAFSettings;
 }
 
-void PAFProject::AddPackage(const char* packageName)
+void PAFProject::InitMembers()
+{
+	fInputParameters = new PAFVariableContainer();
+	fPackages = new std::vector<PAFPackage*>();
+	fSelectorPackages = new std::vector<PAFPackageSelector*>();
+	fLibraries = new std::vector<PAFLibrary*>();
+	fDataFiles = new TFileCollection("PAFFiles");
+	fDynamicHistograms = new std::vector<TString>();
+	fPAFSettings = DEFAULT_PAFISETTINGS;
+	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
+}
+
+void PAFProject::AddPackage(TString& packageName)
 {
 	PAFPackage* result = new PAFPackage(GetPAFSettings(), packageName);
 	AddPackage(result);
 }
 
-void PAFProject::AddSelectorPackage(const char* packageSelectorName)
+void PAFProject::AddPackage(const char* packageName)
+{
+	TString tPackageName(packageName);
+	AddPackage(tPackageName);
+}
+
+void PAFProject::AddPackage(PAFPackage* package)
+{
+	fPackages->push_back(package);
+}
+
+void PAFProject::AddSelectorPackage(TString& packageSelectorName)
 {
 	PAFPackageSelector* result = new PAFPackageSelector(GetPAFSettings(), packageSelectorName);
 	AddSelectorPackage(result);
+
+}
+
+void PAFProject::AddSelectorPackage(const char* packageSelectorName)
+{
+	TString tPackageSelectorName(packageSelectorName);
+	AddSelectorPackage(tPackageSelectorName);
+}
+
+void PAFProject::AddSelectorPackage(PAFPackageSelector* packageSelector)
+{
+	fSelectorPackages->push_back(packageSelector);
+}
+
+void PAFProject::AddLibrary(TString& libraryName)
+{
+	PAFLibrary* result = new PAFLibrary(libraryName);
+	AddLibrary(result);
 }
 
 void PAFProject::AddLibrary(const char* libraryName)
 {
-	PAFLibrary* result = new PAFLibrary(libraryName);
-	AddLibrary(result);
+	TString tLibraryName(libraryName);
+	AddLibrary(tLibraryName);
+}
+
+void PAFProject::AddLibrary(PAFLibrary* library)
+{
+	fLibraries->push_back(library);
+}
+
+void PAFProject::AddDataFile(TString& fileName)
+{
+	TFileInfo* result = new TFileInfo(fileName);
+	AddDataFile(result);
+}
+
+void PAFProject::AddDataFile(const char* fileName)
+{
+	TString tFileName(fileName);
+	AddDataFile(tFileName);
+}
+
+void PAFProject::AddDataFile(TFileInfo* dataFile)
+{
+	fDataFiles->Add(dataFile);
 }
 
 void PAFProject::SetPAFSettings(PAFISettings* settings)
 {
 	delete fPAFSettings;
 	fPAFSettings = settings;
+}
+
+void PAFProject::AddDynamicHistogram(TString& histogram)
+{
+	fDynamicHistograms->push_back(histogram);
+}
+
+void PAFProject::AddDynamicHistogram(const char* histogram)
+{
+	TString tHistogram(histogram);
+	AddDynamicHistogram(tHistogram);
 }
 
 void PAFProject::UploadAndEnablePackage(PAFPackage* package)
@@ -82,31 +159,38 @@ void PAFProject::UploadAndEnablePackage(PAFPackage* package)
 	else
 	{
 		package->CompileAsLibrary();
-		fLibraries.push_back(new PAFLibrary(package->GetLibraryFileName()));
+		fLibraries->push_back(new PAFLibrary(package->GetLibraryFileName()));
 	}
 }
-void PAFProject::UploadAndEnablePackages(std::vector<PAFPackage*> packages)
+void PAFProject::UploadAndEnablePackages(std::vector<PAFPackage*>* packages)
 {
-	for(unsigned int i = 0; i < packages.size(); i++)
-		UploadAndEnablePackage(packages[i]);
+	for(unsigned int i = 0; i < packages->size(); i++)
+	{
+		UploadAndEnablePackage(packages->at(i));
+	}
 }
 
-void PAFProject::UploadAndEnablePackages(std::vector<PAFPackageSelector*> packages)
+void PAFProject::UploadAndEnablePackages(std::vector<PAFPackageSelector*>* packages)
 {
-	for(unsigned int i = 0; i < packages.size(); i++)
-		UploadAndEnablePackage(packages[i]);
+	for(unsigned int i = 0; i < packages->size(); i++)
+	{
+		UploadAndEnablePackage(packages->at(i));
+	}
 }
 
 void PAFProject::LoadLibraries()
 {
-	for(unsigned int i = 0; i < fLibraries.size(); i++)
-		fExecutionEnvironment->LoadLibrary(fLibraries[i]);
+	for(unsigned int i = 0; i < fLibraries->size(); i++)
+	{
+		fExecutionEnvironment->LoadLibrary(fLibraries->at(i));
+	}
 }
 
 void PAFProject::AddDynamicHistograms()
 {
-    for (unsigned int i = 0; i < fDynamicHistograms.size(); i++) {
-      fExecutionEnvironment->AddFeedback(fDynamicHistograms[i]);
+    for (unsigned int i = 0; i < fDynamicHistograms->size(); i++) 
+	{
+      fExecutionEnvironment->AddFeedback(fDynamicHistograms->at(i));
     }
     fExecutionEnvironment->CreateDrawFeedback();
 }
@@ -139,21 +223,23 @@ void PAFProject::PreparePAFSelector()
 {
 	PAFISelector* result = NULL;
 
-	if(fSelectorPackages.size() == 0)
+	if(fSelectorPackages->size() == 0)
 	{
-		//TODO Throw an exception.
+		PAF_FATAL("PAFProject", "No PAFSelector specified.");
 	}
-	else if (fSelectorPackages.size() == 1)
+	else if (fSelectorPackages->size() == 1)
 	{
-		result = CreateObject<PAFChainItemSelector*>(fSelectorPackages[0]->GetName());
+		result = CreateObject<PAFChainItemSelector*>(fSelectorPackages->at(0)->GetName());
 	}
 	else
 	{
-		std::vector<PAFISelector*> selectors;
-		for(unsigned int i = 0; i < fSelectorPackages.size(); i++)
-			selectors.push_back( 
-				CreateObject<PAFISelector*>(fSelectorPackages[i]->GetName()) );
-		result = new PAFChainSelector(&selectors);
+		std::vector<PAFISelector*>* selectors = new std::vector<PAFISelector*>();
+		for(unsigned int i = 0; i < fSelectorPackages->size(); i++)
+		{	
+			selectors->push_back( 
+				CreateObject<PAFISelector*>(fSelectorPackages->at(i)->GetName()));
+		}
+		result = new PAFChainSelector(selectors);
 	}
 
 	fPAFSelector = result;
@@ -161,23 +247,28 @@ void PAFProject::PreparePAFSelector()
 
 void PAFProject::Run()
 {
-	PAF_DEBUG("Project", "Launching configured project");
+	PAF_DEBUG("Project", "Launching configured project.");
 	PrepareEnvironment();
 	PreparePAFSelector();
 	AddDynamicHistograms();
 	
-	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
-	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
-	
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
-	
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
 	
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
+	
+	PAF_DEBUG("PAFProject", "Launching process");
+	
 	if(fOutputFile.Length() == 0)
+	{
 		fExecutionEnvironment->Process(fDataFiles, selector);
+	}
 	else
+	{
 		fExecutionEnvironment->Process(fDataFiles, selector, fOutputFile);
-
+	}
+	PAF_DEBUG("PAFProject", "Process completed.");
 	//gPAFModePlugin->Finish();
 }
