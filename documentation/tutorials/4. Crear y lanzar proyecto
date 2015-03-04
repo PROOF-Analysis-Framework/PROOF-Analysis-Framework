@@ -1,0 +1,48 @@
+# PAF::Primer proyecto
+
+Llegados a este punto, pasamos a lanzar ya por fin PAF. Utilizaremos el selector creado en el anterior tutorial y un archivo ROOT que contenga la variable "T_METPF_ET".
+
+Recomendamos el siguiente flujo de trabajo dado que es el más cómodo, no hay que recordar prácticamente nada y apenas lanzaremos comandos. 
+
+Creamos un archivo RunPAFAnalysis.C, el cual no vamos a compilar, sino que CINT lo interpretará, haciéndonos el trabajo un tanto más fácil. En el archivo, lo que haremos será configurar el proyecto a nuestro gusto y lanzarlo. 
+
+El archivo, como todos las macros que CINT ejecuta, debe contener un método que se llame igual que el archivo para lanzarlo con ".x RunPAFAnalysis.C". Dicho método, crea en primer lugar el PAFProject que configuraremos para lanzar:
+```cpp
+PAFProject* myProject = new PAFProject();
+```
+Por defecto, el proyecto se está creando con una serie de configuraciones, en próximos tutoriales veremos qué nos permite configurar (entorno de ejecución, variables, ajustes de ejecución...).
+
+Ahora que tenemos un proyecto, veremos que ya podremos ejecutarlo, pero es evidente que mucho no podrá hacer porque no le hemos dicho qué queremos analizar ni con qué lo queremos analizar. Para ello, y aunque el orden no importa, daremos primero los archivos a analizar. Le paso la ruta al archivo completa:
+```cpp
+myProject->AddDataFile("/home/javier/Documents/Tree_ZJets_Madgraph_0.root");
+```
+Y por último, le indicamos que selector queremos pasar:
+```cpp
+myProject->AddSelectorPackage("MyAnalysis");
+```
+
+Él sólo se ecargará de buscar el selector en los repositorios que le hayamos indicado en la configuración (Variable PAFPATHREPOSITORIES, tutorial 2). 
+
+Y ya por fin, podemos ejecutar nuestro proyecto:
+```cpp
+myProject->Run();
+```
+Pero no nos olvidemos, éste es el script, ahora deberemos entrar en ROOT y lanzarlo, es sencillo:
+```cpp
+.x RunPAFAnalysis.C
+```
+Si todo ha ido correctamente, se ejecutará y mostrará los resultados al finalizar. Ha sido nuestra primera ejecución.
+
+Todo junto:
+```cpp
+void RunPAFAnalysisMT() 
+{
+	PAFProject* myProject = new PAFProject();
+	myProject->AddDataFile("/home/javier/Documents/Tree_ZJets_Madgraph_0.root");
+	myProject->AddSelectorPackage("myAnalysis");
+	myProject->Run();
+}
+```
+
+#### Problemas
+En Ubuntu, si hemos instalado ROOT desde los repositorios, debemos hacer un #include de TSelector y TCanvas en el script para que no se produzcan errores de enlazado.
