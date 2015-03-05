@@ -16,16 +16,18 @@
 
 #include "../PAF.h"
 
+#include "../environments/PAFPROOFLiteEnvironment.h"
+
 ClassImp(PAFProject);
 
-PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
-bool			DEFAULT_COMPILE_ON_SLAVES = false;
-
-
+PAFISettings*				DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
+bool						DEFAULT_COMPILE_ON_SLAVES = false;
 
 PAFProject::PAFProject()
 {
 	InitMembers();
+	
+	fExecutionEnvironment = new PAFPROOFLiteEnvironment(4);
 }
 
 PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment) 
