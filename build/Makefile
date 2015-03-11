@@ -2,7 +2,7 @@ include Makefile.arch
 
 VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/project:../src/input_parameters:../src/util:../src/logger:../src/variable_container:../src/computing_helpers/:../src/settings/:../src/pafinspecttree/:
 
-all: libPAF.so
+all: libPAF.so pafinspecttree
 	@rm *.o
 	@rm *.h
 	@rm *.cxx	
