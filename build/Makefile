@@ -4,6 +4,7 @@ VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/proje
 
 all: libPAF.so pafinspecttree
 	@rm *.o
+	@rm *.pcm
 	@rm *.h
 	@rm *.cxx	
 clean:
@@ -13,7 +14,7 @@ clean:
 	rm *.o
 
 pafinspecttree : PAFInspectTree.o
-	$(CXX) -llibrary $(ROOTLIBS) $? -o $@
+	$(CXX) -g $(ROOTLIBS) $? -o $@
 	
 libPAF.so: PAFBaseSelectorDict.o PAFBaseSelector.o PAFISelectorDict.o PAFISelector.o PAFChainItemSelectorDict.o PAFChainItemSelector.o PAFChainSelectorDict.o PAFChainSelector.o PAFIExecutionEnvironmentDict.o PAFIExecutionEnvironment.o PAFPROOFEnvironmentDict.o PAFPROOFEnvironment.o PAFPROOFLiteEnvironmentDict.o PAFPROOFLiteEnvironment.o PAFPoDEnvironmentDict.o PAFPoDEnvironment.o PAFPROOFCloudEnvironmentDict.o PAFPROOFCloudEnvironment.o PAFPROOFClusterEnvironmentDict.o PAFPROOFClusterEnvironment.o PAFSequentialEnvironmentDict.o PAFSequentialEnvironment.o PAFNamedItemDict.o PAFNamedItem.o PAFStringUtilDict.o PAFStringUtil.o PAFPackageDict.o PAFPackage.o PAFLibraryDict.o PAFLibrary.o PAFPackageSelectorDict.o PAFPackageSelector.o PAFProjectDict.o PAFProject.o PAF.o PAFLogger.o PAFConsoleLogger.o PAFVariableContainerDict.o PAFVariableContainer.o PAFItemVariableContainerDict.o PAFItemVariableContainer.o PAFGenericItemVariableContainerDict.o PAFGenericItemVariableContainer.o PAFFindHelperDict.o PAFFindHelper.o PAFISettingsDict.o PAFISettings.o PAFEnvironmentVariableSettingsDict.o PAFEnvironmentVariableSettings.o
 	@$(CXX) $(SOFLAGS) $(ROOTLIBS) $? -o $@

@@ -29,7 +29,7 @@ TProof* PAFPROOFClusterEnvironment::doCreateTProof()
 	// XXX: think of a better way of doing this, 
 	// startproof returns the path where the paf_url file is located
 	TString fPAFSessionDir = gSystem->GetFromPipe(slots_petition);
-	ifstream paf_url;
+	std::ifstream paf_url;
 	paf_url.open(fPAFSessionDir + "/paf_url");
 	if (!paf_url.is_open()) {
 		return NULL;
