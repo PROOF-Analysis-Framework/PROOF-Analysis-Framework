@@ -43,11 +43,12 @@ void PAFStopWatch::TakeTime(const char* key)
 	{
 		timePrevious = GetTimeAt(fTimes->GetEntries() - 1)->GetVal();
 	}
-	double time = fWatch->RealTime() - timePrevious;
-	
+	double time = fWatch->RealTime() - timePrevious;	
+	Resume();
 	TParameter<double>* result = new TParameter<double>(key, time);
 	fTimes->Add(result);
 	PrintTime(result);
+
 }
 
 TParameter<double>* PAFStopWatch::GetTimeAt(int index)
@@ -70,6 +71,6 @@ void PAFStopWatch::PrintTimes()
 
 void PAFStopWatch::PrintTime(TParameter<double>* time)
 {
-	PAF_INFO("PAFStopWatch", TString::Format("%s: %f", time->GetName(), time->GetVal()));
+	PAF_INFO("PAFStopWatch", TString::Format("%s: %fs", time->GetName(), time->GetVal()));
 }
 

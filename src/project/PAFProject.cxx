@@ -13,6 +13,7 @@
 
 #include "../util/PAFNamedItem.h"
 #include "../settings/PAFEnvironmentVariableSettings.h"
+#include "../util/PAFStopWatch.h"
 
 #include "../PAF.h"
 
@@ -251,11 +252,14 @@ void PAFProject::PreparePAFSelector()
 
 void PAFProject::Run()
 {
+	PAFStopWatch* timer = new PAFStopWatch();
+	timer->Start();
 	PAF_DEBUG("Project", "Launching configured project.");
 	fExecutionEnvironment->Initialise();
 	PrepareEnvironment();
 	PreparePAFSelector();
 	AddDynamicHistograms();
+	timer->TakeTime("Environment ready");
 	
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
@@ -274,6 +278,7 @@ void PAFProject::Run()
 	{
 		fExecutionEnvironment->Process(fDataFiles, selector, fOutputFile);
 	}
+	timer->TakeTime("Processed");
 	PAF_DEBUG("PAFProject", "Process completed.");
 	fExecutionEnvironment->Dispose();
 }
