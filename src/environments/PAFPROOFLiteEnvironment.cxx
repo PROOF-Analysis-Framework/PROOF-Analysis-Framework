@@ -15,5 +15,6 @@ PAFPROOFLiteEnvironment::PAFPROOFLiteEnvironment(int nSlots)
 
 TProof* PAFPROOFLiteEnvironment::doCreateTProof()
 {
-	return TProof::Open("lite:///?workers=" + fNSlots);
+	TString connectionString = TString::Format("lite:///?workers=%d", fNSlots);
+	return TProof::Open(connectionString);
 }

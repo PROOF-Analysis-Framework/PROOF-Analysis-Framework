@@ -1,6 +1,7 @@
 # Compiled objects
 *.so
 *.o
+*.pcm
 *.kdev4
 *.root
 sandbox/.paf/

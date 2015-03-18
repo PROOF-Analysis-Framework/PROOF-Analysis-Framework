@@ -25,7 +25,6 @@ void PAFPROOFEnvironment::Initialise()
 void PAFPROOFEnvironment::Dispose()
 {
 	fSession->Close();
-	delete fSession;
 }
 
 void PAFPROOFEnvironment::AddInput(TObject* obj)

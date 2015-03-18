@@ -101,17 +101,17 @@ class PAFProject
 		void AddDynamicHistograms();
 		
 	protected:
-		PAFIExecutionEnvironment*           fExecutionEnvironment;
-		PAFVariableContainer*				fInputParameters;
-		PAFISelector*                       fPAFSelector;
-		std::vector<PAFPackage*>*			fPackages; //!
+		PAFIExecutionEnvironment*		fExecutionEnvironment;
+		PAFVariableContainer*			fInputParameters;
+		PAFISelector*				fPAFSelector;
+		std::vector<PAFPackage*>*		fPackages; //!
 		std::vector<PAFPackageSelector*>*	fSelectorPackages; //!
-		std::vector<PAFLibrary*>*			fLibraries; //!
-		TFileCollection*                    fDataFiles;
-		TString                             fOutputFile;
-		std::vector<TString>*				fDynamicHistograms;
-		PAFISettings*						fPAFSettings;
-		bool								fCompileOnSlaves;
+		std::vector<PAFLibrary*>*		fLibraries; //!
+		TFileCollection*			fDataFiles;
+		TString					fOutputFile;
+		std::vector<TString>*			fDynamicHistograms;
+		PAFISettings*				fPAFSettings;
+		bool					fCompileOnSlaves;
 		
 	ClassDef(PAFProject, 1);
 };

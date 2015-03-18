@@ -5,6 +5,8 @@
 #pragma link C++ class PAFGenericItemVariableContainer<double>+;
 #pragma link C++ class PAFGenericItemVariableContainer<TObject>+;
 #pragma link C++ class PAFGenericItemVariableContainer<TObject*>+;
+#pragma link C++ class PAFGenericItemVariableContainer<TString>+;
 #pragma link C++ class PAFGenericItemVariableContainer<TString*>+;
 #pragma link C++ class PAFGenericItemVariableContainer<void*>+;
+#pragma link C++ class PAFGenericItemVariableContainer<const char*>+;
 #endif
