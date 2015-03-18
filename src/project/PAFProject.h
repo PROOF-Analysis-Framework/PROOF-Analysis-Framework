@@ -87,16 +87,13 @@ class PAFProject
 
 	protected:
 		void InitMembers();
-		
-		void UploadAndEnablePackage(PAFPackage* package);
-		void UploadAndEnablePackages(std::vector<PAFPackage*>* packages);
-		void UploadAndEnablePackages(std::vector<PAFPackageSelector*>* packages);
-		void LoadLibraries();
 
 		template<typename T>
 		T CreateObject(const char* className);
 		
-		void PrepareEnvironment();
+		void PreparePackage(PAFPackage* package);
+		void PreparePackages();
+		void LoadProjectItems();
 		void PreparePAFSelector();
 		void AddDynamicHistograms();
 		

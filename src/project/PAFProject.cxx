@@ -152,45 +152,6 @@ void PAFProject::AddDynamicHistogram(const char* histogram)
 	AddDynamicHistogram(tHistogram);
 }
 
-void PAFProject::UploadAndEnablePackage(PAFPackage* package)
-{
-	package->PreparePackage();
-	if(fCompileOnSlaves)
-	{
-		package->CreateParFile();
-		fExecutionEnvironment->UploadPackage(package);
-		fExecutionEnvironment->EnablePackage(package);
-	}
-	else
-	{
-		package->CompileAsLibrary();
-		fLibraries->push_back(new PAFLibrary(package->GetLibraryFileName()));
-	}
-}
-void PAFProject::UploadAndEnablePackages(std::vector<PAFPackage*>* packages)
-{
-	for(unsigned int i = 0; i < packages->size(); i++)
-	{
-		UploadAndEnablePackage(packages->at(i));
-	}
-}
-
-void PAFProject::UploadAndEnablePackages(std::vector<PAFPackageSelector*>* packages)
-{
-	for(unsigned int i = 0; i < packages->size(); i++)
-	{
-		UploadAndEnablePackage(packages->at(i));
-	}
-}
-
-void PAFProject::LoadLibraries()
-{
-	for(unsigned int i = 0; i < fLibraries->size(); i++)
-	{
-		fExecutionEnvironment->LoadLibrary(fLibraries->at(i));
-	}
-}
-
 void PAFProject::AddDynamicHistograms()
 {
     for (unsigned int i = 0; i < fDynamicHistograms->size(); i++) 
@@ -214,14 +175,56 @@ void CreateSessionDir()
   	gSystem->SetBuildDir(buildDir);
 }
 
-void PAFProject::PrepareEnvironment()
+void PAFProject::PreparePackage(PAFPackage* package)
+{
+	package->PreparePackage();
+	if(fCompileOnSlaves)
+	{
+		package->CreateParFile();
+	}
+	else
+	{
+		package->CompileAsLibrary();
+		fLibraries->push_back(new PAFLibrary(package->GetLibraryFileName()));
+	}
+}
+
+void PAFProject::PreparePackages()
 {
 	CreateSessionDir();
 	
-	UploadAndEnablePackages(fPackages);
-	UploadAndEnablePackages(fSelectorPackages);
+	for(unsigned int i = 0; i < fPackages->size(); i++)
+	{
+		PreparePackage(fPackages->at(i));
+	}
 
-	LoadLibraries();
+	for(unsigned int i = 0; i < fSelectorPackages->size(); i++)
+	{
+		PreparePackage(fSelectorPackages->at(i));
+	}
+}
+
+void PAFProject::LoadProjectItems()
+{
+	for(unsigned int i = 0; i < fLibraries->size(); i++)
+	{
+		fExecutionEnvironment->LoadLibrary(fLibraries->at(i));
+	}
+
+	if(fCompileOnSlaves)
+	{
+		for(unsigned int i = 0; i < fPackages->size(); i++)
+		{
+			fExecutionEnvironment->UploadPackage(fPackages->at(i));
+			fExecutionEnvironment->EnablePackage(fPackages->at(i));
+		}
+
+		for(unsigned int i = 0; i < fSelectorPackages->size(); i++)
+		{
+			fExecutionEnvironment->UploadPackage(fSelectorPackages->at(i));
+			fExecutionEnvironment->EnablePackage(fSelectorPackages->at(i));
+		}
+	}
 }
 
 void PAFProject::PreparePAFSelector()
@@ -252,14 +255,15 @@ void PAFProject::PreparePAFSelector()
 
 void PAFProject::Run()
 {
-	PAFStopWatch* timer = new PAFStopWatch();
-	timer->Start();
+	PAFStopWatch timer;
+	timer.Start();
 	PAF_DEBUG("Project", "Launching configured project.");
 	fExecutionEnvironment->Initialise();
-	PrepareEnvironment();
+	timer.TakeTime("Execution environment initilized");
+	PreparePackages();
+	LoadProjectItems();	
 	PreparePAFSelector();
 	AddDynamicHistograms();
-	timer->TakeTime("Environment ready");
 	
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
@@ -267,7 +271,8 @@ void PAFProject::Run()
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
-	
+
+	timer.TakeTime("Environment ready");
 	PAF_DEBUG("PAFProject", "Launching process");
 	
 	if(fOutputFile.Length() == 0)
@@ -278,7 +283,7 @@ void PAFProject::Run()
 	{
 		fExecutionEnvironment->Process(fDataFiles, selector, fOutputFile);
 	}
-	timer->TakeTime("Processed");
+	timer.TakeTime("Processed");
 	PAF_DEBUG("PAFProject", "Process completed.");
 	fExecutionEnvironment->Dispose();
 }

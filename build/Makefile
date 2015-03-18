@@ -5,11 +5,12 @@ VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/proje
 all: libPAF.so pafinspecttree
 
 clean:
-	-@rm *.so
-	-@rm *.cxx
-	-@rm *.h
-	-@rm *.o
-	-@rm *.pcm
+	-@rm *.so -f
+	-@rm *.cxx -f
+	-@rm *.h -f 
+	-@rm *.o -f
+	-@rm *.pcm -f
+	-@rm pafinspecttree -f
 
 pafinspecttree : PAFInspectTree.o
 	$(CXX) -g $(ROOTLIBS) $? -o $@
