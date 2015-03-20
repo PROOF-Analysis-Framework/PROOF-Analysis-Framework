@@ -17,6 +17,11 @@ PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeO
 {
 }
 
+PAFPoDEnvironment::~PAFPoDEnvironment()
+{
+	 
+}
+
 TProof* PAFPoDEnvironment::doCreateTProof()
 {
 	TProof* result = 0;
@@ -46,16 +51,17 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 		PAF_DEBUG("PAFPoDEnvironment", response_command);
 
 		int slotsReady = 0;
-		int srmsize = 1;
-		int trmsize = (int) TMath::Log10(fTimeOut) + 1;
-		int rmsize  = srmsize + trmsize + 13;
+		//TODO Implement logger messages.
+		//int srmsize = 1;
+		//int trmsize = (int) TMath::Log10(fTimeOut) + 1;
+		//int rmsize  = srmsize + trmsize + 13;
 		do {
 			gSystem->Sleep(wait*1000);
 			slotsReady = gSystem->GetFromPipe("pod-info -n").Atoi();
 			n_waits--;
-			srmsize = (slotsReady == 0?1:(int) TMath::Log10(slotsReady) + 1);
-			trmsize = (int) TMath::Log10(n_waits*wait) + 1;
-			rmsize = srmsize + trmsize + 13;
+			//srmsize = (slotsReady == 0?1:(int) TMath::Log10(slotsReady) + 1);
+			//trmsize = (int) TMath::Log10(n_waits*wait) + 1;
+			//rmsize = srmsize + trmsize + 13;
 		} while((slotsReady < fNSlots) && (n_waits > 0) );
 	}
 

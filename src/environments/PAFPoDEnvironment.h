@@ -15,6 +15,7 @@ class PAFPoDEnvironment : public PAFPROOFEnvironment
 {
 	public:
 		PAFPoDEnvironment(int nSlots = 10, int maxSlavesPerNode=9999, int timeOut = 60);
+		virtual ~PAFPoDEnvironment();
 
 	protected:
 		TProof* doCreateTProof();

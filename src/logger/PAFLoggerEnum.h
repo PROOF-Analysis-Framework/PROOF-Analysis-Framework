@@ -8,5 +8,7 @@
 
 #pragma once
 
+#pragma GCC diagnostic ignored "-Wunused-variable" //To avoid warnings with PAFLogLevelStrings.
+
 enum PAFLogLevel { DEBUG, INFO, WARN, ERROR, FATAL};
 static const char* PAFLogLevelStrings[] = { "DEBUG", "INFO", "WARN", "ERROR", "FATAL" };
