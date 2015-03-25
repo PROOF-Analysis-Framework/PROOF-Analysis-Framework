@@ -9,6 +9,7 @@ all: libPAF.so pafinspecttree
 install: libPAF.so
 	@cp $< $(ROOTSYS)/lib/
 	@cp $(addsuffix .rootmap, $(basename $<)) ${ROOTSYS}/lib/
+	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname ${ROOTSYS}/include/PAF/{}` && cp ../src/{} ${ROOTSYS}/include/PAF/{}'
 
 clean:
 	-@rm *.so -f
