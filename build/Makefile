@@ -11,6 +11,12 @@ install: libPAF.so
 	@cp $(addsuffix .rootmap, $(basename $<)) ${ROOTSYS}/lib/
 	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname ${ROOTSYS}/include/PAF/{}` && cp ../src/{} ${ROOTSYS}/include/PAF/{}'
 
+portable: libPAF.so
+	-@rm *.cxx -f
+	-@rm *.h -f 
+	-@rm *.o -f
+	-@rm *.pcm -f
+
 clean:
 	-@rm *.so -f
 	-@rm *.cxx -f
