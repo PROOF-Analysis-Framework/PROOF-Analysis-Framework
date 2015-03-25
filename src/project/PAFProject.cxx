@@ -170,7 +170,7 @@ T PAFProject::CreateObject(const char* className)
 
 void CreateSessionDir()
 {
-	TString buildDir = TString::Format("%s/.paf/BuildDir",gSystem->pwd());
+	TString buildDir = "/tmp/PAF/BuildDir";
 	gSystem->mkdir(buildDir, true);
   	gSystem->SetBuildDir(buildDir);
 }
