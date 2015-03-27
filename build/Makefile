@@ -16,6 +16,7 @@ portable: libPAF.so
 	-@rm *.h -f 
 	-@rm *.o -f
 	-@rm *.pcm -f
+	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname include/PAF/{}` && cp ../src/{} include/PAF/{}'
 
 clean:
 	-@rm *.so -f
@@ -25,7 +26,8 @@ clean:
 	-@rm *.pcm -f
 	-@rm *.rootmap -f
 	-@rm pafinspecttree -f
-
+	-@rm -r include/
+	
 pafinspecttree : PAFInspectTree.o
 	@$(CXX) -g $(ROOTLIBS) $? -o $@
 	

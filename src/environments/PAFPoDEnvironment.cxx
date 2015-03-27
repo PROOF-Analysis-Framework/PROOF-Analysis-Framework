@@ -72,6 +72,7 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 	if (result)
 		result->SetParameter("PROOF_MaxSlavesPerNode", fMaxSlavesPerNode);
 
+	PAF_DEBUG("PAFPoDEnvironment", "Environment loaded successfully");
 	return result;
 }
 

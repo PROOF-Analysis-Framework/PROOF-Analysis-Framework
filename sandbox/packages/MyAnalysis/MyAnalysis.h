@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../PAF/computing/PAFChainItemSelector.h"
+#include "PAF/computing/PAFChainItemSelector.h"
 
 #include <TH1F.h>
 
