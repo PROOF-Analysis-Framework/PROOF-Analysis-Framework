@@ -3,6 +3,8 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TLeaf.h"
+#include "TRegexp.h"
+#include "TString.h"
 
 #include <iostream>
 
@@ -21,20 +23,29 @@ void printVariables(const char* fileName, const char* branchName, const char* tr
 		treeName = "Tree";
 	}
 
+	if(branchName == NULL) {
+		branchName = "*";
+	}
+	TString tBranchName(branchName);
+
 	TFile* file = new TFile(fileName);
 	TTree* tree = (TTree*)file->Get(treeName);
-	
+	TRegexp* regex = new TRegexp(tBranchName);	
+
 	TObjArray* leaves = tree->GetListOfLeaves();
 	Int_t nb = leaves->GetEntriesFast();
 	for (Int_t i = 0; i < nb; ++i) {
 		TLeaf* leaf = (TLeaf*)leaves->UncheckedAt(i);
-		if(branchName == NULL || TString(leaf->GetName()).EqualTo(branchName)) {
-			std::cout << "Type: " << leaf->GetTypeName() << " \t\tVariable: " << leaf->GetName() <<  std::endl;
+		const TString name(leaf->GetName());
+		int length;
+		if(regex->Index(name, &length) != -1) {
+			std::cout << "Type: " << leaf->GetTypeName() << " \t\tVariable: " << name <<  std::endl;
 		}
 	}
 	
 	delete tree;
 	delete file;
+	delete regex;
 }
 
 int main(int argc, const char* argv[]){
