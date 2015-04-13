@@ -1,6 +1,6 @@
 include ${ROOTSYS}/etc/Makefile.arch
 
-VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/project:../src/input_parameters:../src/util:../src/logger:../src/variable_container:../src/computing_helpers/:../src/settings/:../src/pafinspecttree/:
+VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/project:../src/input_parameters:../src/util:../src/logger:../src/variable_container:../src/computing_helpers/:../src/settings/:../src/paf_inspecttree/:
 
 LINK_DEFS=$(shell find ../src/ -name '*LinkDef.h')
 

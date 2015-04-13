@@ -30,7 +30,7 @@ void printVariables(const char* fileName, const char* branchName, const char* tr
 
 	TFile* file = new TFile(fileName);
 	TTree* tree = (TTree*)file->Get(treeName);
-	TRegexp* regex = new TRegexp(tBranchName);	
+	TRegexp* regex = new TRegexp(tBranchName, kTRUE);	
 
 	TObjArray* leaves = tree->GetListOfLeaves();
 	Int_t nb = leaves->GetEntriesFast();
