@@ -10,6 +10,9 @@ export PAFREPOSITORIES=~/Documents/PROOF-Analysis-Framework/sandbox/packages
 # Add PAFPATH/bin to PATH
 export PATH=$PATH:$PAFPATH/bin
 
+# Add PAF lib path to libraries that ROOT should find.
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PAFPATH/lib
+
 if [ -z $ROOTSYS ]; then
   echo "WARNING: It seems you have not configured your ROOT environment"
   echo "         This is usually done with 'source /opt/root/bin/thisroot.sh'"

@@ -4,19 +4,13 @@ VPATH = ../src:../src/computing:../src/environments:../src/packages:../src/proje
 
 LINK_DEFS=$(shell find ../src/ -name '*LinkDef.h')
 
-all: libPAF.so pafinspecttree_tool
+all: libPAF.so pafinspecttree
 
 install: libPAF.so
-	@cp $< $(ROOTSYS)/lib/
-	@cp $(addsuffix .rootmap, $(basename $<)) ${ROOTSYS}/lib/
-	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname ${ROOTSYS}/include/PAF/{}` && cp ../src/{} ${ROOTSYS}/include/PAF/{}'
-
-portable: libPAF.so
-	-@rm *.cxx -f
-	-@rm *.h -f 
-	-@rm *.o -f
-	-@rm *.pcm -f
-	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname include/PAF/{}` && cp ../src/{} include/PAF/{}'
+	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname ../include/PAF/{}` && cp ../src/{} ../include/PAF/{}'
+	-@mkdir -p ../lib/
+	@cp libPAF.so ../lib/libPAF.so
+	@cp libPAF.rootmap ../lib/libPAF.rootmap
 
 clean:
 	-@rm *.so -f
@@ -26,10 +20,11 @@ clean:
 	-@rm *.pcm -f
 	-@rm *.rootmap -f
 	-@rm pafinspecttree -f
-	-@rm -r include/
+	-@rm -r ../include/
+	-@rm -r ../lib/
 	
-pafinspecttree_tool : PAFInspectTree.o
-	$(CXX) $(ROOTLIBS) $? -o $@
+pafinspecttree : PAFInspectTree.o
+	@$(CXX) -g $(ROOTLIBS) $? -o $@
 	
 libPAF.so: PAFBaseSelectorDict.o PAFBaseSelector.o PAFISelectorDict.o PAFISelector.o PAFChainItemSelectorDict.o PAFChainItemSelector.o PAFChainSelectorDict.o PAFChainSelector.o PAFIExecutionEnvironmentDict.o PAFIExecutionEnvironment.o PAFPROOFEnvironmentDict.o PAFPROOFEnvironment.o PAFPROOFLiteEnvironmentDict.o PAFPROOFLiteEnvironment.o PAFPoDEnvironmentDict.o PAFPoDEnvironment.o PAFPROOFCloudEnvironmentDict.o PAFPROOFCloudEnvironment.o PAFPROOFClusterEnvironmentDict.o PAFPROOFClusterEnvironment.o PAFSequentialEnvironmentDict.o PAFSequentialEnvironment.o PAFNamedItemDict.o PAFNamedItem.o PAFStopWatchDict.o PAFStopWatch.o PAFStringUtilDict.o PAFStringUtil.o PAFPackageDict.o PAFPackage.o PAFLibraryDict.o PAFLibrary.o PAFPackageSelectorDict.o PAFPackageSelector.o PAFProjectDict.o PAFProject.o PAF.o PAFLogger.o PAFConsoleLogger.o PAFVariableContainerDict.o PAFVariableContainer.o PAFItemVariableContainerDict.o PAFItemVariableContainer.o PAFGenericItemVariableContainerDict.o PAFGenericItemVariableContainer.o PAFFindHelperDict.o PAFFindHelper.o PAFISettingsDict.o PAFISettings.o PAFEnvironmentVariableSettingsDict.o PAFEnvironmentVariableSettings.o
 	@$(CXX) $(SOFLAGS) $(ROOTLIBS) $? -o $@

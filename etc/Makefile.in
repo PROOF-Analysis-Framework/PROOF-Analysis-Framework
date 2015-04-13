@@ -19,7 +19,7 @@ OBJS        = $(TARGETO)
 PWD=$(shell pwd)
 
 MYINCLUDES=$(shell INC=""; for i in `ls -d $(PWD)/../*/`; do INC="-I$$i $$INC"; done; echo $$INC)
-MYINCLUDES+=-I$(PAFPATH)/build/include
+MYINCLUDES+=-I$(PAFPATH)/include
 CXXFLAGS+= $(MYINCLUDES)
 
 #------------------------------------------------------------------------------
