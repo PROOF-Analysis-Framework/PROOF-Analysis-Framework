@@ -36,9 +36,9 @@ class PAFBaseSelector : public TSelector {
 		PAFVariableContainer* GetSelectorParams() { return fSelectorParams; }
 		
 	protected:
-		TTree*					fTree;
-		PAFISelector* 			fPAFISelector;
-		PAFVariableContainer* 	fSelectorParams;
+		TTree*			fTree;
+		PAFISelector*		fPAFISelector;
+		PAFVariableContainer*	fSelectorParams;
 		PAFVariableContainer*	fVariables;//!
 
 	ClassDef(PAFBaseSelector, 1);

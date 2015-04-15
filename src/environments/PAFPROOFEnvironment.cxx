@@ -11,14 +11,29 @@
 
 #include "TString.h"
 
+#include "proof_library_upload/PAFPROOFUploadLibrarySharedDirectory.h"
+
+PAFPROOFIUploadLibrary*	DEFAULT_PROOFUPLOADLIBRARY = new PAFPROOFUploadLibrarySharedDirectory();
+
+PAFPROOFEnvironment::PAFPROOFEnvironment()
+{
+	InitMembers();
+}
+
 PAFPROOFEnvironment::~PAFPROOFEnvironment()
 {
 	delete fSession;
 }
 
+void PAFPROOFEnvironment::InitMembers()
+{
+	fPROOFUploadLibrary = DEFAULT_PROOFUPLOADLIBRARY;
+}
+
 void PAFPROOFEnvironment::Initialise()
 {
 	fSession = doCreateTProof();
+	fPROOFUploadLibrary->SetSession(fSession);
 	LoadPAF();
 }
 
@@ -57,6 +72,17 @@ void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* s
 	fSession->Process(dataFiles, selector, options);
 }
 
+void PAFPROOFEnvironment::SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary)
+{
+	delete fPROOFUploadLibrary;
+	fPROOFUploadLibrary = proofUploadLibrary;
+}
+
+PAFPROOFIUploadLibrary* PAFPROOFEnvironment::GetPROOFUpload()
+{
+	return fPROOFUploadLibrary;
+}
+
 bool PAFPROOFEnvironment::UploadPackage(PAFPackage* package)
 {
 	return fSession->UploadPackage(package->GetParFileName(), TProof::kRemoveOld) == 0;
@@ -69,17 +95,13 @@ bool PAFPROOFEnvironment::EnablePackage(PAFPackage* package)
 
 bool PAFPROOFEnvironment::LoadLibrary(PAFLibrary* library)
 {
-	TString loader = TString::Format("gSystem->Load(\"%s\");", library->GetFileName().Data());
-	gSystem->Load(library->GetFileName().Data());
-	fSession->Exec(loader.Data());	
-
-	return true;
+	return fPROOFUploadLibrary->UploadLibrary(library);
 }
 
 void PAFPROOFEnvironment::LoadPAF()
 {
 	fSession->Exec("TH1* th1 = 0"); //TODO Remove this trick. Needed in Ubuntu.
-	PAFLibrary paf("$PAFPATH/build/libPAF.so");
+	PAFLibrary paf("$PAFPATH/lib/libPAF.so");
 	LoadLibrary(&paf);
 }
 

@@ -9,13 +9,15 @@
 
 #pragma once
 
-#include "TProof.h"
 #include "PAFIExecutionEnvironment.h"
+
+#include "TProof.h"
+#include "proof_library_upload/PAFPROOFIUploadLibrary.h"
 
 class PAFPROOFEnvironment : public PAFIExecutionEnvironment 
 {
 	public:
-		PAFPROOFEnvironment() {};
+		PAFPROOFEnvironment();
 		virtual ~PAFPROOFEnvironment();
 
 		void Initialise();
@@ -32,13 +34,18 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		
 		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector);
 		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile);
+		
+		void SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary);
+		PAFPROOFIUploadLibrary* GetPROOFUpload();
 
 	protected:
+		void InitMembers();
 		virtual TProof* doCreateTProof() = 0;
 		virtual void LoadPAF();
 		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, const char* options);
 		
 	protected:
-		TProof* fSession;
+		TProof*			fSession;
+		PAFPROOFIUploadLibrary*	fPROOFUploadLibrary;
 };
 

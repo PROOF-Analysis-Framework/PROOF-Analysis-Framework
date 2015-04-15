@@ -13,9 +13,11 @@ void printError(){
 }
 
 void printHelp(){
-	std::cout << "-\t\"-h | --help\" to show command help." << std::endl;
-	std::cout << "-\t\"-b | --branch branchname\" to retrieve information about specified branch." << std::endl;
-	std::cout << "-\t\"-t | --tree treename\"  to retrieve information about specified tree." << std::endl;
+	std::cout << "\t\"-h | --help\" to show command help." << std::endl;
+	std::cout << "\t\"-b | --branch branchname\" to retrieve information about specified branch." << std::endl;
+	std::cout << "\t\"-t | --tree treename\"  to retrieve information about specified tree." << std::endl;
+	
+	std::cout << "\t\ ROOT file name. Mandatory." << std::endl;
 }
 
 void printVariables(const char* fileName, const char* branchName, const char* treeName){
