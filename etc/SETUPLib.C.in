@@ -1,0 +1,5 @@
+Int_t SETUP() {
+  if (gSystem->Load("%NAME%") == -1)
+     return -1;
+  return 0;
+}

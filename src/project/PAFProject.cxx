@@ -102,7 +102,7 @@ void PAFProject::AddSelectorPackage(PAFPackageSelector* packageSelector)
 
 void PAFProject::AddLibrary(TString& libraryName)
 {
-	PAFLibrary* result = new PAFLibrary(libraryName);
+	PAFLibrary* result = new PAFLibrary(fPAFSettings, libraryName);
 	AddLibrary(result);
 }
 
@@ -185,7 +185,7 @@ void PAFProject::PreparePackage(PAFPackage* package)
 	else
 	{
 		package->CompileAsLibrary();
-		fLibraries->push_back(new PAFLibrary(package->GetLibraryFileName()));
+		fLibraries->push_back(new PAFLibrary(fPAFSettings, package->GetLibraryFileName()));
 	}
 }
 
@@ -257,10 +257,10 @@ void PAFProject::Run()
 {
 	PAFStopWatch timer;
 	timer.Start();
+	PreparePackages();
 	PAF_DEBUG("Project", "Launching configured project.");
 	fExecutionEnvironment->Initialise();
 	timer.TakeTime("Execution environment initilized");
-	PreparePackages();
 	LoadProjectItems();	
 	PreparePAFSelector();
 	AddDynamicHistograms();

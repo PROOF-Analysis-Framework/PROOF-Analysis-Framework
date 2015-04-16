@@ -13,15 +13,25 @@
 
 #include "TString.h"
 
+#include "../settings/PAFISettings.h"
+
 class PAFLibrary : public TObject {
 	public:
-		PAFLibrary() : fFileName() {}
-		PAFLibrary(const char* fileName) : fFileName(fileName) {}
+		PAFLibrary();
+		PAFLibrary(PAFISettings* pafsettings, const char* fileName);
 		virtual ~PAFLibrary() {}
 	
 		TString GetFileName();
+		TString GetLibraryName();
+		
+		void CreatePARFile();
+		TString GetPARFileName();
+		
+		void SetSettings(PAFISettings* pafsettings);
+		PAFISettings* GetSettings();
 	private:
-		TString fFileName;
+		PAFISettings* 	fPAFSettings;
+		TString 	fFileName;
 
 	ClassDef(PAFLibrary, 1);
 };

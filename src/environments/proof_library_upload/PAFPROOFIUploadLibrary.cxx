@@ -15,17 +15,10 @@ PAFPROOFIUploadLibrary::PAFPROOFIUploadLibrary()
 
 }
 
-PAFPROOFIUploadLibrary::PAFPROOFIUploadLibrary(TProof* session)
-	: fSession(session)
-{
-
-}
-
 PAFPROOFIUploadLibrary::~PAFPROOFIUploadLibrary()
 {
 
 }
-
 
 void PAFPROOFIUploadLibrary::SetSession(TProof* session)
 {

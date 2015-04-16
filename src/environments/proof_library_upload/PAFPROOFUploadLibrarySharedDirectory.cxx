@@ -8,13 +8,6 @@ PAFPROOFUploadLibrarySharedDirectory::PAFPROOFUploadLibrarySharedDirectory()
 {
 
 }
-
-PAFPROOFUploadLibrarySharedDirectory::PAFPROOFUploadLibrarySharedDirectory(TProof* session)
-	: PAFPROOFIUploadLibrary(session)
-{
-
-}
-
 PAFPROOFUploadLibrarySharedDirectory::~PAFPROOFUploadLibrarySharedDirectory()
 {
 

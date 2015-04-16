@@ -11,9 +11,11 @@
 
 #include "TString.h"
 
-#include "proof_library_upload/PAFPROOFUploadLibrarySharedDirectory.h"
+#include "proof_library_upload/PAFPROOFUploadLibraryTProofUpload.h"
 
-PAFPROOFIUploadLibrary*	DEFAULT_PROOFUPLOADLIBRARY = new PAFPROOFUploadLibrarySharedDirectory();
+#include "../settings/PAFEnvironmentVariableSettings.h"
+
+PAFPROOFIUploadLibrary*	DEFAULT_PROOFUPLOADLIBRARY = new PAFPROOFUploadLibraryTProofUpload();
 
 PAFPROOFEnvironment::PAFPROOFEnvironment()
 {
@@ -100,8 +102,11 @@ bool PAFPROOFEnvironment::LoadLibrary(PAFLibrary* library)
 
 void PAFPROOFEnvironment::LoadPAF()
 {
+	//FIXME This smells too bad.
+	PAFISettings* settings = new PAFEnvironmentVariableSettings();
+	
 	fSession->Exec("TH1* th1 = 0"); //TODO Remove this trick. Needed in Ubuntu.
-	PAFLibrary paf("$PAFPATH/lib/libPAF.so");
+	PAFLibrary paf(settings, "$PAFPATH/lib/libPAF.so");
 	LoadLibrary(&paf);
 }
 

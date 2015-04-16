@@ -17,7 +17,6 @@ class PAFPROOFIUploadLibrary
 {
 	public:
 		PAFPROOFIUploadLibrary();
-		PAFPROOFIUploadLibrary(TProof* session);
 		virtual ~PAFPROOFIUploadLibrary();
 		
 		void SetSession(TProof* session);
