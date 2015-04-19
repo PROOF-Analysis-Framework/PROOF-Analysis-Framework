@@ -6,11 +6,12 @@ LINK_DEFS=$(shell find ../src/ -name '*LinkDef.h')
 
 all: libPAF.so pafinspecttree
 
-install: libPAF.so
+install: libPAF.so pafinspecttree
 	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -i sh -c 'mkdir -p `dirname ../include/PAF/{}` && cp ../src/{} ../include/PAF/{}'
 	-@mkdir -p ../lib/
 	@cp libPAF.so ../lib/libPAF.so
 	@cp libPAF.rootmap ../lib/libPAF.rootmap
+	@cp pafinspecttree ../bin/
 
 clean:
 	-@rm *.so -f
@@ -20,6 +21,7 @@ clean:
 	-@rm *.pcm -f
 	-@rm *.rootmap -f
 	-@rm pafinspecttree -f
+	-@rm ../bin/pafinspecttree
 	-@rm -r ../include/
 	-@rm -r ../lib/
 	
