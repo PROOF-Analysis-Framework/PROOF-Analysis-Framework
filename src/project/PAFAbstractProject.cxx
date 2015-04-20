@@ -234,7 +234,7 @@ void PAFAbstractProject::Run()
 	PreparePAFSelector();
 	AddDynamicHistograms();
 	
-	//fExecutionEnvironment->SetOutputFile(fOutputFile);
+	fExecutionEnvironment->SetOutput(fOutputFile);
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
 	

@@ -33,7 +33,6 @@ PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment)
 	fDataFiles = new TFileCollection("PAFFiles");
 }
 
-
 PAFProject::~PAFProject()
 {
 	delete fDataFiles;
@@ -59,7 +58,7 @@ void PAFProject::AddDataFile(TFileInfo* dataFile)
 
 void PAFProject::doRun(PAFBaseSelector* selector)
 {
-	fExecutionEnvironment->Process(fDataFiles, selector);
+	fExecutionEnvironment->Process(selector, fDataFiles);
 }
 
 

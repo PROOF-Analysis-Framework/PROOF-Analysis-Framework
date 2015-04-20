@@ -26,6 +26,8 @@ class PAFIExecutionEnvironment
 		virtual void Initialise() = 0;
 		virtual void Dispose() = 0;
 		
+		virtual void SetOutput(TString& outputFile) = 0;
+		
 		virtual void AddInput(TObject* obj) = 0;
 		virtual void AddFeedback(const char* name) = 0;
 		virtual TDrawFeedback* CreateDrawFeedback() = 0;
@@ -35,6 +37,5 @@ class PAFIExecutionEnvironment
 
 		virtual bool LoadLibrary(PAFLibrary* library) = 0;
 		
-		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector) = 0;
-		virtual void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile) = 0; 
+		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles) = 0;
 };

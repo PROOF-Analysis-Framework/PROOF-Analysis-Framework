@@ -23,6 +23,8 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		void Initialise();
 		void Dispose();
 		
+		virtual void SetOutput(TString& outputFile);
+		
 		void AddInput(TObject* obj);
 		void AddFeedback(const char* name);
 		TDrawFeedback* CreateDrawFeedback();
@@ -32,8 +34,7 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 
 		bool LoadLibrary(PAFLibrary* library);
 		
-		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector);
-		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile);
+		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles);
 		
 		void SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary);
 		PAFPROOFIUploadLibrary* GetPROOFUpload();
@@ -42,9 +43,9 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		void InitMembers();
 		virtual TProof* doCreateTProof() = 0;
 		virtual void LoadPAF();
-		void Process(TFileCollection* dataFiles, PAFBaseSelector* selector, const char* options);
 		
 	protected:
+		TString			fOutputFile;
 		TProof*			fSession;
 		PAFPROOFIUploadLibrary*	fPROOFUploadLibrary;
 };

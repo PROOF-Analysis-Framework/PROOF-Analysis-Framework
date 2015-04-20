@@ -33,8 +33,14 @@ PAFSequentialEnvironment::~PAFSequentialEnvironment()
 
 void PAFSequentialEnvironment::InitMembers()
 {
+	fOutputFile = TString();
 	 fInputList = new TList();
 	 fFeedbackCanvas = new PAFVariableContainer();
+}
+
+void PAFSequentialEnvironment::SetOutput(TString& outputFile)
+{
+	fOutputFile = outputFile;
 }
 
 void PAFSequentialEnvironment::AddInput(TObject* obj)
@@ -53,9 +59,13 @@ TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
 	return NULL;
 }
 
-void PAFSequentialEnvironment::Process(TFileCollection* dataFiles, 
-										PAFBaseSelector* selector)
+void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
 {
+	if(fOutputFile.Length() > 0)
+	{
+		PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
+	}
+
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
 	for(int i = 0; i < dataFiles->GetNFiles(); i++)
@@ -77,13 +87,6 @@ void PAFSequentialEnvironment::Process(TFileCollection* dataFiles,
 	}
 	DrawFeedback(selector);
 	selector->Terminate();
-}
-
-void PAFSequentialEnvironment::Process(TFileCollection* dataFiles,
-										PAFBaseSelector* selector,
-										TString& outputFile)
-{
-	PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
 }
 
 void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)

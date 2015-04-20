@@ -44,6 +44,11 @@ void PAFPROOFEnvironment::Dispose()
 	fSession->Close();
 }
 
+void PAFPROOFEnvironment::SetOutput(TString& outputFile)
+{
+	fOutputFile = outputFile;
+}
+
 void PAFPROOFEnvironment::AddInput(TObject* obj)
 {
 	fSession->AddInputData(obj);
@@ -59,19 +64,16 @@ TDrawFeedback* PAFPROOFEnvironment::CreateDrawFeedback()
 	return fSession->CreateDrawFeedback();
 }
 
-void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* selector, TString& outputFile)
-{		
-	Process(dataFiles, selector, TString::Format("of=%s;stf", outputFile.Data()).Data());
-}
-
-void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* selector)
-{		
-	fSession->Process(dataFiles, selector);
-}
-
-void PAFPROOFEnvironment::Process(TFileCollection* dataFiles, PAFBaseSelector* selector, const char* options)
+void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
 {
-	fSession->Process(dataFiles, selector, options);
+	if(fOutputFile.Length() > 0)
+	{
+		fSession->Process(dataFiles, selector, TString::Format("of=%s;stf", fOutputFile.Data()).Data());
+	}
+	else
+	{
+		fSession->Process(dataFiles, selector);
+	}
 }
 
 void PAFPROOFEnvironment::SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary)
