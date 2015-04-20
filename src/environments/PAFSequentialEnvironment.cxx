@@ -59,6 +59,31 @@ TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
 	return NULL;
 }
 
+void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
+{
+	if(fOutputFile.Length() > 0)
+	{
+		PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
+	}
+
+	selector->SetInputList(fInputList);
+	selector->SlaveBegin(NULL);
+	//selector->Init(tree);
+
+	for(Long64_t i = 0; i < nentries; i++)
+	{
+		selector->Process(i);
+		if(i % 10000 == 0)
+		{
+			DrawFeedback(selector);
+		}
+	}
+	
+	DrawFeedback(selector);
+	selector->Terminate();
+}
+
+
 void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
 {
 	if(fOutputFile.Length() > 0)

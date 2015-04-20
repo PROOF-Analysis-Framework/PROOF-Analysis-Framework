@@ -22,6 +22,8 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 		virtual void AddInput(TObject* obj);
 		virtual void AddFeedback(const char* name);
 		virtual TDrawFeedback* CreateDrawFeedback();
+		
+		virtual void Process ( PAFBaseSelector* selector, Long64_t nentries );
 		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles);
 		
 		virtual bool UploadPackage(PAFPackage* package);

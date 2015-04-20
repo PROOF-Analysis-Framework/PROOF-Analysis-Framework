@@ -64,6 +64,18 @@ TDrawFeedback* PAFPROOFEnvironment::CreateDrawFeedback()
 	return fSession->CreateDrawFeedback();
 }
 
+void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
+{
+	if(fOutputFile.Length() > 0)
+	{
+		fSession->Process(selector, nentries, TString::Format("of=%s;stf", fOutputFile.Data()).Data());
+	}
+	else
+	{
+		fSession->Process(selector, nentries);
+	}
+}
+
 void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
 {
 	if(fOutputFile.Length() > 0)
