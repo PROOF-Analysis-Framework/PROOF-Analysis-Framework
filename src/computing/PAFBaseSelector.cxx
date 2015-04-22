@@ -28,12 +28,13 @@ void PAFBaseSelector::Init(TTree* tree)
 	fVariables = new PAFVariableContainer();
 
 	fTree = tree;
-	
+
 	fTree->SetBranchStatus("*", 0);
-	
+
 	TObjArray* leaves = tree->GetListOfLeaves();
 	Int_t nb = leaves->GetEntriesFast();
-	for (Int_t i = 0; i < nb; ++i) {
+	for (Int_t i = 0; i < nb; ++i) 
+	{
 		TObject* leaf = leaves->UncheckedAt(i);
 		fVariables->Add(leaf->GetName(), leaf);
 	}

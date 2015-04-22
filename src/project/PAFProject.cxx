@@ -9,16 +9,6 @@
 
 #include "PAFProject.h"
 
-#include "TSystem.h"
-
-#include "../util/PAFNamedItem.h"
-#include "../settings/PAFEnvironmentVariableSettings.h"
-#include "../util/PAFStopWatch.h"
-
-#include "../PAF.h"
-
-#include "../environments/PAFPROOFLiteEnvironment.h"
-
 ClassImp(PAFProject);
 
 PAFProject::PAFProject()
@@ -60,5 +50,3 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 {
 	fExecutionEnvironment->Process(selector, fDataFiles);
 }
-
-
