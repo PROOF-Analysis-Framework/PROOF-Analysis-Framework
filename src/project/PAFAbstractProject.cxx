@@ -22,7 +22,7 @@
 ClassImp(PAFAbstractProject);
 
 PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
-bool		DEFAULT_COMPILE_ON_SLAVES = false;
+bool            DEFAULT_COMPILE_ON_SLAVES = false;
 
 PAFAbstractProject::PAFAbstractProject()
 {

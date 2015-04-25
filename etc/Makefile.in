@@ -18,9 +18,12 @@ OBJS        = $(TARGETO)
 
 PWD=$(shell pwd)
 
+LIBS+=-L$(PAFPATH)/lib -lPAF
+
 MYINCLUDES=$(shell INC=""; for i in `ls -d $(PWD)/../*/`; do INC="-I$$i $$INC"; done; echo $$INC)
 MYINCLUDES+=-I$(PAFPATH)/include
 CXXFLAGS+= $(MYINCLUDES)
+MYLIBS+=-L$(PAFPATH)/lib -lPAF
 
 #------------------------------------------------------------------------------
 
@@ -38,7 +41,7 @@ ifeq ($(ARCH),aix5)
 else
 ifeq ($(PLATFORM),macosx)
 # We need to make both the .dylib and the .so
-	$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@
+	$(LD) $(SOFLAGS)$@ $(LDFLAGS) $(MYLIBS) $(LIBS) $^ $(OutPutOpt) $@
 ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
 ifeq ($(MACOSX_MINOR),4)
 	ln -sf $@ $(subst .$(DllSuf),.so,$@)

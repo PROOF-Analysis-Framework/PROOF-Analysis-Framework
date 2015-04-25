@@ -13,6 +13,14 @@ install: libPAF.so pafinspecttree
 	@cp libPAF.rootmap ../lib/libPAF.rootmap
 	@cp pafinspecttree ../bin/
 
+installosx: libPAF.so pafinspecttree
+	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -I{} sh -c 'mkdir -p `dirname ../include/PAF/{}` && cp ../src/{} ../include/PAF/{}'
+	-@mkdir -p ../lib/
+	@cp libPAF.so ../lib/libPAF.so
+	@cp libPAF.rootmap ../lib/libPAF.rootmap
+	@cp pafinspecttree ../bin/
+
+
 clean:
 	-@rm *.so -f
 	-@rm *.cxx -f
@@ -29,7 +37,11 @@ pafinspecttree : PAFInspectTree.o
 	@$(CXX) -g $(ROOTLIBS) $? -o $@
 	
 libPAF.so: PAFBaseSelectorDict.o PAFBaseSelector.o PAFISelectorDict.o PAFISelector.o PAFChainItemSelectorDict.o PAFChainItemSelector.o PAFChainSelectorDict.o PAFChainSelector.o PAFIExecutionEnvironmentDict.o PAFIExecutionEnvironment.o PAFPROOFEnvironmentDict.o PAFPROOFEnvironment.o PAFPROOFLiteEnvironmentDict.o PAFPROOFLiteEnvironment.o PAFPoDEnvironmentDict.o PAFPoDEnvironment.o PAFPROOFCloudEnvironmentDict.o PAFPROOFCloudEnvironment.o PAFPROOFClusterEnvironmentDict.o PAFPROOFClusterEnvironment.o PAFSequentialEnvironmentDict.o PAFSequentialEnvironment.o PAFPROOFIUploadLibraryDict.o PAFPROOFIUploadLibrary.o PAFPROOFUploadLibrarySharedDirectoryDict.o PAFPROOFUploadLibrarySharedDirectory.o PAFPROOFUploadLibraryTProofUploadDict.o PAFPROOFUploadLibraryTProofUpload.o PAFNamedItemDict.o PAFNamedItem.o PAFStopWatchDict.o PAFStopWatch.o PAFStringUtilDict.o PAFStringUtil.o PAFPackageDict.o PAFPackage.o PAFLibraryDict.o PAFLibrary.o PAFPackageSelectorDict.o PAFPackageSelector.o PAFAbstractProjectDict.o PAFAbstractProject.o PAFProjectDict.o PAFProject.o PAFProjectGenericDict.o PAFProjectGeneric.o PAF.o PAFLogger.o PAFConsoleLogger.o PAFVariableContainerDict.o PAFVariableContainer.o PAFItemVariableContainerDict.o PAFItemVariableContainer.o PAFGenericItemVariableContainerDict.o PAFGenericItemVariableContainer.o PAFFindHelperDict.o PAFFindHelper.o PAFISettingsDict.o PAFISettings.o PAFEnvironmentVariableSettingsDict.o PAFEnvironmentVariableSettings.o
-	@$(CXX) $(SOFLAGS) $(ROOTLIBS) $? -o $@
+ifeq ($(PLATFORM),macosx)
+	@$(CXX) $(SOFLAGS)$@ $(ROOTLIBS) -lProof $? -o $@
+else
+	@$(CXX) $(SOFLAGS) $(ROOTLIBS) -lProof $? -o $@
+endif
 	@rlibmap -l $@ -c $(LINK_DEFS) > $(addsuffix .rootmap, $(basename $@))
 
 %.o: %.cxx

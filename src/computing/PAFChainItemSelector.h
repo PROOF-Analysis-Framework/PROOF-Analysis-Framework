@@ -227,7 +227,7 @@ template <typename T>
 inline T PAFChainItemSelector::Get(const char* key, unsigned int i)
 {
 	TString tKey(key);
-	return Get<T>(tKey);
+	return Get<T>(tKey, i);
 }
 
 template <typename T>

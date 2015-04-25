@@ -5,4 +5,5 @@
 *.kdev4
 *.root
 *.rootmap
+*.DS_Store
 sandbox/.paf/

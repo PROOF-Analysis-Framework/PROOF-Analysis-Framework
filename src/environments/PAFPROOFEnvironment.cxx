@@ -11,11 +11,11 @@
 
 #include "TString.h"
 
-#include "proof_library_upload/PAFPROOFUploadLibraryTProofUpload.h"
+#include "proof_library_upload/PAFPROOFUploadLibrarySharedDirectory.h"
 
 #include "../settings/PAFEnvironmentVariableSettings.h"
 
-PAFPROOFIUploadLibrary*	DEFAULT_PROOFUPLOADLIBRARY = new PAFPROOFUploadLibraryTProofUpload();
+PAFPROOFIUploadLibrary*	DEFAULT_PROOFUPLOADLIBRARY = new PAFPROOFUploadLibrarySharedDirectory();
 
 PAFPROOFEnvironment::PAFPROOFEnvironment()
 {
