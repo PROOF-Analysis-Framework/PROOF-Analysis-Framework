@@ -36,6 +36,6 @@ std::vector< TString >* PAFVariableContainer::GetKeys()
 	for (std::map<TString,PAFItemVariableContainer*>::iterator it=fPairs.begin();
 		 it!=fPairs.end(); ++it)
 		 result->push_back(it->first);
-    
+	
     return result;
 }
