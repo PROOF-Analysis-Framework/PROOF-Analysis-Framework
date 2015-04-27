@@ -6,8 +6,7 @@
 class PAFITool
 {
 	public:
-		PAFITool();
-		virtual ~PAFITool();
+		virtual ~PAFITool() = 0;
 	
 		virtual TString GetToolName() = 0;
 		virtual TString GetHelp() = 0;

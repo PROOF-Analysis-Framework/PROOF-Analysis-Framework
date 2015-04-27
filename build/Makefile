@@ -11,14 +11,14 @@ install: libPAF.so paf
 	-@mkdir -p ../lib/
 	@cp libPAF.so ../lib/libPAF.so
 	@cp libPAF.rootmap ../lib/libPAF.rootmap
-	@cp pafinspecttree ../bin/
+	@cp paf ../bin/
 
 installosx: libPAF.so paf
 	@find ../src/ -name '*.h' ! -name '*LinkDef.h' | sed 's/^..\/src\///' | xargs -I{} sh -c 'mkdir -p `dirname ../include/PAF/{}` && cp ../src/{} ../include/PAF/{}'
 	-@mkdir -p ../lib/
 	@cp libPAF.so ../lib/libPAF.so
 	@cp libPAF.rootmap ../lib/libPAF.rootmap
-	@cp pafinspecttree ../bin/
+	@cp paf ../bin/
 
 
 clean:
@@ -28,12 +28,12 @@ clean:
 	-@rm *.o -f
 	-@rm *.pcm -f
 	-@rm *.rootmap -f
-	-@rm pafinspecttree -f
-	-@rm ../bin/pafinspecttree
+	-@rm paf -f
+	-@rm ../bin/paf
 	-@rm -r ../include/
 	-@rm -r ../lib/
 	
-paf : PAFITool.o
+paf : PAFTools.o PAFITool.o
 	@$(CXX) -g $(ROOTLIBS) $? -o $@
 	
 libPAF.so: PAFBaseSelectorDict.o PAFBaseSelector.o PAFISelectorDict.o PAFISelector.o PAFChainItemSelectorDict.o PAFChainItemSelector.o PAFChainSelectorDict.o PAFChainSelector.o PAFIExecutionEnvironmentDict.o PAFIExecutionEnvironment.o PAFPROOFEnvironmentDict.o PAFPROOFEnvironment.o PAFPROOFLiteEnvironmentDict.o PAFPROOFLiteEnvironment.o PAFPoDEnvironmentDict.o PAFPoDEnvironment.o PAFPROOFCloudEnvironmentDict.o PAFPROOFCloudEnvironment.o PAFPROOFClusterEnvironmentDict.o PAFPROOFClusterEnvironment.o PAFSequentialEnvironmentDict.o PAFSequentialEnvironment.o PAFPROOFIUploadLibraryDict.o PAFPROOFIUploadLibrary.o PAFPROOFUploadLibrarySharedDirectoryDict.o PAFPROOFUploadLibrarySharedDirectory.o PAFPROOFUploadLibraryTProofUploadDict.o PAFPROOFUploadLibraryTProofUpload.o PAFNamedItemDict.o PAFNamedItem.o PAFStopWatchDict.o PAFStopWatch.o PAFStringUtilDict.o PAFStringUtil.o PAFPackageDict.o PAFPackage.o PAFLibraryDict.o PAFLibrary.o PAFPackageSelectorDict.o PAFPackageSelector.o PAFAbstractProjectDict.o PAFAbstractProject.o PAFProjectDict.o PAFProject.o PAFProjectGenericDict.o PAFProjectGeneric.o PAF.o PAFLogger.o PAFConsoleLogger.o PAFVariableContainerDict.o PAFVariableContainer.o PAFItemVariableContainerDict.o PAFItemVariableContainer.o PAFGenericItemVariableContainerDict.o PAFGenericItemVariableContainer.o PAFFindHelperDict.o PAFFindHelper.o PAFISettingsDict.o PAFISettings.o PAFEnvironmentVariableSettingsDict.o PAFEnvironmentVariableSettings.o
