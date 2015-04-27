@@ -2,6 +2,8 @@
 
 #include "TObjString.h"
 
+#include "PAFToolInspectTree.h"
+
 #include <iostream>
 
 int main(int argc, const char* argv[])
@@ -55,5 +57,6 @@ void PAFTools::InitMembers()
 
 void PAFTools::InitTools()
 {
-	
+	PAFToolInspectTree* inspectree = new PAFToolInspectTree();
+	fTools[inspectree->GetToolName()] = inspectree;
 }
