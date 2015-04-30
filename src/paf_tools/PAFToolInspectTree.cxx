@@ -4,11 +4,13 @@
 #include "TRegexp.h"
 #include "THashList.h"
 
-const char* TOOL_NAME = "inspecttree";
+#include "../exceptions/PAFExceptionCommandExpression.h"
 
-const char* HELP_MESSAGE = "\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t ROOT file name. Mandatory.";
+const char* PAFToolInspectTree::TOOL_NAME = "inspecttree";
 
-const char* COMMAND_EXPRESSION = "TODO";
+const char* PAFToolInspectTree::HELP_MESSAGE = "\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t ROOT file name. Mandatory.";
+
+const char* PAFToolInspectTree::COMMAND_EXPRESSION = "inspecttree [-t | --tree] [-b | --branch] root_filename";
 
 
 PAFToolInspectTree::PAFToolInspectTree()
@@ -24,6 +26,11 @@ PAFToolInspectTree::~PAFToolInspectTree()
 
 void PAFToolInspectTree::Execute(TList* params)
 {
+	if(params->GetSize() == 1)
+	{
+		throw PAFExceptionCommandExpression(TOOL_NAME);
+	}
+	
 	const char* branchName = NULL;
 	const char* treeName = NULL;
 	TFile* rootFile = new TFile(GetParam(params, params->GetSize() - 1));

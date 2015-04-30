@@ -8,5 +8,5 @@ PAFExceptionCommandExpression::PAFExceptionCommandExpression(TString toolName)
 
 TString PAFExceptionCommandExpression::GetMessage()
 {
-	return fToolName;
+	return TString::Format("%s command requires more information.", fToolName.Data());
 }

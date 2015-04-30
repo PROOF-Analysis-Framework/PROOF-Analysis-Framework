@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PAFITool.h"
+#include "PAFAbstractTool.h"
 
 #include "TList.h"
 #include "TString.h"
@@ -9,7 +9,7 @@
 
 int main(int argc, const char* argv[]);
 
-class PAFTools
+class PAFTools : public PAFAbstractTool
 {
 	public:
 		PAFTools();
@@ -23,4 +23,8 @@ class PAFTools
 	
 		void InitMembers();
 		void InitTools();
+	
+		static const char* TOOL_NAME;
+		static const char* HELP_MESSAGE;
+		static const char* COMMAND_EXPRESSION;
 };

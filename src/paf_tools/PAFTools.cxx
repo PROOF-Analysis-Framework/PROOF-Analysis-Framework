@@ -4,6 +4,8 @@
 
 #include "PAFToolInspectTree.h"
 
+#include "../exceptions/PAFExceptionCommandExpression.h"
+
 #include <iostream>
 
 int main(int argc, const char* argv[])
@@ -13,13 +15,22 @@ int main(int argc, const char* argv[])
 	tools.Execute(argc, argv);
 }
 
+const char* PAFTools::TOOL_NAME = "paf";
+
+const char* PAFTools::HELP_MESSAGE = "paf tools launcher";
+
+const char* PAFTools::COMMAND_EXPRESSION = "paf tool_name [tool_parameters]";
+
+
 PAFTools::PAFTools()
+	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
 {
 	InitMembers();
 }
 
 PAFTools::~PAFTools()
 {
+	
 }
 
 void PAFTools::InitMembers()
@@ -47,16 +58,44 @@ void PAFTools::Execute(TList* params)
 {
 	if(params->IsEmpty())
 	{
-		return; //TODO: We should launch PAFTools help.
+		PrintMessage(GetCommandExpression());
+		PrintMessage(GetHelpMessage());
+		return;
 	}
 	
-	TString tool = ((TObjString*)params->First())->GetString();
-	if(fTools.find(tool) == fTools.end())
+	TString param0 = GetParam(params, 0);
+	if(param0.EqualTo("-h") || param0.EqualTo("--help"))
 	{
-		std::cout << "Tool \"" << tool.Data() << "\" not found." << std::endl;
+		PrintMessage(GetCommandExpression());
+		PrintMessage(GetHelpMessage());
+		return;
 	}
-	else
+
+	if(fTools.find(param0) == fTools.end())
 	{
-		fTools[tool]->Execute(params);
+		PrintMessage(TString::Format("Tool \"%s\" not found.\n", param0.Data()));
+		return;
+	}
+	
+	PAFITool* tool = fTools[param0];
+	if(params->GetSize() == 2)
+	{
+		TString param1 = GetParam(params, 1);
+		if (param1.EqualTo("-h") || param1.EqualTo("--help"))
+		{
+			PrintMessage(tool->GetHelpMessage());
+			return;
+		}
+	}
+	
+	try
+	{
+		tool->Execute(params);
+	}
+	catch (PAFExceptionCommandExpression& ex)
+	{
+		PrintMessage(ex.GetMessage());
+		PrintMessage("Command expression:");
+		PrintMessage(tool->GetCommandExpression());
 	}
 }
