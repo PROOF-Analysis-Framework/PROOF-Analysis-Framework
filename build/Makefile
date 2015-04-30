@@ -1,6 +1,6 @@
 include ${ROOTSYS}/etc/Makefile.arch
 
-VPATH = ../src:../src/computing:../src/environments:../src/environments/proof_library_upload:../src/packages:../src/project:../src/input_parameters:../src/util:../src/logger:../src/variable_container:../src/computing_helpers/:../src/settings/:../src/paf_tools/:
+VPATH = ../src:../src/computing:../src/environments:../src/environments/proof_library_upload:../src/packages:../src/project:../src/input_parameters:../src/util:../src/logger:../src/variable_container:../src/computing_helpers/:../src/settings/:../src/paf_tools/:../src/exceptions/:
 
 LINK_DEFS=$(shell find ../src/ -name '*LinkDef.h')
 
@@ -33,7 +33,7 @@ clean:
 	-@rm -r ../include/
 	-@rm -r ../lib/
 	
-paf : PAFTools.o PAFITool.o PAFAbstractTool.o PAFToolInspectTree.o
+paf : PAFTools.o PAFITool.o PAFAbstractTool.o PAFToolInspectTree.o PAFIException.o PAFExceptionCommandExpression.o
 	@$(CXX) -g $(ROOTLIBS) $? -o $@
 	
 libPAF.so: PAFBaseSelectorDict.o PAFBaseSelector.o PAFISelectorDict.o PAFISelector.o PAFChainItemSelectorDict.o PAFChainItemSelector.o PAFChainSelectorDict.o PAFChainSelector.o PAFIExecutionEnvironmentDict.o PAFIExecutionEnvironment.o PAFPROOFEnvironmentDict.o PAFPROOFEnvironment.o PAFPROOFLiteEnvironmentDict.o PAFPROOFLiteEnvironment.o PAFPoDEnvironmentDict.o PAFPoDEnvironment.o PAFPROOFCloudEnvironmentDict.o PAFPROOFCloudEnvironment.o PAFPROOFClusterEnvironmentDict.o PAFPROOFClusterEnvironment.o PAFSequentialEnvironmentDict.o PAFSequentialEnvironment.o PAFPROOFIUploadLibraryDict.o PAFPROOFIUploadLibrary.o PAFPROOFUploadLibrarySharedDirectoryDict.o PAFPROOFUploadLibrarySharedDirectory.o PAFPROOFUploadLibraryTProofUploadDict.o PAFPROOFUploadLibraryTProofUpload.o PAFNamedItemDict.o PAFNamedItem.o PAFStopWatchDict.o PAFStopWatch.o PAFStringUtilDict.o PAFStringUtil.o PAFPackageDict.o PAFPackage.o PAFLibraryDict.o PAFLibrary.o PAFPackageSelectorDict.o PAFPackageSelector.o PAFAbstractProjectDict.o PAFAbstractProject.o PAFProjectDict.o PAFProject.o PAFProjectGenericDict.o PAFProjectGeneric.o PAF.o PAFLogger.o PAFConsoleLogger.o PAFVariableContainerDict.o PAFVariableContainer.o PAFItemVariableContainerDict.o PAFItemVariableContainer.o PAFGenericItemVariableContainerDict.o PAFGenericItemVariableContainer.o PAFFindHelperDict.o PAFFindHelper.o PAFISettingsDict.o PAFISettings.o PAFEnvironmentVariableSettingsDict.o PAFEnvironmentVariableSettings.o
