@@ -1,3 +1,12 @@
+/**
+	@brief PAF tool class to clean the environment used.
+	@file PAFToolReset.h
+	@class PAFToolReset
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-04-30
+ */
+
 #pragma once
 
 #include "PAFAbstractTool.h"

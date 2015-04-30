@@ -1,3 +1,12 @@
+/**
+	@brief PAF tool class to clean the environment used.
+	@file PAFToolReset.cxx
+	@class PAFToolReset
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-04-30
+ */
+
 #include "PAFToolReset.h"
 
 #include "../exceptions/PAFExceptionCommandExpression.h"

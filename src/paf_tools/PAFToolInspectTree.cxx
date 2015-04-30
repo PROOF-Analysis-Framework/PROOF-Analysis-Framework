@@ -1,3 +1,12 @@
+/**
+	@brief PAF tool class to show information about ROOT files.
+	@file PAFToolInspectTree.cxx
+	@class PAFToolInspectTree
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-04-30
+ */
+
 #include "PAFToolInspectTree.h"
 
 #include "TLeaf.h"

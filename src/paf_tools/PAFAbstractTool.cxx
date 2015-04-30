@@ -1,3 +1,12 @@
+/**
+	@brief Abstract class to provides a default implementation of PAFItool.
+	@file PAFAbstractTool.cxx
+	@class PAFAbstractTool
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-04-30
+ */
+
 #include "PAFAbstractTool.h"
 
 #include <iostream>

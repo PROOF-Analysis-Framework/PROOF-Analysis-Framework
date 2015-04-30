@@ -1,3 +1,12 @@
+/**
+	@brief PAF tool executable that holds all paf tools.
+	@file PAFTools.h
+	@class PAFTools
+	@author I. Gonzalez Caballero, J. Delgado Fernandez
+	@version 1.0
+	@date 2015-04-30
+ */
+
 #pragma once
 
 #include "PAFAbstractTool.h"
