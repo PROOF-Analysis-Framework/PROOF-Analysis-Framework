@@ -4,10 +4,15 @@
 #include "TRegexp.h"
 #include "THashList.h"
 
-#include <iostream>
+const char* TOOL_NAME = "inspecttree";
+
+const char* HELP_MESSAGE = "\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t ROOT file name. Mandatory.";
+
+const char* COMMAND_EXPRESSION = "TODO";
+
 
 PAFToolInspectTree::PAFToolInspectTree()
-	: PAFITool()
+	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
 {
 
 }
@@ -15,27 +20,6 @@ PAFToolInspectTree::PAFToolInspectTree()
 PAFToolInspectTree::~PAFToolInspectTree()
 {
 
-}
-
-TString PAFToolInspectTree::GetParam(TList* params, int i)
-{
-	return ((TObjString*)params->At(i))->GetString();
-}
-
-TString PAFToolInspectTree::GetToolName()
-{
-	return "inspecttree";
-}
-
-TString PAFToolInspectTree::GetHelp()
-{
-	return
-		"\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t ROOT file name. Mandatory.";
-}
-
-TString PAFToolInspectTree::GetCommandExpression()
-{
-	return "TODO";
 }
 
 void PAFToolInspectTree::Execute(TList* params)
@@ -62,14 +46,32 @@ void PAFToolInspectTree::Execute(TList* params)
 	}
 }
 
-void PAFToolInspectTree::PrintMessage(const char* message)
+TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
 {
-	std::cout << message << std::endl;
+	return (TTree*)rootFile->Get(treeName);
 }
 
-void PAFToolInspectTree::PrintVariable(const char* type, const char* name)
+TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 {
-	std::cout << "Type: " << type << " \t\tVariable: " << name <<  std::endl;
+	THashList* trees = (THashList*)rootFile->GetListOfKeys();
+	TTree* result = NULL;
+	
+	if(trees->GetSize() == 1)
+	{
+		TObject* uniqueTree = trees->First();
+		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", uniqueTree->GetName()));
+		result = GetTree(rootFile, uniqueTree->GetName());
+	}
+	else
+	{
+		PrintMessage("Please, the file specified has several Trees. You should choose one with -t param.\nHere is the list of Trees contained in that ROOT file:");
+		for(int i = 0; i < trees->GetSize(); i++)
+		{
+			TObject* tree = trees->At(i);
+			PrintMessage( TString::Format("\t -%s", tree->GetName()).Data() );
+		}
+	}
+	return result;
 }
 
 void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
@@ -94,31 +96,8 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
 	delete regex;
 }
 
-TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
+void PAFToolInspectTree::PrintVariable(const char* type, const char* name)
 {
-	return (TTree*)rootFile->Get(treeName);
-}
-
-TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
-{
-	THashList* trees = (THashList*)rootFile->GetListOfKeys();
-	TTree* result = NULL;
-	
-	if(trees->GetSize() == 1)
-	{
-		TObject* uniqueTree = trees->First();
-		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", uniqueTree->GetName()).Data() );
-		result = (TTree*)rootFile->Get(uniqueTree->GetName());
-	}
-	else
-	{
-		PrintMessage("Please, the file specified has several Trees. You should choose one with -t param.\nHere is the list of Trees contained in that ROOT file:");
-		for(int i = 0; i < trees->GetSize(); i++)
-		{
-			TObject* tree = trees->At(i);
-			PrintMessage( TString::Format("\t -%s", tree->GetName()).Data() );
-		}
-	}
-	return result;
+	PrintMessage(TString::Format("Type: %s \t\tVariable: %s\n", type, name));
 }
 

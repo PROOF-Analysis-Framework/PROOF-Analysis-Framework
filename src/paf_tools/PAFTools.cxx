@@ -22,6 +22,17 @@ PAFTools::~PAFTools()
 {
 }
 
+void PAFTools::InitMembers()
+{
+	InitTools();
+}
+
+void PAFTools::InitTools()
+{
+	PAFToolInspectTree* inspectree = new PAFToolInspectTree();
+	fTools[inspectree->GetToolName()] = inspectree;
+}
+
 void PAFTools::Execute(int argc, const char* argv[])
 {
 	TList params;
@@ -48,15 +59,4 @@ void PAFTools::Execute(TList* params)
 	{
 		fTools[tool]->Execute(params);
 	}
-}
-
-void PAFTools::InitMembers()
-{
-	InitTools();
-}
-
-void PAFTools::InitTools()
-{
-	PAFToolInspectTree* inspectree = new PAFToolInspectTree();
-	fTools[inspectree->GetToolName()] = inspectree;
 }
