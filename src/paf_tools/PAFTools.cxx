@@ -3,6 +3,7 @@
 #include "TObjString.h"
 
 #include "PAFToolInspectTree.h"
+#include "PAFToolReset.h"
 
 #include "../exceptions/PAFExceptionCommandExpression.h"
 
@@ -40,8 +41,21 @@ void PAFTools::InitMembers()
 
 void PAFTools::InitTools()
 {
-	PAFToolInspectTree* inspectree = new PAFToolInspectTree();
+	PAFITool* inspectree = new PAFToolInspectTree();
 	fTools[inspectree->GetToolName()] = inspectree;
+	
+	PAFITool* pafreset = new PAFToolReset();
+	fTools[pafreset->GetToolName()] = pafreset;
+}
+
+TString PAFTools::GetHelpMessage()
+{
+	TString result = "PAF tools currently available:\n";
+	for (auto& kv : fTools)
+	{
+		result.Append(TString::Format("\t%s\n", kv.first.Data()));
+	}
+	return result;
 }
 
 void PAFTools::Execute(int argc, const char* argv[])

@@ -14,7 +14,9 @@ class PAFTools : public PAFAbstractTool
 	public:
 		PAFTools();
 		virtual ~PAFTools();
-
+	
+		virtual TString GetHelpMessage();
+	
 		void Execute(int argc, const char* argv[]);
 		void Execute(TList* params);
 	
