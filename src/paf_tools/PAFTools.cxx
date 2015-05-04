@@ -60,10 +60,11 @@ void PAFTools::InitTools()
 TString PAFTools::GetHelpMessage()
 {
 	TString result = "PAF tools currently available:\n";
-	for (auto& kv : fTools)
-	{
-		result.Append(TString::Format("\t%s\n", kv.first.Data()));
-	}
+	for (std::map<TString, PAFITool*>::iterator it = fTools.begin();
+                it != fTools.end(); it++)
+        {
+                result.Append(TString::Format("\t%s\n", it->first.Data()));
+        }
 	return result;
 }
 
