@@ -143,7 +143,7 @@ void CreateSessionDir()
 	//TString buildDir = "/tmp/PAF/BuildDir";
 	TString buildDir = TString::Format("%s/.paf/BuildDir",gSystem->pwd());
 	gSystem->mkdir(buildDir, true);
-  	gSystem->SetBuildDir(buildDir);
+	gSystem->SetBuildDir(buildDir);
 }
 
 void PAFAbstractProject::PreparePackage(PAFPackage* package)
@@ -163,7 +163,7 @@ void PAFAbstractProject::PreparePackage(PAFPackage* package)
 void PAFAbstractProject::PreparePackages()
 {
 	CreateSessionDir();
-	
+
 	for(unsigned int i = 0; i < fPackages->size(); i++)
 	{
 		PreparePackage(fPackages->at(i));
@@ -235,20 +235,20 @@ void PAFAbstractProject::Run()
 	LoadProjectItems();
 	PreparePAFSelector();
 	AddDynamicHistograms();
-	
+
 	fExecutionEnvironment->SetOutput(fOutputFile);
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
-	
+
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
-
+	
 	timer.TakeTime("Environment ready");
 	PAF_DEBUG("PAFProject", "Launching process");
-	
+
 	doRun(selector);
-	
+
 	timer.TakeTime("Processed");
 	PAF_DEBUG("PAFProject", "Process completed.");
 	fExecutionEnvironment->Dispose();

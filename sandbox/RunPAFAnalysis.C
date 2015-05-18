@@ -1,8 +1,0 @@
-#include "TProof.h"
-
-void RunScript() {
-	PAFProject* myProject = new PAFProject(new PAFPROOFLiteEnvironment(%NODES%));
-	myProject->AddDataFile("/home/javier/Documents/Tree_ZJets_Madgraph_0.root");
-	myProject->AddSelectorPackage("MyAnalysis");
-	myProject->Run();
-}

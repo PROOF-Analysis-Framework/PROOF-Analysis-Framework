@@ -36,7 +36,7 @@ class PAFIExecutionEnvironment
 		virtual bool EnablePackage(PAFPackage* package) = 0;
 
 		virtual bool LoadLibrary(PAFLibrary* library) = 0;
-		
+
 		virtual void Process(PAFBaseSelector* selector, Long64_t nentries) = 0;
 		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles) = 0;
 };

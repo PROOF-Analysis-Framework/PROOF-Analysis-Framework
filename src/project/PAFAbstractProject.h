@@ -45,13 +45,13 @@ class PAFAbstractProject
 		void AddSelectorPackage(TString& packageSelectorName);
 		void AddSelectorPackage(const char* packageSelectorName);
 		void AddSelectorPackage(PAFPackageSelector* packageSelector);
-		
+
 		void SetLibraries(std::vector<PAFLibrary*>* libraries) { fLibraries = libraries; }
 		std::vector<PAFLibrary*>* GetLibraries() {return fLibraries;}
 		void AddLibrary(TString& libraryName);
 		void AddLibrary(const char* libraryName);
 		void AddLibrary(PAFLibrary* library);
-		
+
 		void SetPAFSettings(PAFISettings* settings);
 		PAFISettings* GetPAFSettings(){ return fPAFSettings; }
 
