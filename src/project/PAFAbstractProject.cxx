@@ -27,6 +27,7 @@ bool            DEFAULT_COMPILE_ON_SLAVES = false;
 PAFAbstractProject::PAFAbstractProject()
 {
 	InitMembers();
+	fExecutionEnvironment = new PAFPROOFLiteEnvironment(4);
 }
 
 PAFAbstractProject::PAFAbstractProject(PAFIExecutionEnvironment* executionEnvironment)
@@ -139,7 +140,8 @@ T PAFAbstractProject::CreateObject(const char* className)
 
 void CreateSessionDir()
 {
-	TString buildDir = "/tmp/PAF/BuildDir";
+	//TString buildDir = "/tmp/PAF/BuildDir";
+	TString buildDir = TString::Format("%s/.paf/BuildDir",gSystem->pwd());
 	gSystem->mkdir(buildDir, true);
   	gSystem->SetBuildDir(buildDir);
 }
