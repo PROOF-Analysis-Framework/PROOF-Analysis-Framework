@@ -10,7 +10,7 @@
 #pragma once
 
 #include "TObject.h"
-#include "TFileCollection.h"
+#include "TDSet.h"
 #include "TDrawFeedback.h"
 
 #include "../computing/PAFBaseSelector.h"
@@ -38,5 +38,5 @@ class PAFIExecutionEnvironment
 		virtual bool LoadLibrary(PAFLibrary* library) = 0;
 		
 		virtual void Process(PAFBaseSelector* selector, Long64_t nentries) = 0;
-		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles) = 0;
+		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles) = 0;
 };

@@ -14,13 +14,18 @@ ClassImp(PAFProject);
 PAFProject::PAFProject()
 	: PAFAbstractProject()
 {
-	fDataFiles = new TFileCollection("PAFFiles");
+	InitMembers();
 }
 
 PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment) 
 	: PAFAbstractProject(executionEnvironment)
 {
-	fDataFiles = new TFileCollection("PAFFiles");
+	InitMembers();
+}
+
+void PAFProject::InitMembers()
+{
+	fDataFiles = new TDSet("PAFFiles", "Tree");
 }
 
 PAFProject::~PAFProject()
@@ -28,17 +33,39 @@ PAFProject::~PAFProject()
 	delete fDataFiles;
 }
 
-void PAFProject::AddDataFile(TString& fileName)
+TString PAFProject::GetDefaultTreeName()
 {
-	//TFileInfo* result = new TFileInfo(fileName);
-	//AddDataFile(result);
-	fDataFiles->Add(fileName);
+	return TString(fDataFiles->GetObjName());
 }
 
-void PAFProject::AddDataFile(const char* fileName)
+void PAFProject::SetDefaultTreeName(TString& defualtTreeName)
 {
-	TString tFileName(fileName);
-	AddDataFile(tFileName);
+	SetDefaultTreeName(defualtTreeName.Data());
+}
+
+void PAFProject::SetDefaultTreeName(const char* defaultTreeName)
+{
+	fDataFiles->SetObjName(defaultTreeName);
+}
+
+TDSet* PAFProject::GetDataFiles()
+{
+	return fDataFiles;
+}
+
+void PAFProject::SetDataFiles(TDSet* dataFiles)
+{
+	fDataFiles = dataFiles;
+}
+
+void PAFProject::AddDataFile(TString& fileName, const char* objname)
+{
+	AddDataFile(fileName.Data(), objname);
+}
+
+void PAFProject::AddDataFile(const char* fileName, const char* objname)
+{
+	fDataFiles->Add(fileName, objname);
 }
 
 void PAFProject::AddDataFile(TFileInfo* dataFile)

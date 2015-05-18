@@ -84,7 +84,7 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, Long64_t nentr
 }
 
 
-void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
+void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles)
 {
 	if(fOutputFile.Length() > 0)
 	{
@@ -93,11 +93,13 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TFileCollectio
 
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
-	for(int i = 0; i < dataFiles->GetNFiles(); i++)
+	
+	TDSetElement* element;
+	while( (element = dataFiles->Next()) )
 	{
-		TFileInfo* fileinfo = (TFileInfo*)dataFiles->GetList()->At(i);
+		TFileInfo* fileinfo = (TFileInfo*)element->GetFileInfo();
 		TFile file(fileinfo->GetCurrentUrl()->GetFile());
-		TTree* tree = (TTree*)file.Get("Tree"); //TODO There is a dataFiles->GetDefaultTreeName();
+		TTree* tree = (TTree*)file.Get(element->GetObjName()); //TODO There is a dataFiles->GetDefaultTreeName();
 
 		selector->Init(tree);
 		

@@ -76,7 +76,7 @@ void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
 	}
 }
 
-void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TFileCollection* dataFiles)
+void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles)
 {
 	if(fOutputFile.Length() > 0)
 	{

@@ -35,7 +35,7 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		bool LoadLibrary(PAFLibrary* library);
 
 		virtual void Process(PAFBaseSelector* selector, Long64_t nentries);
-		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles);
+		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles);
 
 		void SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary);
 		PAFPROOFIUploadLibrary* GetPROOFUpload();

@@ -24,7 +24,7 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 		virtual TDrawFeedback* CreateDrawFeedback();
 		
 		virtual void Process ( PAFBaseSelector* selector, Long64_t nentries );
-		virtual void Process(PAFBaseSelector* selector, TFileCollection* dataFiles);
+		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles);
 		
 		virtual bool UploadPackage(PAFPackage* package);
 		virtual bool EnablePackage(PAFPackage* package);

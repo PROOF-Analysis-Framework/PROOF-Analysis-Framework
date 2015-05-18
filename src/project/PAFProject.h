@@ -11,8 +11,8 @@
 
 #include "PAFAbstractProject.h"
 
+#include "TDSet.h"
 #include "TFileInfo.h"
-#include "TFileCollection.h"
 
 class PAFProject : public PAFAbstractProject
 {
@@ -21,16 +21,24 @@ class PAFProject : public PAFAbstractProject
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 		virtual ~PAFProject();
 		
-		void SetDataFiles(TFileCollection* dataFiles) { fDataFiles = dataFiles; }
-		TFileCollection* GetDataFiles() { return fDataFiles; }
-		void AddDataFile(TString& fileName);
-		void AddDataFile(const char* fileName);
+		void SetDefaultTreeName(TString& defualtTreeName);
+		void SetDefaultTreeName(const char* defaultTreeName);
+		TString GetDefaultTreeName();
+		
+		void SetDataFiles(TDSet* dataFiles);
+		TDSet* GetDataFiles();
+		
+		void AddDataFile(TString& fileName, const char* objname = 0);
+		void AddDataFile(const char* fileName, const char* objname = 0);
 		void AddDataFile(TFileInfo* dataFile);
-
+		
 		void doRun(PAFBaseSelector* selector);      
 
 	protected:
-		TFileCollection* fDataFiles;
+		void InitMembers();
+		
+	protected:
+		TDSet* 	fDataFiles;
 		
 	ClassDef(PAFProject, 1);
 };
