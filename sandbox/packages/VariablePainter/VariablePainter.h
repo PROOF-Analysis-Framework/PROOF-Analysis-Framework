@@ -9,7 +9,6 @@ class VariablePainter : public PAFChainItemSelector {
 		VariablePainter() : PAFChainItemSelector(), myHistogram(0) {}
 		virtual ~VariablePainter() {}
 
-	protected:
 		virtual void Initialise();
 		virtual void InsideLoop();
 		virtual void Summary();

@@ -5,7 +5,7 @@
 ClassImp(VariablePainter)
 
 void VariablePainter::Initialise() {
-	myHistogram = CreateH1F("etHistogram","#slash{E}_{T}", 100, 0., 200.);
+	myHistogram = CreateH1F("myHistogram","MyHistogram", 100, 0., 200.);
 }
 
 void VariablePainter::InsideLoop() {
@@ -15,7 +15,7 @@ void VariablePainter::InsideLoop() {
 
 void VariablePainter::Summary() {
 	TCanvas* canvas = new TCanvas("canvas", "Proof ProofFirst canvas", 200, 10, 400, 400);
-	TH1F* result = (TH1F*)FindOutput("etHistogram");
+	TH1F* result = (TH1F*)FindOutput("myHistogram");
 	result->Draw();
 	canvas->Update();
 }

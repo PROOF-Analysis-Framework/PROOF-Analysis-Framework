@@ -10,7 +10,6 @@ class BasicSelector : public PAFChainItemSelector
 		BasicSelector() : PAFChainItemSelector(), etHisto(0) {}
 		virtual ~BasicSelector() {}
 
-	protected:
 		virtual void Initialise();
 		virtual void InsideLoop();
 		virtual void Summary();

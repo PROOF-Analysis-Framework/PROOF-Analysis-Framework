@@ -8,7 +8,6 @@ class VariableGetter : public PAFChainItemSelector
 		VariableGetter() : PAFChainItemSelector() {}
 		virtual ~VariableGetter() {}
 
-	protected:
 		virtual void InsideLoop();
 		
 	ClassDef(VariableGetter, 0);

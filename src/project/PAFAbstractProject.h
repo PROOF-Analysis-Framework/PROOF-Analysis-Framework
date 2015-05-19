@@ -117,3 +117,17 @@ inline void PAFAbstractProject::SetInputParam(const char* key, T param)
 	SetInputParam(tkey, param);
 }
 
+template<>
+inline void PAFAbstractProject::SetInputParam(TString& key, const char* param)
+{
+	TString tparam(param);
+	SetInputParam(key, tparam);
+}
+
+template <>
+inline void PAFAbstractProject::SetInputParam(const char* key, const char* param)
+{
+	TString tkey(key);
+	SetInputParam(tkey, param);
+}
+
