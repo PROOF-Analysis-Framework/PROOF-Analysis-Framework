@@ -4,6 +4,6 @@ ClassImp(VariableGetter)
 
 void VariableGetter::InsideLoop() {
 	TString variable = GetParam<TString>("Variable");
-	float result = Get<float>("T_METPF_ET");
+	float result = Get<float>(variable);
 	SetParam("Result", result);
 }
