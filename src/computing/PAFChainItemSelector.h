@@ -116,10 +116,13 @@ class PAFChainItemSelector : public PAFISelector
 		
 
 		//Helpers methods
-		
+
 		TObject* FindInput(TString& name);
+		TObject* FindInput(const char* name);
+
 		TObject* FindOutput(TString& name);
-		
+		TObject* FindOutput(const char* name);
+
 		TTree* CreateTree(const char* name, const char* title);
 
 		TH1F* CreateH1F(const char* name, const char* title, 

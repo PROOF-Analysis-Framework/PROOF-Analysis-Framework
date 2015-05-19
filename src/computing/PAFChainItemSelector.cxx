@@ -182,9 +182,21 @@ TObject* PAFChainItemSelector::FindInput(TString& name)
 	return PAFFindHelper::Find<TObject*>(fInput, name);
 }
 
+TObject* PAFChainItemSelector::FindInput(const char* name)
+{
+	TString tName(name);
+	return FindInput(tName);
+}
+
 TObject* PAFChainItemSelector::FindOutput(TString& name)
 {
 	return PAFFindHelper::Find<TObject*>(fOutput, name);
+}
+
+TObject* PAFChainItemSelector::FindOutput(const char* name)
+{
+	TString tName(name);
+	return FindOutput(tName);
 }
 
 TTree* PAFChainItemSelector::CreateTree(const char* name, const char* title) {
