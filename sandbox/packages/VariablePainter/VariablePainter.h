@@ -4,10 +4,10 @@
 
 #include <TH1F.h>
 
-class MyVariablePainter : public PAFChainItemSelector {
+class VariablePainter : public PAFChainItemSelector {
 	public:
-		MyVariablePainter() : PAFChainItemSelector(), myHistogram(0) {}
-		virtual ~MyVariablePainter() {}
+		VariablePainter() : PAFChainItemSelector(), myHistogram(0) {}
+		virtual ~VariablePainter() {}
 
 	protected:
 		virtual void Initialise();
@@ -17,5 +17,5 @@ class MyVariablePainter : public PAFChainItemSelector {
 	protected:
 		TH1F* myHistogram;
 		
-	ClassDef(MyVariablePainter, 1);
+	ClassDef(VariablePainter, 1);
 };

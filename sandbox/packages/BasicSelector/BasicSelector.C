@@ -6,13 +6,13 @@ ClassImp(BasicSelector);
 
 void BasicSelector::Initialise() 
 {
-	etHisto = CreateH1F("etHistogram","EtHistogram", 100, 0., 200.);
+	etHisto = CreateH1F("etHistogram","#slash{E}_{T}", 100, 0., 200.);
 }
 
 void BasicSelector::InsideLoop() 
 {
 	float t_metpf_et = Get<float>("T_METPF_ET");
-	etHisto->Fill(tMetEt/tMetGenEt);
+	etHisto->Fill(t_metpf_et);
 }
 
 void BasicSelector::Summary()
