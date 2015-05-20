@@ -16,28 +16,25 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment {
 
 		void Initialise() {}
 		void Dispose() {}
-		
-		virtual void SetOutput(TString& outputFile);
-		
+
 		virtual void AddInput(TObject* obj);
 		virtual void AddFeedback(const char* name);
 		virtual TDrawFeedback* CreateDrawFeedback();
-		
+
 		virtual void Process ( PAFBaseSelector* selector, Long64_t nentries );
 		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles);
-		
+
 		virtual bool UploadPackage(PAFPackage* package);
 		virtual bool EnablePackage(PAFPackage* package);
-		
+
 		virtual bool LoadLibrary(PAFLibrary* library);
 
 	protected:
 		void InitMembers();
-		
+
 		virtual void DrawFeedback(TSelector* selector);
 
 	protected:
-		TString 		fOutputFile;
 		TList*			fInputList;
 		PAFVariableContainer* 	fFeedbackCanvas;
 };

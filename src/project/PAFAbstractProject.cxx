@@ -23,6 +23,7 @@ ClassImp(PAFAbstractProject);
 
 PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
 bool            DEFAULT_COMPILE_ON_SLAVES = false;
+TString		DEFAULT_OUTPUT_FILE("output.root");
 
 PAFAbstractProject::PAFAbstractProject()
 {
@@ -47,7 +48,7 @@ void PAFAbstractProject::InitMembers()
 	fPackages = new std::vector<PAFPackage*>();
 	fSelectorPackages = new std::vector<PAFPackageSelector*>();
 	fLibraries = new std::vector<PAFLibrary*>();
-	fOutputFile = TString();
+	fOutputFile = DEFAULT_OUTPUT_FILE;
 	fDynamicHistograms = new std::vector<TString>();
 	fPAFSettings = DEFAULT_PAFISETTINGS;
 	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
@@ -236,13 +237,13 @@ void PAFAbstractProject::Run()
 	PreparePAFSelector();
 	AddDynamicHistograms();
 
-	fExecutionEnvironment->SetOutput(fOutputFile);
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
 
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
+	selector->SetOutputFile(fOutputFile);
 	
 	timer.TakeTime("Environment ready");
 	PAF_DEBUG("PAFProject", "Launching process");

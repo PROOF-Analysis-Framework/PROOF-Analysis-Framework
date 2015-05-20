@@ -22,9 +22,7 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 
 		void Initialise();
 		void Dispose();
-		
-		virtual void SetOutput(TString& outputFile);
-		
+
 		void AddInput(TObject* obj);
 		void AddFeedback(const char* name);
 		TDrawFeedback* CreateDrawFeedback();
@@ -46,7 +44,6 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		virtual void LoadPAF();
 		
 	protected:
-		TString			fOutputFile;
 		TProof*			fSession;
 		PAFPROOFIUploadLibrary*	fPROOFUploadLibrary;
 };

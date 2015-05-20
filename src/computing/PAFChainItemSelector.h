@@ -155,8 +155,8 @@ class PAFChainItemSelector : public PAFISelector
 						Axis_t ylow, Axis_t yup);
 		
 	protected:		
-		TList* 					fInput;
-		TSelectorList* 			fOutput;
+		TList* 			fInput;
+		TSelectorList* 		fOutput;
 		PAFVariableContainer* 	fVariables; //! Do not stream
 		PAFVariableContainer* 	fSelectorParams;
 

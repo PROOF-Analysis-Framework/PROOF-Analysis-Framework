@@ -33,14 +33,8 @@ PAFSequentialEnvironment::~PAFSequentialEnvironment()
 
 void PAFSequentialEnvironment::InitMembers()
 {
-	fOutputFile = TString();
-	 fInputList = new TList();
-	 fFeedbackCanvas = new PAFVariableContainer();
-}
-
-void PAFSequentialEnvironment::SetOutput(TString& outputFile)
-{
-	fOutputFile = outputFile;
+	fInputList = new TList();
+	fFeedbackCanvas = new PAFVariableContainer();
 }
 
 void PAFSequentialEnvironment::AddInput(TObject* obj)
@@ -61,11 +55,6 @@ TDrawFeedback* PAFSequentialEnvironment::CreateDrawFeedback()
 
 void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
 {
-	if(fOutputFile.Length() > 0)
-	{
-		PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
-	}
-
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
 	//selector->Init(tree);
@@ -86,11 +75,6 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, Long64_t nentr
 
 void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles)
 {
-	if(fOutputFile.Length() > 0)
-	{
-		PAF_FATAL("PAFSequentialEnvironment", "Process with output file is not implemented yet");
-	}
-
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
 	
@@ -119,7 +103,8 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)
 {
 	std::vector<TString>* feedbacks = fFeedbackCanvas->GetKeys();
-	for(unsigned int i = 0; i < feedbacks->size(); i++){
+	for(unsigned int i = 0; i < feedbacks->size(); i++)
+	{
 		TString item = feedbacks->at(i);
 		TCanvas* canvas = fFeedbackCanvas->Get<TCanvas*>(item);
 		canvas->cd();

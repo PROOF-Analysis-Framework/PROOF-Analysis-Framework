@@ -5,7 +5,7 @@ THIS=$(dirname ${BASH_ARGV[0]})
 PAFPATH=$(cd ${THIS};pwd); export PAFPATH
 
 # Colon separated list of paths where modules and packages are to be looked for
-export PAFREPOSITORIES=$(pwd)/sandbox/packages
+export PAFREPOSITORIES=./packages
 
 # Add PAFPATH/bin to PATH
 export PATH=$PATH:$PAFPATH/bin

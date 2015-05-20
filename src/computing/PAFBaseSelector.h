@@ -14,7 +14,6 @@
 #include "TString.h"
 
 #include "PAFISelector.h"
-#include "../util/PAFNamedItem.h"
 #include "../variable_container/PAFVariableContainer.h"
 
 #include "../PAF.h"
@@ -34,12 +33,16 @@ class PAFBaseSelector : public TSelector {
 		
 		void SetSelectorParams(PAFVariableContainer* selectorparams) { fSelectorParams = selectorparams; }
 		PAFVariableContainer* GetSelectorParams() { return fSelectorParams; }
-		
+
+		void SetOutputFile(const TString& fOutputFile);
+		TString GetOutputFile();
+
 	protected:
 		TTree*			fTree;
 		PAFISelector*		fPAFISelector;
 		PAFVariableContainer*	fSelectorParams;
 		PAFVariableContainer*	fVariables;//!
+		TString		fOutputFile;
 
 	ClassDef(PAFBaseSelector, 1);
 };

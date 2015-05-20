@@ -26,8 +26,6 @@ class PAFIExecutionEnvironment
 		virtual void Initialise() = 0;
 		virtual void Dispose() = 0;
 		
-		virtual void SetOutput(TString& outputFile) = 0;
-		
 		virtual void AddInput(TObject* obj) = 0;
 		virtual void AddFeedback(const char* name) = 0;
 		virtual TDrawFeedback* CreateDrawFeedback() = 0;

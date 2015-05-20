@@ -22,6 +22,16 @@ PAFBaseSelector::~PAFBaseSelector()
 	delete fVariables;
 }
 
+void PAFBaseSelector::SetOutputFile(const TString& outputFile)
+{
+	fOutputFile = outputFile;
+}
+
+TString PAFBaseSelector::GetOutputFile()
+{
+	return fOutputFile;
+}
+
 void PAFBaseSelector::Init(TTree* tree)
 {
 	delete fVariables;
@@ -66,7 +76,11 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 
 void PAFBaseSelector::Terminate()
 {
-	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);	
+	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
 	fPAFISelector->SetDynamicData(fVariables);
-  	fPAFISelector->Summary();
+	fPAFISelector->Summary();
+
+	PAF_DEBUG("PAFBaseSelector", "Saving output to file");
+	fOutput->Add(fInput);
+	fOutput->SaveAs(fOutputFile.Data());
 }
