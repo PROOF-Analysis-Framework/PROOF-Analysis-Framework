@@ -23,7 +23,7 @@ ClassImp(PAFAbstractProject);
 
 PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
 bool            DEFAULT_COMPILE_ON_SLAVES = false;
-TString		DEFAULT_OUTPUT_FILE("output.root");
+TString		DEFAULT_OUTPUT_FILE = TString("pafoutput.root");
 
 PAFAbstractProject::PAFAbstractProject()
 {

@@ -67,29 +67,63 @@ void PAFToolInspectTree::Execute(TList* params)
 
 TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
 {
-	return (TTree*)rootFile->Get(treeName);
+	TObject* result = rootFile->Get(treeName);
+	
+	if(result->IsA() == TTree::Class())
+	{
+		return (TTree*)result;
+	}
+	
+	return NULL;
+}
+
+TList* PAFToolInspectTree::GetListOfTrees(TFile* rootFile)
+{
+	TList* result = new TList();
+	
+	THashList* trees = (THashList*)rootFile->GetListOfKeys();
+	
+	TIterator* it = trees->MakeIterator();
+	TObject* item = 0;
+	while( (item = it->Next()) )
+	{
+		TTree* tree = GetTree(rootFile, item->GetName());
+		if(tree)
+		{
+			result->Add(tree);
+		}
+	}
+	
+	return result;
 }
 
 TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 {
-	THashList* trees = (THashList*)rootFile->GetListOfKeys();
+	TList* trees = GetListOfTrees(rootFile);
+	
 	TTree* result = NULL;
 	
+	if(trees->GetSize() == 0)
+	{
+		PrintMessage("This ROOT file does not contain any Tree");
+	}
 	if(trees->GetSize() == 1)
 	{
-		TObject* uniqueTree = trees->First();
-		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", uniqueTree->GetName()));
-		result = GetTree(rootFile, uniqueTree->GetName());
+		result = (TTree*)trees->First();
+		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", result->GetName()));
 	}
 	else
 	{
 		PrintMessage("Please, the file specified has several Trees. You should choose one with -t param.\nHere is the list of Trees contained in that ROOT file:");
 		for(int i = 0; i < trees->GetSize(); i++)
 		{
-			TObject* tree = trees->At(i);
+			TTree* tree = (TTree*)trees->At(i);
 			PrintMessage( TString::Format("\t -%s", tree->GetName()).Data() );
 		}
 	}
+	
+	delete trees;
+	
 	return result;
 }
 
