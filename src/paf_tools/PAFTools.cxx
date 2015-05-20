@@ -33,7 +33,7 @@ const char* PAFTools::COMMAND_EXPRESSION = "paf tool_name [tool_parameters]";
 
 
 PAFTools::PAFTools()
-	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
+	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION), TApplication(TOOL_NAME, 0, 0)
 {
 	InitMembers();
 }

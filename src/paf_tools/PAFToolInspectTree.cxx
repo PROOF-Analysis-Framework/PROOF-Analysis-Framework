@@ -10,6 +10,9 @@
 #include "PAFToolInspectTree.h"
 
 #include "TLeaf.h"
+#include "TLeafElement.h"
+#include "TLeafObject.h"
+
 #include "TRegexp.h"
 #include "THashList.h"
 
@@ -104,7 +107,12 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
 		int length;
 		if(regex->Index(name, &length) != -1)
 		{
-			PrintVariable(leaf->GetTypeName(), name.Data());
+			TString type(leaf->GetTypeName());
+			if(leaf->IsA() == TLeafElement::Class() || leaf->IsA() == TLeafObject::Class())
+			{
+				type.Append("*");
+			}
+			PrintVariable(type.Data(), name.Data());
 		}
 	}
 	

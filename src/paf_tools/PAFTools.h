@@ -13,12 +13,13 @@
 
 #include "TList.h"
 #include "TString.h"
+#include "TApplication.h"
 
 #include <map>
 
 int main(int argc, const char* argv[]);
 
-class PAFTools : public PAFAbstractTool
+class PAFTools : public PAFAbstractTool, public TApplication
 {
 	public:
 		PAFTools();
