@@ -77,29 +77,35 @@ TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
 	return NULL;
 }
 
-TList* PAFToolInspectTree::GetListOfTrees(TFile* rootFile)
+void PAFToolInspectTree::GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path)
 {
-	TList* result = new TList();
-
-	THashList* trees = (THashList*)rootFile->GetListOfKeys();
+	THashList* trees = (THashList*)directory->GetListOfKeys();
 
 	TIterator* it = trees->MakeIterator();
 	TObject* item = 0;
 	while( (item = it->Next()) )
 	{
-		TTree* tree = GetTree(rootFile, item->GetName());
-		if(tree)
+		TObject* obj = directory->Get(item->GetName());
+		TString current_item = (directory->IsA() == TFile::Class()) ? 
+			TString(item->GetName()) : TString::Format("%s/%s", path, item->GetName());
+		
+		if(obj->IsA() == TTree::Class())
 		{
-			result->Add(tree);
+			resultTrees->Add(new TObjString(current_item.Data()));
+		}
+		else if (obj->IsA() == TDirectoryFile::Class() ||
+				obj->IsA() == TDirectory::Class())
+		{
+			GetListOfTrees((TDirectory*)obj, resultTrees, current_item.Data());
 		}
 	}
-
-	return result;
 }
 
 TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
-{
-	TList* trees = GetListOfTrees(rootFile);
+{	
+	TList* trees = new TList();
+	
+	GetListOfTrees(rootFile, trees, "");
 	
 	TTree* result = NULL;
 	
@@ -107,18 +113,19 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 	{
 		PrintMessage("This ROOT file does not contain any Tree");
 	}
-	if(trees->GetSize() == 1)
+	else if(trees->GetSize() == 1)
 	{
-		result = (TTree*)trees->First();
-		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", result->GetName()));
+		const char* tree_name = trees->First()->GetName();
+		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", tree_name));
+		result = GetTree(rootFile, tree_name);
 	}
 	else
 	{
 		PrintMessage("Please, the file specified has several Trees. You should choose one with -t param.\nHere is the list of Trees contained in that ROOT file:");
 		for(int i = 0; i < trees->GetSize(); i++)
 		{
-			TTree* tree = (TTree*)trees->At(i);
-			PrintMessage( TString::Format("\t -%s", tree->GetName()).Data() );
+			const char* tree_name = trees->At(i)->GetName();
+			PrintMessage( TString::Format("\t -%s", tree_name).Data());
 		}
 	}
 	
