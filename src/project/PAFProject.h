@@ -13,6 +13,7 @@
 
 #include "TDSet.h"
 #include "TFileInfo.h"
+#include "TFile.h"
 
 class PAFProject : public PAFAbstractProject
 {
@@ -32,10 +33,14 @@ class PAFProject : public PAFAbstractProject
 		void AddDataFile(const char* fileName, const char* objname = 0);
 		void AddDataFile(TFileInfo* dataFile);
 		
-		void doRun(PAFBaseSelector* selector);      
+		virtual void doRun(PAFBaseSelector* selector);
+		virtual void doProjectChecks();
 
 	protected:
 		void InitMembers();
+		
+		bool ExistsTree(TFile* rootFile, const char* treeName);
+		TList* GetListOfTrees(TFile* rootFile);
 		
 	protected:
 		TDSet* 	fDataFiles;

@@ -68,21 +68,21 @@ void PAFToolInspectTree::Execute(TList* params)
 TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
 {
 	TObject* result = rootFile->Get(treeName);
-	
+
 	if(result->IsA() == TTree::Class())
 	{
 		return (TTree*)result;
 	}
-	
+
 	return NULL;
 }
 
 TList* PAFToolInspectTree::GetListOfTrees(TFile* rootFile)
 {
 	TList* result = new TList();
-	
+
 	THashList* trees = (THashList*)rootFile->GetListOfKeys();
-	
+
 	TIterator* it = trees->MakeIterator();
 	TObject* item = 0;
 	while( (item = it->Next()) )
@@ -93,7 +93,7 @@ TList* PAFToolInspectTree::GetListOfTrees(TFile* rootFile)
 			result->Add(tree);
 		}
 	}
-	
+
 	return result;
 }
 

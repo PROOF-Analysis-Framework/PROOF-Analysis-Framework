@@ -227,6 +227,9 @@ void PAFAbstractProject::PreparePAFSelector()
 
 void PAFAbstractProject::Run()
 {
+	PAF_DEBUG("Project", "Checking project configuration.");
+	doProjectChecks();
+
 	PAFStopWatch timer;
 	timer.Start();
 	PreparePackages();
