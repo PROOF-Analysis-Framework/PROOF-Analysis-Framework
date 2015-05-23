@@ -22,14 +22,14 @@ class PAFProject : public PAFAbstractProject
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 		virtual ~PAFProject();
 		
-		void SetDefaultTreeName(TString& defualtTreeName);
+		void SetDefaultTreeName(TString& defaultTreeName);
 		void SetDefaultTreeName(const char* defaultTreeName);
 		TString GetDefaultTreeName();
 		
 		void SetDataFiles(TDSet* dataFiles);
 		TDSet* GetDataFiles();
 		
-		void AddDataFile(TString& fileName, const char* objname = 0);
+		void AddDataFile(TString& fileName, TString& objname);
 		void AddDataFile(const char* fileName, const char* objname = 0);
 		void AddDataFile(TFileInfo* dataFile);
 		
@@ -40,7 +40,10 @@ class PAFProject : public PAFAbstractProject
 		void InitMembers();
 		
 		bool ExistsTree(TFile* rootFile, const char* treeName);
-		TList* GetListOfTrees(TFile* rootFile);
+		void GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path);
+		
+		virtual TString GetDirectoryFromObjName(TString& objName);
+		virtual TString GetNameFromObjName(TString& objName);
 		
 	protected:
 		TDSet* 	fDataFiles;

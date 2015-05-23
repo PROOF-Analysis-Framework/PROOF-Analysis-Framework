@@ -9,6 +9,8 @@
 
 #include "PAFProject.h"
 
+#include "../util/PAFStringUtil.h"
+
 ClassImp(PAFProject);
 
 PAFProject::PAFProject()
@@ -38,14 +40,27 @@ TString PAFProject::GetDefaultTreeName()
 	return TString(fDataFiles->GetObjName());
 }
 
-void PAFProject::SetDefaultTreeName(TString& defualtTreeName)
+void PAFProject::SetDefaultTreeName(TString& defaultTreeName)
 {
-	SetDefaultTreeName(defualtTreeName.Data());
+	TDSet* tmp = fDataFiles;
+	fDataFiles = new TDSet("PAFFiles", "");
+	
+	fDataFiles->SetDirectory(GetDirectoryFromObjName(defaultTreeName));
+	fDataFiles->SetObjName(GetNameFromObjName(defaultTreeName));
+	
+	while(tmp->Next())
+	{
+		TDSetElement* item = tmp->Current();
+		const char* dir = TString(item->GetDirectory()).EqualTo("/") ? 0 : item->GetDirectory();
+		const char* obj = TString(item->GetObjName()).IsNull() ? 0 : item->GetDirectory();
+		fDataFiles->Add(item->GetFileName(), dir, obj);
+	}
 }
 
 void PAFProject::SetDefaultTreeName(const char* defaultTreeName)
 {
-	fDataFiles->SetObjName(defaultTreeName);
+	TString tDefaultTreeName(defaultTreeName);	
+	SetDefaultTreeName(tDefaultTreeName);
 }
 
 TDSet* PAFProject::GetDataFiles()
@@ -58,14 +73,21 @@ void PAFProject::SetDataFiles(TDSet* dataFiles)
 	fDataFiles = dataFiles;
 }
 
-void PAFProject::AddDataFile(TString& fileName, const char* objname)
+void PAFProject::AddDataFile(TString& fileName, TString& objname)
 {
-	AddDataFile(fileName.Data(), objname);
+	TString directory = GetDirectoryFromObjName(objname);
+	TString name = GetNameFromObjName(objname);
+	
+	fDataFiles->Add(fileName, 
+			name.IsNull() ? NULL : name.Data(),
+			directory.IsNull() ? NULL : directory.Data());
 }
 
 void PAFProject::AddDataFile(const char* fileName, const char* objname)
 {
-	fDataFiles->Add(fileName, objname);
+	TString tFileName(fileName);
+	TString tObjName(objname);
+	AddDataFile(tFileName, tObjName);
 }
 
 void PAFProject::AddDataFile(TFileInfo* dataFile)
@@ -77,6 +99,11 @@ bool PAFProject::ExistsTree(TFile* rootFile, const char* treeName)
 {
 	TObject* result = rootFile->Get(treeName);
 
+	if(result == NULL)
+	{
+		return kFALSE;
+	}
+	
 	if(result->IsA() == TTree::Class())
 	{
 		return kTRUE;
@@ -85,34 +112,42 @@ bool PAFProject::ExistsTree(TFile* rootFile, const char* treeName)
 	return kFALSE;
 }
 
-TList* PAFProject::GetListOfTrees(TFile* rootFile)
+void PAFProject::GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path)
 {
-	TList* result = new TList();
-
-	THashList* trees = (THashList*)rootFile->GetListOfKeys();
+	THashList* trees = (THashList*)directory->GetListOfKeys();
 
 	TIterator* it = trees->MakeIterator();
 	TObject* item = 0;
 	while( (item = it->Next()) )
 	{
-		result->Add(item);
+		TObject* obj = directory->Get(item->GetName());
+		TString current_item = (directory->IsA() == TFile::Class()) ? 
+			TString(item->GetName()) : TString::Format("%s/%s", path, item->GetName());
+		
+		if(obj->IsA() == TTree::Class())
+		{
+			resultTrees->Add(new TObjString(current_item.Data()));
+		}
+		else if (obj->IsA() == TDirectoryFile::Class() ||
+				obj->IsA() == TDirectory::Class())
+		{
+			GetListOfTrees((TDirectory*)obj, resultTrees, current_item.Data());
+		}
 	}
-
-	return result;
 }
 
 void PAFProject::doProjectChecks()
 {
-	//If there is a Tree name specified, return.
-	if(!GetDefaultTreeName().IsNull())
-	{
-		return;
-	}
-	
 	TDSetElement* firstElement = (TDSetElement*)GetDataFiles()->GetListOfElements()->First();
 	if(firstElement == NULL)
 	{
 		PAF_FATAL("Project", "There is no ROOT file specified.");
+	}
+	
+	//If there is a Tree name specified, return.
+	if(!GetDefaultTreeName().IsNull())
+	{
+		return;
 	}
 	
 	//If the first file has a Tree specified, return.
@@ -135,21 +170,23 @@ void PAFProject::doProjectChecks()
 	}
 	else
 	{
-		TList* trees = GetListOfTrees(&file);
-		int ntrees = trees->GetEntries();
+		TList* trees = new TList();
+		GetListOfTrees(&file, trees, "");
 		
-		if(ntrees == 0)
+		if(trees->GetEntries() == 0)
 		{
 			PAF_FATAL("Project", "The ROOT file specified does not have any Tree.");
 		}
-		else if (ntrees == 1)
+		else if (trees->GetEntries() == 1)
 		{
-			SetDefaultTreeName(trees->First()->GetName());
+			const char* treeName = trees->First()->GetName();
+			PAF_DEBUG("Project", TString::Format("Using Tree called \"%s\".", treeName).Data());
+			SetDefaultTreeName(treeName);
 		}
 		else
 		{
 			TString trees_message("There are more than one Tree on ROOT files specified:\n");
-			for(int i = 0; i < ntrees; i++)
+			for(int i = 0; i < trees->GetEntries(); i++)
 			{
 				trees_message.Append("\t-");
 				trees_message.Append(trees->At(i)->GetName());
@@ -159,6 +196,7 @@ void PAFProject::doProjectChecks()
 			PAF_FATAL("Project", "The ROOT files specified have more than one tree. No tree has a common name, please, specify with PAFProject::SetDefaultTreeName.");
 		}
 		
+		trees->Clear();
 		delete trees;
 	}
 }
@@ -166,4 +204,43 @@ void PAFProject::doProjectChecks()
 void PAFProject::doRun(PAFBaseSelector* selector)
 {
 	fExecutionEnvironment->Process(selector, fDataFiles);
+}
+
+TString PAFProject::GetDirectoryFromObjName(TString& objName)
+{
+	TString tObjName = objName;
+	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+	
+	TString result;
+	
+	if(parts->size() > 0)
+	{
+		for(unsigned int i = 0; i < parts->size() - 1; i++)
+		{
+			result.Append(parts->at(i)->Data());
+		}
+	}
+	
+	parts->clear();
+	delete parts;
+	
+	return result;
+}
+
+TString PAFProject::GetNameFromObjName(TString& objName)
+{
+	TString tObjName = objName;
+	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+	
+	TString result;
+	
+	if(parts->size() > 0)
+	{
+		result = (parts->at(parts->size() - 1))->Copy();
+	}
+	
+	parts->clear();
+	delete parts;
+	
+	return result;
 }
