@@ -31,7 +31,7 @@ class PAFChainItemSelector : public PAFISelector
 	public:
 		PAFChainItemSelector() : fInput(0), fOutput(0), fVariables(0), fSelectorParams(0) {}
 		virtual ~PAFChainItemSelector() {}
-		
+
 		virtual void Initialise() {}
 		virtual void InitialiseParameters() {}
 		virtual void InsideLoop() {}
@@ -44,24 +44,24 @@ class PAFChainItemSelector : public PAFISelector
 		void SetParam(TString& key, T object);
 		template<typename T>
 		void SetParam(const char* key, T object);
-		
+
 		template<typename T>
 		T GetParam(TString& key);
 		template<typename T>
 		T GetParam(const char* key);
-		
+
 		int GetParamInt(TString& key);
 		int GetParamInt(const char* key);
-		
+
 		float GetParamFloat(TString& key);
 		float GetParamFloat(const char* key);
-		
+
 		double GetParamDouble(TString& key);
 		double GetParamDouble(const char* key);
-		
+
 		TString GetParamString(TString& key);
 		TString GetParamString(const char* key);
-		
+
 		template<typename T>
 		void AssignParam(TString& key, T& target);	
 		template<typename T>
@@ -71,30 +71,30 @@ class PAFChainItemSelector : public PAFISelector
 		T Get(TString& key);
 		template<typename T>
 		T Get(const char* key);
-		
+
 		template<typename T>
 		T Get(TString& key, unsigned int i);
 		template<typename T>
 		T Get(const char* key, unsigned int i);
-		
+
 		int GetInt(TString& key);
 		int GetInt(const char* key);
-		
+
 		float GetFloat(TString& key);
 		float GetFloat(const char* key);
-		
+
 		double GetDouble(TString& key);
 		double GetDouble(const char* key);
-		
+
 		int GetInt(TString& key, unsigned int i);
 		int GetInt(const char* key, unsigned int i);
-		
+
 		float GetFloat(TString& key, unsigned int i);
 		float GetFloat(const char* key, unsigned int i);
-		
+
 		double GetDouble(TString& key, unsigned int i);
 		double GetDouble(const char* key, unsigned int i);
-		
+
 		template<typename T>
 		void Assign(TString& key, T& target);
 		template<typename T>
@@ -113,7 +113,9 @@ class PAFChainItemSelector : public PAFISelector
 		
 		bool Exists(TString& key);
 		bool Exists(const char* key);
-		
+
+		unsigned int GetSizeOf(TString& key);
+		unsigned int GetSizeOf(const char* key);
 
 		//Helpers methods
 
@@ -157,8 +159,8 @@ class PAFChainItemSelector : public PAFISelector
 		TProfile* CreateProfile(const char* name, const char* title,
 						Int_t nbinsx, Axis_t xlow, Axis_t xup,
 						Axis_t ylow, Axis_t yup);
-		
-	protected:		
+
+	protected:
 		TList* 			fInput;
 		TSelectorList* 		fOutput;
 		PAFVariableContainer* 	fVariables; //! Do not stream

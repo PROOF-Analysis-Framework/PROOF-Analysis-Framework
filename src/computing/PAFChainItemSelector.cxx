@@ -177,6 +177,17 @@ bool PAFChainItemSelector::Exists(const char* key)
 	return  Exists(tkey);
 }
 
+unsigned int PAFChainItemSelector::GetSizeOf(TString& key)
+{
+	return Get<std::vector<void*>*>(key)->size();
+}
+
+unsigned int PAFChainItemSelector::GetSizeOf(const char* key)
+{
+	TString tKey(key);
+	return GetSizeOf(tKey);
+}
+
 TTree* PAFChainItemSelector::CreateTree(const char* name, const char* title) {
 	TTree* h = new TTree(name, title);
 	fOutput->Add(h);
