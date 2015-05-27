@@ -20,9 +20,9 @@
 
 const char* PAFToolInspectTree::TOOL_NAME = "inspecttree";
 
-const char* PAFToolInspectTree::HELP_MESSAGE = "\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t ROOT file name. Mandatory.";
+const char* PAFToolInspectTree::HELP_MESSAGE = "\t\"-h | --help\" to show command help.\n\t\"-b | --branch branchname\" to retrieve information about specified branch.\n\t\"-t | --tree treename\"  to retrieve information about specified tree.\n\t\"-s | --snippet\" to show a code snippet for each variable.\n\t ROOT file name. Mandatory.";
 
-const char* PAFToolInspectTree::COMMAND_EXPRESSION = "inspecttree [-t | --tree] [-b | --branch] root_filename";
+const char* PAFToolInspectTree::COMMAND_EXPRESSION = "inspecttree [-t | --tree] [-b | --branch] [-s | --snippet] root_filename";
 
 
 PAFToolInspectTree::PAFToolInspectTree()
@@ -45,15 +45,23 @@ void PAFToolInspectTree::Execute(TList* params)
 	
 	const char* branchName = NULL;
 	const char* treeName = NULL;
+	bool snippet = kFALSE;
 	TFile* rootFile = new TFile(GetParam(params, params->GetSize() - 1));
 	
 	for(int i = 1; i < params->GetSize(); i = i + 2)
 	{
 		TString item = GetParam(params, i);
-		if(item.EqualTo("-b") || item.EqualTo("--branch")){
+		if(item.EqualTo("-b") || item.EqualTo("--branch"))
+		{
 			branchName = GetParam(params, i + 1);
-		} else if (item.EqualTo("-t") || item.EqualTo("--tree")) {
+		} 
+		else if (item.EqualTo("-t") || item.EqualTo("--tree")) 
+		{
 			treeName = GetParam(params, i + 1);
+		} 
+		else if (item.EqualTo("-s") || item.EqualTo("--snippet")) 
+		{
+			snippet = kTRUE;
 		}
 	}
 	
@@ -61,7 +69,11 @@ void PAFToolInspectTree::Execute(TList* params)
 	
 	if(tree)
 	{
-		PrintVariables(tree, branchName);
+		PrintVariables(tree, branchName, snippet);
+	}
+	else
+	{
+		PrintMessage("There is no tree satisfying the specified parameters.");
 	}
 }
 
@@ -134,14 +146,14 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 	return result;
 }
 
-void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
+void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, bool snippet)
 {
 	TString tBranchName = branchName ? TString(branchName) : TString("*");
 	TRegexp* regex = new TRegexp(tBranchName, kTRUE);
 	
 	TObjArray* leaves = tree->GetListOfLeaves();
-	Int_t nb = leaves->GetEntriesFast();
-	for (Int_t i = 0; i < nb; ++i)
+	int nb = leaves->GetEntriesFast();
+	for (int i = 0; i < nb; i++)
 	{
 		TLeaf* leaf = (TLeaf*)leaves->UncheckedAt(i);
 		const TString name(leaf->GetName());
@@ -154,6 +166,10 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
 				type.Append("*");
 			}
 			PrintVariable(type.Data(), name.Data());
+			if(snippet)
+			{
+				PrintSnippet(type.Data(), name.Data());
+			}
 		}
 	}
 	
@@ -163,6 +179,10 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName)
 
 void PAFToolInspectTree::PrintVariable(const char* type, const char* name)
 {
-	PrintMessage(TString::Format("Type: %s \t\tVariable: %s\n", type, name));
+	PrintMessage(TString::Format("Type: %s \t\tVariable: %s", type, name));
 }
 
+void PAFToolInspectTree::PrintSnippet(const char* type, const char* name)
+{
+	PrintMessage(TString::Format("Use: \"%s %s = Get<%s>(\"%s\")\".\n", type, name, type, name).Data());
+}
