@@ -15,7 +15,7 @@ void VariablePainter::InsideLoop() {
 
 void VariablePainter::Summary() {
 	TCanvas* canvas = new TCanvas("canvas", "Proof ProofFirst canvas", 200, 10, 400, 400);
-	TH1F* result = (TH1F*)FindOutput("myHistogram");
+	TH1F* result = FindOutput<TH1F*>("myHistogram");
 	result->Draw();
 	canvas->Update();
 }

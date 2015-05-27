@@ -117,11 +117,15 @@ class PAFChainItemSelector : public PAFISelector
 
 		//Helpers methods
 
-		TObject* FindInput(TString& name);
-		TObject* FindInput(const char* name);
+		template<typename T>
+		T FindInput(TString& name);
+		template<typename T>
+		T FindInput(const char* name);
 
-		TObject* FindOutput(TString& name);
-		TObject* FindOutput(const char* name);
+		template<typename T>
+		T FindOutput(TString& name);
+		template<typename T>
+		T FindOutput(const char* name);
 
 		TTree* CreateTree(const char* name, const char* title);
 
@@ -257,4 +261,30 @@ inline void PAFChainItemSelector::Assign(const char* key, T& target, unsigned in
 {
 	TString tKey(key);
 	Assign(tKey, target, i);
+}
+
+template <typename T>
+T PAFChainItemSelector::FindInput(TString& name)
+{
+	return PAFFindHelper::Find<T>(fInput, name);
+}
+
+template <typename T>
+T PAFChainItemSelector::FindInput(const char* name)
+{
+	TString tName(name);
+	return FindInput<T>(tName);
+}
+
+template <typename T>
+T PAFChainItemSelector::FindOutput(TString& name)
+{
+	return PAFFindHelper::Find<T>(fOutput, name);
+}
+
+template <typename T>
+T PAFChainItemSelector::FindOutput(const char* name)
+{
+	TString tName(name);
+	return FindOutput<T>(tName);
 }
