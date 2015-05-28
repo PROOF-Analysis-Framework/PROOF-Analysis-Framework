@@ -1,0 +1,18 @@
+#pragma once
+	protected:
+
+
+#include "PAF/computing/PAFChainItemSelector.h"
+
+class %NAME% : public PAFChainItemSelector 
+{
+	public:
+		%NAME%() : PAFChainItemSelector() {}
+		virtual ~%NAME%() {}
+
+		virtual void Initialise();
+		virtual void InsideLoop();
+		virtual void Summary();
+		
+   ClassDef(%NAME%,0);
+};

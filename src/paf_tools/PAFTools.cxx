@@ -13,6 +13,7 @@
 
 #include "PAFToolInspectTree.h"
 #include "PAFToolReset.h"
+#include "PAFToolCreateSelector.h"
 
 #include "../exceptions/PAFExceptionCommandExpression.h"
 
@@ -55,6 +56,9 @@ void PAFTools::InitTools()
 	
 	PAFITool* pafreset = new PAFToolReset();
 	fTools[pafreset->GetToolName()] = pafreset;
+	
+	PAFITool* createselector = new PAFToolCreateSelector();
+	fTools[createselector->GetToolName()] = createselector;
 }
 
 TString PAFTools::GetHelpMessage()

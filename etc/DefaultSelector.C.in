@@ -1,0 +1,17 @@
+#include "%NAME%.h"
+
+ClassImp(%NAME%);
+
+void %NAME%::Initialise() 
+{
+
+}
+
+void %NAME%::InsideLoop() 
+{
+
+}
+
+void %NAME%::Summary()
+{
+}
