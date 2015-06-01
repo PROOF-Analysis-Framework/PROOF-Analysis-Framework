@@ -6,7 +6,7 @@ enable_testing()
 
 include_directories("$ENV{ROOTSYS}/include")
 link_directories("$ENV{ROOTSYS}/lib")
-link_libraries(Core Cint Gpad Rint Hist Proof)
+link_libraries(Core Cint RIO Hist Gpad Rint Proof XMLIO)
 
 add_library (PAFTest ${PROJECT_SOURCE_DIR}/test_utils/PAFTest.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestExpectedException.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestIException.cxx)
 include_directories("test_utils")

@@ -1,5 +1,5 @@
 /**
-	@brief PAF test to check the behaviour of VariableContainer with primitive types.
+	@brief PAF test class to check the behaviour of VariableContainer with primitive types.
 	@file PrimitiveTypes.cxx
 	@class PrimitiveTypes
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
