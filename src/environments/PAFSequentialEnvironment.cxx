@@ -102,11 +102,11 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 
 void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)
 {
-	std::vector<TString>* feedbacks = fFeedbackCanvas->GetKeys();
-	for(unsigned int i = 0; i < feedbacks->size(); i++)
+	TList* feedbacks = fFeedbackCanvas->GetKeys();
+	for(int i = 0; i < feedbacks->GetEntries(); i++)
 	{
-		TString item = feedbacks->at(i);
-		TCanvas* canvas = fFeedbackCanvas->Get<TCanvas*>(item);
+		TObjString* item = (TObjString*)feedbacks->At(i);
+		TCanvas* canvas = fFeedbackCanvas->Get<TCanvas*>(item->GetTitle());
 		canvas->cd();
 		TH1* th1 = dynamic_cast<TH1*>(selector->GetOutputList()->FindObject(item));
 		if(th1) th1->Draw();

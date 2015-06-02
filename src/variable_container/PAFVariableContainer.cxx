@@ -13,14 +13,29 @@ ClassImp(PAFVariableContainer);
 
 PAFVariableContainer::~PAFVariableContainer()
 {
-	for (std::map<TString,PAFItemVariableContainer*>::iterator it=fPairs.begin();
-		 it!=fPairs.end(); ++it)
-		 delete it->second;
+
+}
+
+TList* PAFVariableContainer::GetKeys()
+{
+	TList* result = new TList();
+	
+	const THashTable* table = fPairs.GetTable();
+	
+	TIterator* it = table->MakeIterator();
+	TObject* current = NULL;
+	while( (current = it->Next()) )
+	{
+		TPair* item = (TPair*)current;
+		result->Add(item->Key()->Clone());
+	}
+	
+	return result;
 }
 
 bool PAFVariableContainer::Exists(TString& key)
 {
-	return fPairs[key] != NULL;
+	return fPairs.FindObject(key) != NULL;
 }
 
 bool PAFVariableContainer::Exists(const char* key)
@@ -29,13 +44,3 @@ bool PAFVariableContainer::Exists(const char* key)
 	return Exists(tkey);
 }
 
-std::vector< TString >* PAFVariableContainer::GetKeys()
-{
-	std::vector<TString>* result = new std::vector<TString>();
-	
-	for (std::map<TString,PAFItemVariableContainer*>::iterator it=fPairs.begin();
-		 it!=fPairs.end(); ++it)
-		 result->push_back(it->first);
-	
-    return result;
-}

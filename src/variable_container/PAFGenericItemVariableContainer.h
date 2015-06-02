@@ -9,14 +9,14 @@
 
 #pragma once
 
-#include "PAFItemVariableContainer.h"
+#include "TObject.h"
 
 template <class T>
-class PAFGenericItemVariableContainer : public PAFItemVariableContainer
+class PAFGenericItemVariableContainer : public TObject
 {
 	public:
-		PAFGenericItemVariableContainer() : PAFItemVariableContainer(), fObject() {}
-		PAFGenericItemVariableContainer(T object) : PAFItemVariableContainer(), fObject(object) {}
+		PAFGenericItemVariableContainer() : TObject() {}
+		PAFGenericItemVariableContainer(T object) : TObject(), fObject(object) {}
 		virtual ~PAFGenericItemVariableContainer() {}
 		
 		T Get() { return fObject; }

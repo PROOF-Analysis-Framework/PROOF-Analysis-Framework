@@ -9,19 +9,18 @@
 
 #pragma once
 
-#include <map>
-#include <vector>
-
+#include "TMap.h"
+#include "TList.h"
 #include "TObject.h"
+#include "TObjString.h"
 #include "TString.h"
 
-#include "PAFItemVariableContainer.h"
 #include "PAFGenericItemVariableContainer.h"
 
 class PAFVariableContainer : public TObject
 {
 	public:
-		PAFVariableContainer() : TObject(), fPairs() {}		
+		PAFVariableContainer() : TObject(), fPairs() {}
 		virtual ~PAFVariableContainer();
 		
 		template<typename T>
@@ -36,13 +35,13 @@ class PAFVariableContainer : public TObject
 		template<typename T>
 		T Get(const char* key);
 		
+		TList* GetKeys();
+		
 		bool Exists(TString& key);
 		bool Exists(const char* key);
-		
-		std::vector<TString>* GetKeys();
-		
-	private:
-		std::map<TString, PAFItemVariableContainer*> fPairs;
+
+	protected:
+		TMap fPairs;
 		
 	ClassDef(PAFVariableContainer, 1);
 };
@@ -50,7 +49,7 @@ class PAFVariableContainer : public TObject
 template <typename T>
 inline void PAFVariableContainer::Add(TString& key, T value)
 {
-	fPairs[key] = new PAFGenericItemVariableContainer<T>(value);
+	fPairs.Add(new TObjString(key.Data()), new PAFGenericItemVariableContainer<T>(value));
 }
 
 template <typename T>
@@ -63,8 +62,8 @@ inline void PAFVariableContainer::Add(const char* key, T value)
 template <typename T>
 inline T PAFVariableContainer::Get(TString& key)
 {
-	PAFItemVariableContainer* result = fPairs[key];
-	return ((PAFGenericItemVariableContainer<T>*)result)->Get();
+	PAFGenericItemVariableContainer<T>* result = (PAFGenericItemVariableContainer<T>*)fPairs.GetValue(new TObjString(key.Data()));
+	return result->Get();
 }
 
 template <typename T>
