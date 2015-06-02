@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "TObject.h"
+
 class PAFTest
 {
 	public:
@@ -25,4 +27,5 @@ class PAFTest
 		void AssertEquals(double expected, double value);
 		void AssertEquals(long expected, long value);
 		void AssertEquals(void* expected, void* value);
+		void AssertEquals(TObject* expected, TObject* value);
 };

@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
-
 add_executable(PrimitiveTypes PrimitiveTypes.cxx)
 add_test(VariableContainer::PrimitiveTypes PrimitiveTypes)
 
 add_executable(PrimitiveTypesSerialization PrimitiveTypesSerialization.cxx)
 add_test(VariableContainer::PrimitiveTypesSerialization PrimitiveTypesSerialization)
+
+add_executable(TObjectSerialization TObjectSerialization.cxx)
+add_test(VariableContainer::TObjectSerialization TObjectSerialization)

@@ -16,6 +16,8 @@
 
 int PAFTest::Evaluate(PAFTest* test)
 {
+	int result = 0;
+	
 	test->Initialise();
 	try
 	{
@@ -24,10 +26,10 @@ int PAFTest::Evaluate(PAFTest* test)
 	catch (PAFTestIException& ex)
 	{
 		std::cout << ex.GetMessage().Data() << std::endl;
-		return -1;
+		result = -1;
 	}
 	test->Finalize();
-	return 0;
+	return result;
 }
 
 void PAFTest::Initialise()
@@ -111,6 +113,18 @@ void PAFTest::AssertEquals(void* expected, void* value)
 		TString tType("pointer");
 		TString tExpected = TString::Format("%p", expected);
 		TString tValue = TString::Format("%p", value);
+
+		throw PAFTestExpectedException(tType, tExpected, tValue);
+	}
+}
+
+void PAFTest::AssertEquals(TObject* expected, TObject* value)
+{
+	if(!expected->IsEqual(value))
+	{
+		TString tType("TObject*");
+		TString tExpected(expected->GetTitle());
+		TString tValue(value->GetTitle());
 
 		throw PAFTestExpectedException(tType, tExpected, tValue);
 	}
