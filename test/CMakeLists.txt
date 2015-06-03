@@ -6,7 +6,7 @@ enable_testing()
 
 include_directories("$ENV{ROOTSYS}/include")
 link_directories("$ENV{ROOTSYS}/lib")
-link_libraries(Core Cint RIO Hist Gpad Rint Proof XMLIO)
+link_libraries(Core Cint RIO Hist Gpad Rint Proof XMLIO Tree)
 
 add_library (PAFTest ${PROJECT_SOURCE_DIR}/test_utils/PAFTest.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestExpectedException.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestIException.cxx)
 include_directories("test_utils")
@@ -17,3 +17,4 @@ link_directories("$ENV{PAFPATH}/lib")
 link_libraries(libPAF.so)
 
 add_subdirectory(variable_container)
+add_subdirectory(computing)

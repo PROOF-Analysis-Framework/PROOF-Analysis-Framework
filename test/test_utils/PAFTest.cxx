@@ -120,11 +120,11 @@ void PAFTest::AssertEquals(void* expected, void* value)
 
 void PAFTest::AssertEquals(TObject* expected, TObject* value)
 {
-	if(!expected->IsEqual(value))
+	if(expected->Compare(value))
 	{
 		TString tType("TObject*");
-		TString tExpected(expected->GetTitle());
-		TString tValue(value->GetTitle());
+		TString tExpected(expected->GetName());
+		TString tValue(value->GetName());
 
 		throw PAFTestExpectedException(tType, tExpected, tValue);
 	}
