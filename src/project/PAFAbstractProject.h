@@ -74,7 +74,7 @@ class PAFAbstractProject
 		bool GetCompileOnSlaves() { return fCompileOnSlaves; }
 		void SetCompileOnSlaves(bool compileOnSlaves) { fCompileOnSlaves = compileOnSlaves; }
 
-		void Run();
+		TList* Run();
 		virtual void doProjectChecks() = 0;
 		virtual void doRun(PAFBaseSelector* selector) = 0;
 

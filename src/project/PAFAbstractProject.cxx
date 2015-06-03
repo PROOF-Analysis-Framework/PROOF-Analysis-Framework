@@ -225,7 +225,7 @@ void PAFAbstractProject::PreparePAFSelector()
 	fPAFSelector = result;
 }
 
-void PAFAbstractProject::Run()
+TList* PAFAbstractProject::Run()
 {
 	PAF_DEBUG("Project", "Checking project configuration.");
 	doProjectChecks();
@@ -256,4 +256,6 @@ void PAFAbstractProject::Run()
 	timer.TakeTime("Processed");
 	PAF_DEBUG("PAFProject", "Process completed.");
 	fExecutionEnvironment->Dispose();
+
+	return selector->GetOutputList();
 }
