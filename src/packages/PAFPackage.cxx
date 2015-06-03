@@ -29,7 +29,7 @@ TString PAFPackage::GetPreparePackageCommand()
 {
 	TString package_dir = GetPackageDir();
 	if(package_dir == "")
-		PAF_ERROR("PAFPackage", "Package not found in repositories.");
+		PAF_ERROR("PAFPackage", TString::Format("Package \"%s\" not found in repositories.", fName.Data()).Data());
 	return TString::Format("%s/bin/PreparePackage.sh -s -d %s -r %s %s", fPAFSettings->GetPAFPATH()->Data() , GetPackagesDir().Data(), package_dir.Data(), GetName().Data());
 }
 
@@ -61,10 +61,13 @@ TString PAFPackage::GetPackageDir()
 {
 	std::vector<TString*>* package_directories = fPAFSettings->GetPackagesDirectories();
 	
-	for(unsigned int i = 0; i < package_directories->size(); i++){
+	for(unsigned int i = 0; i < package_directories->size(); i++)
+	{
 		TString package_filename = TString::Format("%s/%s", package_directories->at(i)->Data(), fName.Data());
 		if(gSystem->OpenDirectory(package_filename))
+		{
 			return *(package_directories->at(i));
+		}
 	}
 	return TString("");
 }

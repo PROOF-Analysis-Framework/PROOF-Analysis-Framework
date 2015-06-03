@@ -39,7 +39,9 @@ inline T PAFFindHelper::Find(TList* list, TString& name)
 	{
 		tmpobj = list->At(i);
 		if(name.EqualTo(tmpobj->GetName()))
+		{
 			return (T)tmpobj;
+		}
 	}
 	PAF_ERROR("PAFFinderHelper", "Object not found");
 	return NULL;
@@ -48,8 +50,8 @@ inline T PAFFindHelper::Find(TList* list, TString& name)
 template <typename T>
 inline T PAFFindHelper::Find(TList* list, const char* name)
 {
-	TString tname(name);
-	return Find<T>(list, name);
+	TString tName(name);
+	return Find<T>(list, tName);
 }
 
 template <typename T>
@@ -58,7 +60,9 @@ inline T PAFFindHelper::FindPAFNamed(TList* list, TString& name)
 	PAFNamedItem* result = Find<PAFNamedItem*>(list, name);
 	
 	if(!result)
+	{
 		return NULL;
+	}
 	
 	return (T)result->GetObject();
 }
@@ -66,6 +70,6 @@ inline T PAFFindHelper::FindPAFNamed(TList* list, TString& name)
 template <typename T>
 inline T PAFFindHelper::FindPAFNamed(TList* list, const char* name)
 {
-	TString tname(name);
-	return FindPAFNamed<T>(list, tname);
+	TString tName(name);
+	return FindPAFNamed<T>(list, tName);
 }
