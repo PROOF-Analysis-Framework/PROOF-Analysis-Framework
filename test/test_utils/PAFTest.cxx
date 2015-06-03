@@ -12,6 +12,8 @@
 #include "PAFTestIException.h"
 #include "PAFTestExpectedException.h"
 
+#include "TMath.h"
+
 #include <iostream>
 
 int PAFTest::Evaluate(PAFTest* test)
@@ -94,9 +96,9 @@ void PAFTest::AssertEquals(float expected, float value)
 	}
 }
 
-void PAFTest::AssertEquals(double expected, double value)
+void PAFTest::AssertEquals(double expected, double value, double maxError)
 {
-	if(expected != value)
+	if(TMath::Abs(expected - value) > maxError)
 	{
 		TString tType("double");
 		TString tExpected = TString::Format("%f", expected);

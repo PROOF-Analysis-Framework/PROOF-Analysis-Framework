@@ -3,3 +3,6 @@ add_test(Computing::IntPrimitiveType IntPrimitiveType)
 
 add_executable(FloatPrimitiveType FloatPrimitiveType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::FloatPrimitiveType FloatPrimitiveType)
+
+add_executable(DoublePrimitiveType DoublePrimitiveType.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::DoublePrimitiveType DoublePrimitiveType)
