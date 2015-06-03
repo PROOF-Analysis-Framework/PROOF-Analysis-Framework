@@ -6,3 +6,6 @@ add_test(Computing::FloatPrimitiveType FloatPrimitiveType)
 
 add_executable(DoublePrimitiveType DoublePrimitiveType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::DoublePrimitiveType DoublePrimitiveType)
+
+add_executable(LongPrimitiveType LongPrimitiveType.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::LongPrimitiveType LongPrimitiveType)
