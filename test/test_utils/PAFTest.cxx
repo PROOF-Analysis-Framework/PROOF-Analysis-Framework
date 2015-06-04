@@ -108,6 +108,30 @@ void PAFTest::AssertEquals(double expected, double value, double maxError)
 	}
 }
 
+void PAFTest::AssertEquals(TString& expected, TString& value)
+{
+	if(expected.CompareTo(value))
+	{
+		TString tType("TString");
+
+		throw PAFTestExpectedException(tType, expected, value);
+	}
+}
+
+void PAFTest::AssertEquals(const char* expected, const char* value)
+{
+	TString tExpected(expected);
+	TString tValue(value);
+
+	if(tExpected.CompareTo(tValue))
+	{
+		TString tType("const char*");
+
+		throw PAFTestExpectedException(tType, tExpected, tValue);
+	}
+}
+
+
 void PAFTest::AssertEquals(void* expected, void* value)
 {
 	if(expected != value)

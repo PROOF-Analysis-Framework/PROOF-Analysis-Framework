@@ -18,3 +18,4 @@ link_libraries(libPAF.so)
 
 add_subdirectory(variable_container)
 add_subdirectory(computing)
+add_subdirectory(project)

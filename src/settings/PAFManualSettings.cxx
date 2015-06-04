@@ -9,6 +9,8 @@
 
 #include "PAFManualSettings.h"
 
+ClassImp(PAFManualSettings);
+
 PAFManualSettings::PAFManualSettings(TString* pafPath, std::vector< TString* >* packagesDirectories)
 	: PAFISettings(), fPAFPath(pafPath->Copy()), fPackagesDirectories(*packagesDirectories)
 {

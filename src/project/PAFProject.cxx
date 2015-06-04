@@ -44,16 +44,17 @@ void PAFProject::SetDefaultTreeName(TString& defaultTreeName)
 {
 	TDSet* tmp = fDataFiles;
 	fDataFiles = new TDSet("PAFFiles", "");
-	
+
 	fDataFiles->SetDirectory(GetDirectoryFromObjName(defaultTreeName));
 	fDataFiles->SetObjName(GetNameFromObjName(defaultTreeName));
-	
-	while(tmp->Next())
+
+	TList* oldDataFiles = tmp->GetListOfElements();
+	for(int i = 0; i < oldDataFiles->GetEntries(); i++)
 	{
-		TDSetElement* item = tmp->Current();
+		TDSetElement* item = (TDSetElement*)oldDataFiles->At(i);
 		const char* dir = TString(item->GetDirectory()).EqualTo("/") ? 0 : item->GetDirectory();
-		const char* obj = TString(item->GetObjName()).IsNull() ? 0 : item->GetDirectory();
-		fDataFiles->Add(item->GetFileName(), dir, obj);
+		const char* obj = TString(item->GetObjName()).IsNull() ? 0 : item->GetObjName();
+		fDataFiles->Add(item->GetFileName(), obj, dir);
 	}
 }
 

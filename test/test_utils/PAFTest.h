@@ -10,6 +10,7 @@
 #pragma once
 
 #include "TObject.h"
+#include "TString.h"
 
 class PAFTest
 {
@@ -26,6 +27,8 @@ class PAFTest
 		void AssertEquals(float expected, float value);
 		void AssertEquals(double expected, double value, double maxError = 1.0e-10);
 		void AssertEquals(long expected, long value);
+		void AssertEquals(TString& expected, TString& value);
+		void AssertEquals(const char* expected, const char* value);
 		void AssertEquals(void* expected, void* value);
 		void AssertEquals(TObject* expected, TObject* value);
 };

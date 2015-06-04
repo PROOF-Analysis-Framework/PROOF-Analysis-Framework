@@ -24,4 +24,6 @@ class PAFManualSettings : public PAFISettings
 	protected:
 		TString 		fPAFPath;
 		std::vector<TString*> 	fPackagesDirectories;
+
+	ClassDef(PAFManualSettings, 1);
 };
