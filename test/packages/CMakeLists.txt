@@ -1,0 +1,2 @@
+add_executable(PackageGetDirectory PackageGetDirectory.cxx)
+add_test(Packages::PackageGetDirectory PackageGetDirectory)
