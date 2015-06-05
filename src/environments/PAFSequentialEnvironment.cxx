@@ -78,20 +78,29 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
 	
-	TDSetElement* element;
-	while( (element = dataFiles->Next()) )
+	TDSetElement* item = NULL;
+	TList* listDataFiles = dataFiles->GetListOfElements();
+	for(int i = 0; i < listDataFiles->GetEntries(); i++)
 	{
-		TFileInfo* fileinfo = (TFileInfo*)element->GetFileInfo();
-		TFile file(fileinfo->GetCurrentUrl()->GetFile());
-		TTree* tree = (TTree*)file.Get(element->GetObjName()); //TODO There is a dataFiles->GetDefaultTreeName();
+		item = (TDSetElement*)listDataFiles->At(i);
+
+		TString treePath = TString::Format("%s/%s", item->GetDirectory(), item->GetObjName());
+
+		PAF_DEBUG("PAFSequentialEnvironment", TString::Format("Processing tree \"%s\" in file \"%s\".", treePath.Data(), item->GetFileName()));
+
+		TFile file(item->GetFileName());
+		TTree* tree = (TTree*)file.Get(treePath.Data());
 
 		selector->Init(tree);
-		
-		for(int entry = 0; entry < tree->GetEntriesFast(); entry++)
+
+		Long64_t entries = tree->GetEntriesFast();
+		for(int entry = 0; entry < entries; entry++)
 		{
 			selector->Process(entry);
 			if(entry % 10000 == 0)
+			{
 				DrawFeedback(selector);
+			}
 		}
 		
 		delete tree;
