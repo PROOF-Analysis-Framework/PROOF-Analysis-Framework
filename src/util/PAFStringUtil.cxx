@@ -12,15 +12,18 @@
 std::vector< TString* >* PAFStringUtil::Split(TString* string, const char* cs)
 {
 	std::vector<TString*>* result = new std::vector<TString*>();
-	
+
 	while(string->Length() > 0)
 	{
 		int indexnext = string->First(cs);
 		indexnext = indexnext >= 0 ? indexnext : string->Length();
 		TString* dir = new TString(string->Data(), indexnext);
-		result->push_back(dir);
+		if(!dir->IsNull())
+		{
+			result->push_back(dir);
+		}
 		string->Remove(0, indexnext + 1);
 	}
-	
+
 	return result;
 }
