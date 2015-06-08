@@ -49,4 +49,9 @@ void FindHelperFind::Test()
 
 	testList->Remove(obj2);
 	AssertEquals(NULL, PAFFindHelper::Find<void*>(testList, "Test2"));
+
+	delete obj3;
+	delete obj2;
+	delete obj1;
+	delete testList;
 }

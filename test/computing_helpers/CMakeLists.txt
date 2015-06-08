@@ -1,2 +1,5 @@
 add_executable(FindHelperFind FindHelperFind.cxx)
 add_test(ComputingHelpers::FindHelperFind FindHelperFind)
+
+add_executable(FindHelperFindPAFNamed FindHelperFindPAFNamed.cxx)
+add_test(ComputingHelpers::FindHelperFindPAFNamed FindHelperFindPAFNamed)
