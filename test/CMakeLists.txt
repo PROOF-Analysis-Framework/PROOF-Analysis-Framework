@@ -18,6 +18,7 @@ link_libraries(libPAF.so)
 
 add_subdirectory(computing)
 add_subdirectory(computing_helpers)
+add_subdirectory(environments)
 add_subdirectory(packages)
 add_subdirectory(project)
 add_subdirectory(util)

@@ -1,0 +1,2 @@
+add_executable(SequentialEnvironment SequentialEnvironment.cxx AbstractEnvironmentTest.cxx)
+add_test(Environments::SequentialEnvironment SequentialEnvironment)
