@@ -84,7 +84,11 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 	{
 		item = (TDSetElement*)listDataFiles->At(i);
 
-		TString treePath = TString::Format("%s/%s", item->GetDirectory(), item->GetObjName());
+		TString treePath(item->GetObjName());
+		if(!TString(item->GetDirectory()).IsNull())
+		{
+			treePath.Insert(0, item->GetDirectory());
+		}
 
 		PAF_DEBUG("PAFSequentialEnvironment", TString::Format("Processing tree \"%s\" in file \"%s\".", treePath.Data(), item->GetFileName()));
 
