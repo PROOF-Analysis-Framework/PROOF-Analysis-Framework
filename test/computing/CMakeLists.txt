@@ -15,3 +15,6 @@ add_test(Computing::VectorDoubleType VectorDoubleType)
 
 add_executable(GetSizeOfDoubleMethod GetSizeOfDoubleMethod.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::GetSizeOfDoubleMethod GetSizeOfDoubleMethod)
+
+add_executable(GetSizeOfIntMethod GetSizeOfIntMethod.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::GetSizeOfIntMethod GetSizeOfIntMethod)

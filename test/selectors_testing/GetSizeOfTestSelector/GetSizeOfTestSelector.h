@@ -2,7 +2,7 @@
 
 #include "PAF/computing/PAFChainItemSelector.h"
 
-class GetSizeOfTestSelector : public PAFChainItemSelector 
+class GetSizeOfTestSelector : public PAFChainItemSelector
 {
 	public:
 		GetSizeOfTestSelector() : PAFChainItemSelector(), sHisto(0) {}
@@ -13,6 +13,6 @@ class GetSizeOfTestSelector : public PAFChainItemSelector
 
 	protected:
 		TH1* sHisto;
-		
+
    ClassDef(GetSizeOfTestSelector, 0);
 };
