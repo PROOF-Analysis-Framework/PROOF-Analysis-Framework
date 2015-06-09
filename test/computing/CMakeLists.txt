@@ -18,3 +18,6 @@ add_test(Computing::GetSizeOfDoubleMethod GetSizeOfDoubleMethod)
 
 add_executable(GetSizeOfIntMethod GetSizeOfIntMethod.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::GetSizeOfIntMethod GetSizeOfIntMethod)
+
+add_executable(GetSizeOfBoolMethod GetSizeOfBoolMethod.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::GetSizeOfBoolMethod GetSizeOfBoolMethod)
