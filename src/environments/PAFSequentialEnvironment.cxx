@@ -87,7 +87,7 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 		TString treePath(item->GetObjName());
 		if(!TString(item->GetDirectory()).IsNull())
 		{
-			treePath.Insert(0, item->GetDirectory());
+			treePath.Insert(0, TString::Format("%s/", item->GetDirectory()));
 		}
 
 		PAF_DEBUG("PAFSequentialEnvironment", TString::Format("Processing tree \"%s\" in file \"%s\".", treePath.Data(), item->GetFileName()));
@@ -106,8 +106,9 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 				DrawFeedback(selector);
 			}
 		}
-		
+
 		delete tree;
+		file.Close();
 	}
 	DrawFeedback(selector);
 	selector->Terminate();
