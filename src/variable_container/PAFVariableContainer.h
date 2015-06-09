@@ -62,13 +62,13 @@ inline void PAFVariableContainer::Add(const char* key, T value)
 template <typename T>
 inline T PAFVariableContainer::Get(TString& key)
 {
-	PAFGenericItemVariableContainer<T>* result = (PAFGenericItemVariableContainer<T>*)fPairs.GetValue(new TObjString(key.Data()));
-	return result->Get();
+	return Get<T>(key.Data());
 }
 
 template <typename T>
 inline T PAFVariableContainer::Get(const char* key)
 {
-	TString tkey(key);
-	return Get<T>(tkey);
+	TObjString tKey(key);
+	PAFGenericItemVariableContainer<T>* result = (PAFGenericItemVariableContainer<T>*)fPairs.GetValue(&tKey);
+	return result->Get();
 }
