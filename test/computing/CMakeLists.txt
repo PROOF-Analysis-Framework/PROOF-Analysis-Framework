@@ -13,6 +13,9 @@ add_test(Computing::LongPrimitiveType LongPrimitiveType)
 add_executable(VectorDoubleType VectorDoubleType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::VectorDoubleType VectorDoubleType)
 
+add_executable(VectorTLorentzType VectorTLorentzType.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::VectorTLorentzType VectorTLorentzType)
+
 add_executable(GetSizeOfDoubleMethod GetSizeOfDoubleMethod.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::GetSizeOfDoubleMethod GetSizeOfDoubleMethod)
 
