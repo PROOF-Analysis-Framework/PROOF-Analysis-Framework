@@ -8,6 +8,8 @@
 */
 
 #include "PAFChainItemSelector.h"
+#include "TClass.h"
+#include "TMethodCall.h"
 
 ClassImp(PAFChainItemSelector);
 
@@ -179,7 +181,13 @@ bool PAFChainItemSelector::Exists(const char* key)
 
 unsigned int PAFChainItemSelector::GetSizeOf(TString& key)
 {
-	return Get<std::vector<void*>*>(key)->size();
+	TLeaf* leaf = GetLeaf(key);
+	TString sClassType = TString::Format("%s*", leaf->GetTypeName());
+	TClass resultClass(sClassType.Data());
+	TMethodCall sizeMethod(&resultClass, "size", "");
+	Long_t result;
+	sizeMethod.Execute(Get<void*>(key), result);
+	return result;
 }
 
 unsigned int PAFChainItemSelector::GetSizeOf(const char* key)
