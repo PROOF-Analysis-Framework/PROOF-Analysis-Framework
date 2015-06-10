@@ -114,7 +114,9 @@ class PAFChainItemSelector : public PAFISelector
 		bool Exists(TString& key);
 		bool Exists(const char* key);
 
+		template<typename T>
 		unsigned int GetSizeOf(TString& key);
+		template<typename T>
 		unsigned int GetSizeOf(const char* key);
 
 		//Helpers methods
@@ -263,6 +265,19 @@ inline void PAFChainItemSelector::Assign(const char* key, T& target, unsigned in
 {
 	TString tKey(key);
 	Assign(tKey, target, i);
+}
+
+template <typename T>
+unsigned int PAFChainItemSelector::GetSizeOf(TString& key)
+{
+	return Get<std::vector<T>*>(key)->size();
+}
+
+template <typename T>
+unsigned int PAFChainItemSelector::GetSizeOf(const char* key)
+{
+	TString tKey(key);
+	return GetSizeOf<T>(tKey);
 }
 
 template <typename T>

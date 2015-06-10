@@ -48,7 +48,7 @@ void GetSizeOfIntMethod::Test()
 	project.SetPAFSettings(settings);
 
 	project.AddDataFile(TString::Format("%s/GetSizeOfInt.root", gSystem->pwd()));
-	project.AddSelectorPackage("GetSizeOfTestSelector");
+	project.AddSelectorPackage("GetSizeOfIntTestSelector");
 	
 	TList* result = project.Run();
 

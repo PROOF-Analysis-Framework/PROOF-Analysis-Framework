@@ -50,7 +50,7 @@ void GetSizeOfBoolMethod::Test()
 	project.SetPAFSettings(settings);
 
 	project.AddDataFile(TString::Format("%s/GetSizeOfBool.root", gSystem->pwd()));
-	project.AddSelectorPackage("GetSizeOfTestSelector");
+	project.AddSelectorPackage("GetSizeOfBoolTestSelector");
 	
 	TList* result = project.Run();
 

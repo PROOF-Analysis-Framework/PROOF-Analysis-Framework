@@ -48,7 +48,7 @@ void GetSizeOfDoubleMethod::Test()
 	project.SetPAFSettings(settings);
 
 	project.AddDataFile(TString::Format("%s/GetSizeOfDouble.root", gSystem->pwd()));
-	project.AddSelectorPackage("GetSizeOfTestSelector");
+	project.AddSelectorPackage("GetSizeOfDoubleTestSelector");
 	
 	TList* result = project.Run();
 
