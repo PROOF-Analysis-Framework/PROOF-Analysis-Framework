@@ -216,8 +216,23 @@ inline T PAFChainItemSelector::Get(TString& key)
 	TLeaf* leaf = GetLeaf(key);
 	TBranch* branch = leaf->GetBranch();
 
-	void* result = branch->GetAddress() ? branch->GetAddress() : leaf->GetValuePointer();
-	return *((T*)result);
+	//FIXME Temporal trick. It passes the test and should work, but it is a so bad decission.
+	if(branch->GetAddress())
+	{
+		return *((T*)branch->GetAddress());
+	}
+	else
+	{
+		if(leaf->GetNdata() == 1)
+		{
+			return *((T*)leaf->GetValuePointer());
+		}
+		else
+		{
+			void* p = leaf->GetValuePointer();
+			return  *((T*)&p);
+		}
+	}
 }
 
 template <typename T>

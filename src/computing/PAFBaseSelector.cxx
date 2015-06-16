@@ -39,7 +39,7 @@ void PAFBaseSelector::Init(TTree* tree)
 
 	fTree = tree;
 
-	fTree->SetBranchStatus("*", 0);
+	//fTree->SetBranchStatus("*", 0);
 
 	TObjArray* leaves = tree->GetListOfLeaves();
 	Int_t nb = leaves->GetEntriesFast();
