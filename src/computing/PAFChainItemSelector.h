@@ -23,6 +23,7 @@
 #include "TTree.h"
 
 #include "../computing_helpers/PAFFindHelper.h"
+#include "computing_types/PAFIType.h"
 
 #include "../PAF.h"
 
@@ -63,9 +64,9 @@ class PAFChainItemSelector : public PAFISelector
 		TString GetParamString(const char* key);
 
 		template<typename T>
-		void AssignParam(TString& key, T& target);	
+		void AssignParam(TString& key, T& target);
 		template<typename T>
-		void AssignParam(const char* key, T& target);	
+		void AssignParam(const char* key, T& target);
 
 		template<typename T>
 		T Get(TString& key);
@@ -73,9 +74,9 @@ class PAFChainItemSelector : public PAFISelector
 		T Get(const char* key);
 
 		template<typename T>
-		T Get(TString& key, unsigned int i);
+		T Get(TString& key, int i);
 		template<typename T>
-		T Get(const char* key, unsigned int i);
+		T Get(const char* key, int i);
 
 		int GetInt(TString& key);
 		int GetInt(const char* key);
@@ -86,24 +87,24 @@ class PAFChainItemSelector : public PAFISelector
 		double GetDouble(TString& key);
 		double GetDouble(const char* key);
 
-		int GetInt(TString& key, unsigned int i);
-		int GetInt(const char* key, unsigned int i);
+		int GetInt(TString& key, int i);
+		int GetInt(const char* key, int i);
 
-		float GetFloat(TString& key, unsigned int i);
-		float GetFloat(const char* key, unsigned int i);
+		float GetFloat(TString& key, int i);
+		float GetFloat(const char* key, int i);
 
-		double GetDouble(TString& key, unsigned int i);
-		double GetDouble(const char* key, unsigned int i);
-
+		double GetDouble(TString& key, int i);
+		double GetDouble(const char* key, int i);
+		
 		template<typename T>
 		void Assign(TString& key, T& target);
 		template<typename T>
 		void Assign(const char* key, T& target);
-		
+
 		template<typename T>
-		void Assign(TString& key, T& target, unsigned int i);
+		void Assign(TString& key, T& target, int i);
 		template<typename T>
-		void Assign(const char* key, T& target, unsigned int i);
+		void Assign(const char* key, T& target, int i);
 		
 		TLeaf* GetLeaf(TString& key);
 		TLeaf* GetLeaf(const char* key);
@@ -114,10 +115,8 @@ class PAFChainItemSelector : public PAFISelector
 		bool Exists(TString& key);
 		bool Exists(const char* key);
 
-		template<typename T>
-		unsigned int GetSizeOf(TString& key);
-		template<typename T>
-		unsigned int GetSizeOf(const char* key);
+		int GetSizeOf(TString& key);
+		int GetSizeOf(const char* key);
 
 		//Helpers methods
 
@@ -213,26 +212,8 @@ inline void PAFChainItemSelector::AssignParam(const char* key, T& target)
 template <typename T>
 inline T PAFChainItemSelector::Get(TString& key)
 {
-	TLeaf* leaf = GetLeaf(key);
-	TBranch* branch = leaf->GetBranch();
-
-	//FIXME Temporal trick. It passes the test and should work, but it is a so bad decission.
-	if(branch->GetAddress())
-	{
-		return *((T*)branch->GetAddress());
-	}
-	else
-	{
-		if(leaf->GetNdata() == 1)
-		{
-			return *((T*)leaf->GetValuePointer());
-		}
-		else
-		{
-			void* p = leaf->GetValuePointer();
-			return  *((T*)&p);
-		}
-	}
+	T* value = (T*)fVariables->Get<PAFIType*>(key)->GetPointer();
+	return *value;
 }
 
 template <typename T>
@@ -243,14 +224,14 @@ inline T PAFChainItemSelector::Get(const char* key)
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(TString& key, unsigned int i)
+inline T PAFChainItemSelector::Get(TString& key, int i)
 {
-	std::vector<T>* vector_result = Get<std::vector<T>*>(key);
-	return vector_result->at(i);
+	T* value = (T*)fVariables->Get<PAFIType*>(key)->GetPointer(i);
+	return *value;
 }
 
 template <typename T>
-inline T PAFChainItemSelector::Get(const char* key, unsigned int i)
+inline T PAFChainItemSelector::Get(const char* key, int i)
 {
 	TString tKey(key);
 	return Get<T>(tKey, i);
@@ -270,29 +251,16 @@ inline void PAFChainItemSelector::Assign(const char* key, T& target)
 }
 
 template <typename T>
-inline void PAFChainItemSelector::Assign(TString& key, T& target, unsigned int i)
+inline void PAFChainItemSelector::Assign(TString& key, T& target, int i)
 {
 	target = Get<T>(key, i);
 }
 
 template <typename T>
-inline void PAFChainItemSelector::Assign(const char* key, T& target, unsigned int i)
+inline void PAFChainItemSelector::Assign(const char* key, T& target, int i)
 {
 	TString tKey(key);
 	Assign(tKey, target, i);
-}
-
-template <typename T>
-unsigned int PAFChainItemSelector::GetSizeOf(TString& key)
-{
-	return Get<std::vector<T>*>(key)->size();
-}
-
-template <typename T>
-unsigned int PAFChainItemSelector::GetSizeOf(const char* key)
-{
-	TString tKey(key);
-	return GetSizeOf<T>(tKey);
 }
 
 template <typename T>

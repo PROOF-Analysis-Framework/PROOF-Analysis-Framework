@@ -102,34 +102,34 @@ double PAFChainItemSelector::GetDouble(const char* key)
 	return Get<double>(tKey);
 }
 
-int PAFChainItemSelector::GetInt(TString& key, unsigned int i)
+int PAFChainItemSelector::GetInt(TString& key, int i)
 {
 	return Get<int>(key, i);
 }
 
-int PAFChainItemSelector::GetInt(const char* key, unsigned int i)
+int PAFChainItemSelector::GetInt(const char* key, int i)
 {
 	TString tKey(key);
 	return GetInt(tKey, i);
 }
 
-float PAFChainItemSelector::GetFloat(TString& key, unsigned int i)
+float PAFChainItemSelector::GetFloat(TString& key, int i)
 {
 	return Get<float>(key, i);
 }
 
-float PAFChainItemSelector::GetFloat(const char* key, unsigned int i)
+float PAFChainItemSelector::GetFloat(const char* key, int i)
 {
 	TString tKey(key);
 	return GetFloat(tKey, i);
 }
 
-double PAFChainItemSelector::GetDouble(TString& key, unsigned int i)
+double PAFChainItemSelector::GetDouble(TString& key, int i)
 {
 	return Get<double>(key, i);
 }
 
-double PAFChainItemSelector::GetDouble(const char* key, unsigned int i)
+double PAFChainItemSelector::GetDouble(const char* key, int i)
 {
 	TString tKey(key);
 	return GetDouble(tKey, i);
@@ -148,16 +148,8 @@ TBranch* PAFChainItemSelector::GetBranch(const char* key)
 
 TLeaf* PAFChainItemSelector::GetLeaf(TString& key)
 {
-	TLeaf* result = fVariables->Get<TLeaf*>(key);
-	TBranch* branch = result->GetBranch();
-	
-	if(branch->TestBit(kDoNotProcess)){
-		PAF_DEBUG("PAFChainItemSelector", TString::Format("Loading variable: %s", key.Data()));
-		branch->SetStatus(kTRUE);
-		branch->GetEntry(branch->GetReadEntry());
-	}
-	
-	return result;
+	PAFIType* variable = fVariables->Get<PAFIType*>(key);
+	return variable->GetLeaf();
 }
 
 TLeaf* PAFChainItemSelector::GetLeaf(const char* key)
@@ -175,6 +167,18 @@ bool PAFChainItemSelector::Exists(const char* key)
 {
 	TString tkey(key);
 	return  Exists(tkey);
+}
+
+int PAFChainItemSelector::GetSizeOf(TString& key)
+{
+	PAFIType* variable = fVariables->Get<PAFIType*>(key);
+	return variable->GetNData();
+}
+
+int PAFChainItemSelector::GetSizeOf(const char* key)
+{
+	TString tKey(key);
+	return GetSizeOf(tKey);
 }
 
 TTree* PAFChainItemSelector::CreateTree(const char* name, const char* title) {

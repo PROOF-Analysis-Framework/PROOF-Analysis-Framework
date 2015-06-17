@@ -30,7 +30,7 @@ class PAFBaseSelector : public TSelector {
 
 		void SetPAFSelector(PAFISelector* pafiselector) { fPAFISelector = pafiselector; }
 		PAFISelector* GetPAFSelector() { return fPAFISelector; }
-		
+
 		void SetSelectorParams(PAFVariableContainer* selectorparams) { fSelectorParams = selectorparams; }
 		PAFVariableContainer* GetSelectorParams() { return fSelectorParams; }
 

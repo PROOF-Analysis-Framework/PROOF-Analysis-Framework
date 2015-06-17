@@ -1,5 +1,7 @@
 #include "GetSizeOfBoolTestSelector.h"
 
+#include "PAF/PAF.h"
+
 ClassImp(GetSizeOfBoolTestSelector);
 
 void GetSizeOfBoolTestSelector::Initialise() 
@@ -9,11 +11,12 @@ void GetSizeOfBoolTestSelector::Initialise()
 
 void GetSizeOfBoolTestSelector::InsideLoop() 
 {
+	PAF_DEBUG("Sel", "1");
 	TLeaf* leaf = GetLeaf("value");
 	long entry = leaf->GetBranch()->GetReadEntry();
 
-	if(GetSizeOf<bool>("value") == entry || 
-		GetSizeOf<int>("value") == Get<std::vector<int>*>("value")->size())
+	if(GetSizeOf("value") == entry || 
+		GetSizeOf("value") == Get<std::vector<int>*>("value")->size())
 	{
 		sHisto->Fill(entry, 1);
 	}

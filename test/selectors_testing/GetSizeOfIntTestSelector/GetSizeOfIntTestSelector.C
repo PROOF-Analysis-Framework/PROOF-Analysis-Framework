@@ -12,8 +12,8 @@ void GetSizeOfIntTestSelector::InsideLoop()
 	TLeaf* leaf = GetLeaf("value");
 	long entry = leaf->GetBranch()->GetReadEntry();
 
-	if(GetSizeOf<int>("value") == entry || 
-		GetSizeOf<int>("value") == Get<std::vector<int>*>("value")->size())
+	if(GetSizeOf("value") == entry || 
+		GetSizeOf("value") == Get<std::vector<int>*>("value")->size())
 	{
 		sHisto->Fill(entry, 1);
 	}

@@ -13,6 +13,8 @@
 
 #include "../computing_helpers/PAFFindHelper.h"
 
+#include "computing_types/PAFTypesFactory.h"
+
 #include "../PAF.h"
 
 ClassImp(PAFBaseSelector);
@@ -42,11 +44,12 @@ void PAFBaseSelector::Init(TTree* tree)
 	//fTree->SetBranchStatus("*", 0);
 
 	TObjArray* leaves = tree->GetListOfLeaves();
+	PAFTypesFactory factory;
 	Int_t nb = leaves->GetEntriesFast();
 	for (Int_t i = 0; i < nb; ++i) 
 	{
-		TObject* leaf = leaves->UncheckedAt(i);
-		fVariables->Add(leaf->GetName(), leaf);
+		TLeaf* leaf = (TLeaf*)leaves->UncheckedAt(i);
+		fVariables->Add(leaf->GetName(), (TObject*)factory.GetPAFType(leaf));
 	}
 	fPAFISelector->SetDynamicData(fVariables);
 	PAF_DEBUG("PAFBaseSelector", "Successfully ROOT File configuration");
