@@ -184,5 +184,5 @@ void PAFToolInspectTree::PrintVariable(const char* type, const char* name)
 
 void PAFToolInspectTree::PrintSnippet(const char* type, const char* name)
 {
-	PrintMessage(TString::Format("Use: \"%s %s = Get<%s>(\"%s\")\".\n", type, name, type, name).Data());
+	PrintMessage(TString::Format("Use: \"%s %s = Get<%s>(\"%s\");\".\n", type, name, type, name).Data());
 }
