@@ -29,7 +29,9 @@ TString PAFPackage::GetPreparePackageCommand()
 {
 	TString package_dir = GetPackageDir();
 	if(package_dir == "")
-		PAF_ERROR("PAFPackage", TString::Format("Package \"%s\" not found in repositories.", fName.Data()).Data());
+	{
+		PAF_FATAL("PAFPackage", TString::Format("Package \"%s\" not found in repositories.", fName.Data()).Data());
+	}
 	return TString::Format("%s/bin/PreparePackage.sh -s -d %s -r %s %s", fPAFSettings->GetPAFPATH()->Data() , GetPackagesDir().Data(), package_dir.Data(), GetName().Data());
 }
 
