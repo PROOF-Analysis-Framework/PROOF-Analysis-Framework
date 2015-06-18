@@ -32,7 +32,7 @@ int PAFChainItemSelector::GetParamInt(TString& key)
 int PAFChainItemSelector::GetParamInt(const char* key)
 {
 	TString tKey(key);
-	return GetParamInt(key);
+	return GetParamInt(tKey);
 }
 
 
