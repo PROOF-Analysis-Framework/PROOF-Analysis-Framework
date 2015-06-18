@@ -165,7 +165,7 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, boo
 			{
 				type.Append("*");
 			}
-			PrintVariable(type.Data(), name.Data());
+			PrintVariable(type.Data(), leaf->GetTitle());
 			if(snippet)
 			{
 				PrintSnippet(type.Data(), name.Data());
