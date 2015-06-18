@@ -19,11 +19,14 @@
 
 #include "../environments/PAFPROOFLiteEnvironment.h"
 
+#include "progress_updated/PAFProgressUpdatedLogger.h"
+
 ClassImp(PAFAbstractProject);
 
-PAFISettings*	DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
-bool            DEFAULT_COMPILE_ON_SLAVES = false;
-TString		DEFAULT_OUTPUT_FILE = TString("pafoutput.root");
+PAFISettings*		DEFAULT_PAFISETTINGS = new PAFEnvironmentVariableSettings();
+PAFIProgressUpdated* 	DEFAULT_PROGRESSUPDATED = new PAFProgressUpdatedLogger();
+bool            	DEFAULT_COMPILE_ON_SLAVES = false;
+TString			DEFAULT_OUTPUT_FILE = TString("pafoutput.root");
 
 PAFAbstractProject::PAFAbstractProject()
 {
@@ -52,6 +55,11 @@ void PAFAbstractProject::InitMembers()
 	fDynamicHistograms = new std::vector<TString>();
 	fPAFSettings = DEFAULT_PAFISETTINGS;
 	fCompileOnSlaves = DEFAULT_COMPILE_ON_SLAVES;
+	fProgressUpdated = DEFAULT_PROGRESSUPDATED;
+}
+
+void DefaultProgressUpdatedFunction(Long64_t total, Long64_t proc)
+{
 }
 
 void PAFAbstractProject::AddPackage(TString& packageName)
@@ -75,7 +83,6 @@ void PAFAbstractProject::AddSelectorPackage(TString& packageSelectorName)
 {
 	PAFPackageSelector* result = new PAFPackageSelector(GetPAFSettings(), packageSelectorName);
 	AddSelectorPackage(result);
-
 }
 
 void PAFAbstractProject::AddSelectorPackage(const char* packageSelectorName)
@@ -242,6 +249,7 @@ TList* PAFAbstractProject::Run()
 
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
+	fExecutionEnvironment->SetProgressUpdated(fProgressUpdated);
 
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);

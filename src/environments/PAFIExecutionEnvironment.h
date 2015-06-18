@@ -16,6 +16,7 @@
 #include "../computing/PAFBaseSelector.h"
 #include "../packages/PAFPackage.h"
 #include "../packages/PAFLibrary.h"
+#include "../project/progress_updated/PAFIProgressUpdated.h"
 
 class PAFIExecutionEnvironment 
 {
@@ -29,6 +30,9 @@ class PAFIExecutionEnvironment
 		virtual void AddInput(TObject* obj) = 0;
 		virtual void AddFeedback(const char* name) = 0;
 		virtual TDrawFeedback* CreateDrawFeedback() = 0;
+
+		virtual void SetProgressUpdated(PAFIProgressUpdated* progressUpdated) = 0;
+		virtual PAFIProgressUpdated* GetProgressUpdated() = 0;
 
 		virtual bool UploadPackage(PAFPackage* package) = 0;
 		virtual bool EnablePackage(PAFPackage* package) = 0;

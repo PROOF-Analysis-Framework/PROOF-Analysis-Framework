@@ -23,6 +23,7 @@
 #include "../computing/PAFChainItemSelector.h"
 #include "../computing/PAFBaseSelector.h"
 #include "../variable_container/PAFVariableContainer.h"
+#include "progress_updated/PAFIProgressUpdated.h"
 
 class PAFAbstractProject 
 {
@@ -74,6 +75,9 @@ class PAFAbstractProject
 		bool GetCompileOnSlaves() { return fCompileOnSlaves; }
 		void SetCompileOnSlaves(bool compileOnSlaves) { fCompileOnSlaves = compileOnSlaves; }
 
+		void SetProgressUpdated(PAFIProgressUpdated* progressUpdated) { fProgressUpdated = progressUpdated; }
+		PAFIProgressUpdated* GetProgressUpdatedFunction() { return fProgressUpdated; }
+
 		TList* Run();
 		virtual void doProjectChecks() = 0;
 		virtual void doRun(PAFBaseSelector* selector) = 0;
@@ -101,6 +105,7 @@ class PAFAbstractProject
 		std::vector<TString>*			fDynamicHistograms;
 		PAFISettings*				fPAFSettings;
 		bool					fCompileOnSlaves;
+		PAFIProgressUpdated*			fProgressUpdated;
 		
 	ClassDef(PAFAbstractProject, 1);
 };

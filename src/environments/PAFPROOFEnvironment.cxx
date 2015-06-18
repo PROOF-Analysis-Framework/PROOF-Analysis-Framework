@@ -59,8 +59,25 @@ TDrawFeedback* PAFPROOFEnvironment::CreateDrawFeedback()
 	return fSession->CreateDrawFeedback();
 }
 
+PAFIProgressUpdated* 	fProgressUpdated;
+void PAFPROOFEnvironment::SetProgressUpdated(PAFIProgressUpdated* progressUpdated)
+{
+	fProgressUpdated = progressUpdated;
+}
+
+PAFIProgressUpdated* PAFPROOFEnvironment::GetProgressUpdated()
+{
+	return fProgressUpdated;
+}
+
+void UpdateProgress(Long64_t tot, Long64_t proc, Float_t proctime, Long64_t bytes)
+{
+	fProgressUpdated->ProgressUpdated(tot, proc);
+}
+
 void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
 {
+	fSession->SetPrintProgress(UpdateProgress);
 	fSession->Process(selector, nentries);
 }
 

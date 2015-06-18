@@ -27,6 +27,9 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		void AddFeedback(const char* name);
 		TDrawFeedback* CreateDrawFeedback();
 		
+		virtual void SetProgressUpdated(PAFIProgressUpdated* progressUpdated);
+		virtual PAFIProgressUpdated* GetProgressUpdated();
+
 		bool UploadPackage(PAFPackage* package);
 		bool EnablePackage(PAFPackage* package);
 
