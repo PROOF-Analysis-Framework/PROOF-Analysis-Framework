@@ -32,6 +32,12 @@ class PAFProject : public PAFAbstractProject
 		void AddDataFile(TString& fileName, TString& objname);
 		void AddDataFile(const char* fileName, const char* objname = 0);
 		void AddDataFile(TFileInfo* dataFile);
+
+		void SetFirstEvent(Long64_t firstEvent);
+		Long64_t GetFirstEvent();
+
+		void SetNEvents(Long64_t nEvents);
+		Long64_t GetNEvents();
 		
 		virtual void doRun(PAFBaseSelector* selector);
 		virtual void doProjectChecks();
@@ -47,6 +53,8 @@ class PAFProject : public PAFAbstractProject
 		
 	protected:
 		TDSet* 	fDataFiles;
+		Long64_t fFirstEvent;
+		Long64_t fNEvents;
 		
 	ClassDef(PAFProject, 1);
 };

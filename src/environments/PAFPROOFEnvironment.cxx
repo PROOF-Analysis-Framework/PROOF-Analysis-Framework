@@ -64,9 +64,9 @@ void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
 	fSession->Process(selector, nentries);
 }
 
-void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles)
+void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents)
 {
-	fSession->Process(dataFiles, selector);
+	fSession->Process(dataFiles, selector, "", nEvents, firstEvent);
 }
 
 void PAFPROOFEnvironment::SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary)

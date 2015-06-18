@@ -72,17 +72,33 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, Long64_t nentr
 	selector->Terminate();
 }
 
+Long64_t PAFSequentialEnvironment::GetEntriesFrom(Long64_t passedEntries, Long64_t firstEvent)
+{
+	return firstEvent <= passedEntries ? 0 : firstEvent - passedEntries;
+}
 
-void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles)
+Long64_t PAFSequentialEnvironment::GetEntriesTo(Long64_t entriesTree, Long64_t passedEntries, Long64_t firstEvent, Long64_t nEvents)
+{
+	if (nEvents == -1)
+	{
+		return entriesTree;
+	}
+	Long64_t lastEvent = firstEvent + nEvents;
+	Long64_t lastEventThisTree = lastEvent - passedEntries;
+	return lastEventThisTree > entriesTree ? entriesTree : lastEventThisTree;
+}
+
+void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents)
 {
 	selector->SetInputList(fInputList);
 	selector->SlaveBegin(NULL);
+
+	Long64_t passedEntries = 0;
 	
-	TDSetElement* item = NULL;
 	TList* listDataFiles = dataFiles->GetListOfElements();
 	for(int i = 0; i < listDataFiles->GetEntries(); i++)
 	{
-		item = (TDSetElement*)listDataFiles->At(i);
+		TDSetElement* item = (TDSetElement*)listDataFiles->At(i);
 
 		TString treePath(item->GetObjName());
 		if(!TString(item->GetDirectory()).IsNull())
@@ -97,15 +113,19 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 
 		selector->Init(tree);
 
-		Long64_t entries = tree->GetEntriesFast();
-		for(int entry = 0; entry < entries; entry++)
+		Long64_t from = GetEntriesFrom(passedEntries, firstEvent);
+		Long64_t to = GetEntriesTo(tree->GetEntriesFast(), passedEntries, firstEvent, nEvents);
+
+		for(Long64_t entry = from; entry < to; entry++)
 		{
 			selector->Process(entry);
 			if(entry % 10000 == 0)
 			{
 				DrawFeedback(selector);
-			}
+			}	
 		}
+
+		passedEntries += passedEntries + tree->GetEntriesFast();				
 
 		delete tree;
 		file.Close();

@@ -28,6 +28,8 @@ PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment)
 void PAFProject::InitMembers()
 {
 	fDataFiles = new TDSet("PAFFiles", "");
+	fFirstEvent = 0;
+	fNEvents = -1;
 }
 
 PAFProject::~PAFProject()
@@ -94,6 +96,26 @@ void PAFProject::AddDataFile(const char* fileName, const char* objname)
 void PAFProject::AddDataFile(TFileInfo* dataFile)
 {
 	fDataFiles->Add(dataFile);
+}
+
+void PAFProject::SetFirstEvent(Long64_t firstEvent)
+{
+	fFirstEvent = firstEvent;
+}
+
+Long64_t PAFProject::GetFirstEvent()
+{
+	return fFirstEvent;
+}
+
+void PAFProject::SetNEvents(Long64_t nEvents)
+{
+	fNEvents = nEvents;
+}
+
+Long64_t PAFProject::GetNEvents()
+{
+	return fNEvents;
 }
 
 bool PAFProject::ExistsTree(TFile* rootFile, const char* treeName)
@@ -204,7 +226,7 @@ void PAFProject::doProjectChecks()
 
 void PAFProject::doRun(PAFBaseSelector* selector)
 {
-	fExecutionEnvironment->Process(selector, fDataFiles);
+	fExecutionEnvironment->Process(selector, fDataFiles, fFirstEvent, fNEvents);
 }
 
 TString PAFProject::GetDirectoryFromObjName(TString& objName)
