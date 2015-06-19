@@ -14,7 +14,12 @@
 
 PAFPROOFClusterEnvironment::PAFPROOFClusterEnvironment(int nSlots, int maxSlavesPerNode)
 	: fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode)
-{}
+{
+  //Check if startproof is in the path
+  TString sp = gSystem->GetFromPipe("type -p startproof");
+  if (sp == "")
+    PAF_FATAL("PAFPROOFClusterEnvironment", "PROOF Cluster is not configured in your session.\nPlease configure it and retry");
+}
 
 TProof* PAFPROOFClusterEnvironment::doCreateTProof()
 {
