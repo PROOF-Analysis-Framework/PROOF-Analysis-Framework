@@ -15,6 +15,8 @@
 PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeOut)
 	: PAFPROOFEnvironment(), fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode), fTimeOut(timeOut)
 {
+  if (!gSystem->Getenv("POD_LOCATION"))
+    PAF_FATAL("PAFPoDEnvironment", "PoD is not configured in your session.\nPlease configure PoD and retry\nHint: Look for PoD_env.sh");
 }
 
 PAFPoDEnvironment::~PAFPoDEnvironment()
