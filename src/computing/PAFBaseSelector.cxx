@@ -52,7 +52,7 @@ void PAFBaseSelector::Init(TTree* tree)
 		fVariables->Add(leaf->GetName(), (TObject*)factory.GetPAFType(leaf));
 	}
 	fPAFISelector->SetDynamicData(fVariables);
-	PAF_DEBUG("PAFBaseSelector", "Successfully ROOT File configuration");
+	PAF_DEBUG("PAFBaseSelector", "Successfully configured ROOT file");
 }
 
 void PAFBaseSelector::SlaveBegin(TTree* tree)
@@ -66,7 +66,7 @@ void PAFBaseSelector::SlaveBegin(TTree* tree)
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
 
-	PAF_DEBUG("PAFBaseSelector", "Launching PAFSelectors initialisers");
+	PAF_DEBUG("PAFBaseSelector", "Initializing PAFSelectors");
 	fPAFISelector->Initialise();
 }
 
