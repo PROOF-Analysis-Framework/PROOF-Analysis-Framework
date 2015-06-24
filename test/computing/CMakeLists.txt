@@ -10,6 +10,9 @@ add_test(Computing::DoublePrimitiveType DoublePrimitiveType)
 add_executable(LongPrimitiveType LongPrimitiveType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::LongPrimitiveType LongPrimitiveType)
 
+add_executable(ArrayDoubleType ArrayDoubleType.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::ArrayDoubleType ArrayDoubleType)
+
 add_executable(VectorDoubleType VectorDoubleType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::VectorDoubleType VectorDoubleType)
 
