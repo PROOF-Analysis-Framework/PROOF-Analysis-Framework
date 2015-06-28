@@ -27,3 +27,6 @@ add_test(Computing::GetSizeOfIntMethod GetSizeOfIntMethod)
 
 add_executable(GetSizeOfBoolMethod GetSizeOfBoolMethod.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::GetSizeOfBoolMethod GetSizeOfBoolMethod)
+
+add_executable(PassingParameters PassingParameters.cxx AbstractPrimitiveType.cxx)
+add_test(Computing::PassingParameters PassingParameters)

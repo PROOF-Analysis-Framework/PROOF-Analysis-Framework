@@ -1,4 +1,4 @@
-/**
+/**;
 	@brief Internal PAF class to store variables of any type.
 	@file PAFVariableContainer.h
 	@class PAFVariableContainer
@@ -49,7 +49,11 @@ class PAFVariableContainer : public TObject
 template <typename T>
 inline void PAFVariableContainer::Add(TString& key, T value)
 {
-	fPairs.Add(new TObjString(key.Data()), new PAFGenericItemVariableContainer<T>(value));
+	TObjString* objKey = new TObjString(key.Data());
+	
+	delete fPairs.Remove(objKey);
+	
+	fPairs.Add(objKey, new PAFGenericItemVariableContainer<T>(value));
 }
 
 template <typename T>
