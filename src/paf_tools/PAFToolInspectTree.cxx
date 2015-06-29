@@ -166,6 +166,7 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, boo
 				type.Append("*");
 			}
 			PrintVariable(type.Data(), leaf->GetTitle());
+			PrintDescription(leaf->GetBranch()->GetTitle());
 			if(snippet)
 			{
 				PrintSnippet(type.Data(), name.Data());
@@ -175,6 +176,11 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, boo
 	
 	delete tree;
 	delete regex;
+}
+void PAFToolInspectTree::PrintDescription(const char* desc)
+{
+       if (desc)
+	 PrintMessage(TString::Format("Desc.: %s ", desc));
 }
 
 void PAFToolInspectTree::PrintVariable(const char* type, const char* name)

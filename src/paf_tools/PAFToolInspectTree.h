@@ -23,6 +23,7 @@ class PAFToolInspectTree : public PAFAbstractTool
 		virtual void Execute(TList* params);
 	
 	protected:
+		void PrintDescription(const char* desc);
 		void PrintVariable(const char* type, const char* name);
 		void PrintSnippet(const char* type, const char* name);
 		void PrintVariables(TTree* tree, const char* branchName, bool snippet);
