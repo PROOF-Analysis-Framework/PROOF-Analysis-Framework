@@ -4,10 +4,6 @@
 
 ClassImp(PAFStopWatch);
 
-PAFStopWatch::PAFStopWatch()
-{
-	InitMembers();
-}
 
 PAFStopWatch::~PAFStopWatch()
 {
@@ -21,20 +17,6 @@ void PAFStopWatch::InitMembers()
 	fWatch = new TStopwatch();
 }
 
-void PAFStopWatch::Start()
-{
-	fWatch->Start(kTRUE);
-}
-
-void PAFStopWatch::Resume()
-{
-	fWatch->Continue();
-}
-
-void PAFStopWatch::Stop()
-{
-	fWatch->Stop();
-}
 
 void PAFStopWatch::TakeTime(const char* key)
 {
@@ -51,17 +33,13 @@ void PAFStopWatch::TakeTime(const char* key)
 
 }
 
-TParameter<double>* PAFStopWatch::GetTimeAt(int index)
+TParameter<double>* PAFStopWatch::GetTimeAt(int index) const
 {
 	return (TParameter<double>*)fTimes->At(index);
 }
 
-TList* PAFStopWatch::GetTimes()
-{
-	return fTimes;
-}
 
-void PAFStopWatch::PrintTimes()
+void PAFStopWatch::PrintTimes() const
 {
 	for(int i = 0; i < fTimes->GetEntries(); i++)
 	{
@@ -69,7 +47,7 @@ void PAFStopWatch::PrintTimes()
 	}
 }
 
-void PAFStopWatch::PrintTime(TParameter<double>* time)
+void PAFStopWatch::PrintTime(TParameter<double>* time) const
 {
 	PAF_INFO("PAFStopWatch", TString::Format("%s: %fs", time->GetName(), time->GetVal()));
 }
