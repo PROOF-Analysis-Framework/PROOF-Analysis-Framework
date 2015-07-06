@@ -13,8 +13,7 @@
 
 class PAFPackageSelector : public PAFPackage {
 	public:
-		PAFPackageSelector() : PAFPackage() {}
-		PAFPackageSelector(PAFISettings* pafsettings, const char* name) : PAFPackage(pafsettings, name) {}
+		PAFPackageSelector(PAFISettings* pafsettings = 0, const char* name = 0) : PAFPackage(pafsettings, name) {}
 	
 	ClassDef(PAFPackageSelector, 1);
 };

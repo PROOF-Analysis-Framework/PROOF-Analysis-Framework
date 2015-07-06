@@ -16,28 +16,28 @@
 
 class PAFPackage : public TObject {
 	public:
-		PAFPackage() : fName() {}
+                PAFPackage() : fPAFSettings(0), fName() {}
 		PAFPackage(PAFISettings* pafsettings, const char* name) : fPAFSettings(pafsettings), fName(name) {}
 		virtual ~PAFPackage() {}
 
-		void PreparePackage();
-		void CreateParFile();
-		void CompileAsLibrary();
+		void PreparePackage() const;
+		void CreateParFile() const;
+		void CompileAsLibrary() const;
 
-		TString GetName() { return fName; }
-		void SetName(const char* name) { fName = TString(name); }
+		virtual const char* GetName() const { return fName.Data(); }
+		void SetName(const char* name) { fName = name; }
 		
-		TString GetLibraryFileName();
-		TString GetParFileName();
+		TString GetLibraryFileName() const;
+		TString GetParFileName() const;
 		
 		void SetSettings(PAFISettings* pafsettings) { fPAFSettings = pafsettings; }
 		PAFISettings* GetSettings() { return fPAFSettings; }
 		
 	protected:
-		virtual TString GetPreparePackageCommand();
+		virtual TString GetPreparePackageCommand() const;
 		
-		TString GetPackageDir();
-		TString GetPackagesDir();
+		TString GetPackageDir() const;
+		TString GetPackagesDir() const;
 		
 	protected:
 		PAFISettings* fPAFSettings;

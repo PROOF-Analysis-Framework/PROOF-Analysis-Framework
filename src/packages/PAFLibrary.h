@@ -17,18 +17,18 @@
 
 class PAFLibrary : public TObject {
 	public:
-		PAFLibrary();
-		PAFLibrary(PAFISettings* pafsettings, const char* fileName);
+                PAFLibrary(PAFISettings* pafsettings = 0, const char* fileName = 0):
+                  fPAFSettings(pafsettings), fFileName(fileName) {}
 		virtual ~PAFLibrary() {}
 	
-		TString GetFileName();
-		TString GetLibraryName();
+		TString GetFileName() const {return fFileName;}
+		TString GetLibraryName() const;
 		
-		void CreatePARFile();
-		TString GetPARFileName();
+		void CreatePARFile() const;
+		TString GetPARFileName() const;
 		
-		void SetSettings(PAFISettings* pafsettings);
-		PAFISettings* GetSettings();
+		void SetSettings(PAFISettings* pafsettings) {fPAFSettings = pafsettings;}
+		PAFISettings* GetSettings() {return fPAFSettings;}
 	private:
 		PAFISettings* 	fPAFSettings;
 		TString 	fFileName;
