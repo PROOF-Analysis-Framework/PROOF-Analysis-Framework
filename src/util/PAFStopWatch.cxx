@@ -7,6 +7,8 @@ ClassImp(PAFStopWatch);
 
 PAFStopWatch::~PAFStopWatch()
 {
+  //FIXME FIXME
+  //fTimes may need to be iterated to delete the objects contained.
 	delete fTimes;
 	delete fWatch;
 }
