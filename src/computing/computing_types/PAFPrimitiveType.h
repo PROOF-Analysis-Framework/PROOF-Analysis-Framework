@@ -19,10 +19,18 @@ class PAFPrimitiveType : public PAFAbstractType
 		PAFPrimitiveType(TLeaf* leaf) : PAFAbstractType(leaf) {}
 		virtual ~PAFPrimitiveType() {}
 
-		virtual void* GetPointer(int pos = 0);
+		virtual void* GetPointer();
+		virtual void* GetPointer(int pos);
 
 	ClassDef(PAFPrimitiveType<T>, 1);
 };
+
+template <class T>
+inline void* PAFPrimitiveType<T>::GetPointer()
+{
+	T* values = (T*)fLeaf->GetValuePointer();
+	return &values[0];
+}
 
 template <class T>
 inline void* PAFPrimitiveType<T>::GetPointer(int pos)

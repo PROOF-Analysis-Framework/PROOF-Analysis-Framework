@@ -16,7 +16,8 @@
 class PAFIType : public TObject
 {
 	public:
-		virtual void* GetPointer(int pos = 0);
+		virtual void* GetPointer();
+		virtual void* GetPointer(int pos);
 
 		virtual TLeaf* GetLeaf();
 		

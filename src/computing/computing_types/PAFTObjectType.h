@@ -18,6 +18,7 @@ class PAFTObjectType : public PAFAbstractType
 		PAFTObjectType(TLeaf* leaf);
 		virtual ~PAFTObjectType();
 
+		virtual void* GetPointer();
 		virtual void* GetPointer(int pos);
 
 	ClassDef(PAFTObjectType, 1);

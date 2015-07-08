@@ -28,8 +28,13 @@ PAFTObjectType::~PAFTObjectType()
 
 }
 
-void* PAFTObjectType::GetPointer(int pos)
+void* PAFTObjectType::GetPointer()
 {
 	return fLeaf->GetValuePointer();
 }
 
+
+void* PAFTObjectType::GetPointer(int pos)
+{
+	return fLeaf->GetValuePointer();
+}

@@ -11,6 +11,11 @@
 
 ClassImp(PAFIType);
 
+void* PAFIType::GetPointer()
+{
+	return NULL;
+}
+
 void* PAFIType::GetPointer(int pos)
 {
 	return NULL;
@@ -25,4 +30,3 @@ int PAFIType::GetNData()
 {
 	return -1;
 }
-

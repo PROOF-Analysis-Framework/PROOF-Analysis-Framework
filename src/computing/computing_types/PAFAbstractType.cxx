@@ -43,4 +43,3 @@ int PAFAbstractType::GetNData()
 {
     return fLeaf->GetNdata();
 }
-

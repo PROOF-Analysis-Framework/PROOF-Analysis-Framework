@@ -29,6 +29,11 @@ PAFElementType::~PAFElementType()
 
 }
 
+void* PAFElementType::GetPointer()
+{
+	return fLeaf->GetBranch()->GetAddress();
+}
+
 void* PAFElementType::GetPointer(int pos)
 {
 	return fLeaf->GetBranch()->GetAddress();

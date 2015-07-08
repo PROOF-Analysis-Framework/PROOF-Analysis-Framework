@@ -11,6 +11,8 @@
 
 #include "TObject.h"
 
+#include <iostream>
+
 template <class T>
 class PAFGenericItemVariableContainer : public TObject
 {
@@ -18,11 +20,11 @@ class PAFGenericItemVariableContainer : public TObject
 		PAFGenericItemVariableContainer() : TObject() {}
 		PAFGenericItemVariableContainer(T object) : TObject(), fObject(object) {}
 		virtual ~PAFGenericItemVariableContainer() {}
-		
+
 		T Get() { return fObject; }
-		
+
 		void Set(T object) { fObject = object; }
-	
+
 		//TODO Maybe an "IsType" function could facilitate the evolution.
 	private:
 		T fObject;

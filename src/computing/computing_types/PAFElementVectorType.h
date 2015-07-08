@@ -20,7 +20,8 @@ class PAFElementVectorType : public PAFElementType
 		PAFElementVectorType(TLeaf* leaf) : PAFElementType(leaf) {}
 		virtual ~PAFElementVectorType() {}
 
-		virtual void* GetPointer(int pos = -1);
+		virtual void* GetPointer();
+		virtual void* GetPointer(int pos);
 	
 		virtual int GetNData();
 
@@ -31,18 +32,17 @@ class PAFElementVectorType : public PAFElementType
 };
 
 template <class T>
+inline void* PAFElementVectorType<T>::GetPointer()
+{
+	return fLeaf->GetValuePointer();
+}
+
+template <class T>
 inline void* PAFElementVectorType<T>::GetPointer(int pos)
 {
-	if(pos == -1)
-	{
-		return fLeaf->GetValuePointer();
-	}
-	else
-	{
-		std::vector<T>* values = (std::vector<T>*)fLeaf->GetValuePointer();
-		fValue = values->at(pos);
-		return &fValue;
-	}
+	std::vector<T>* values = (std::vector<T>*)fLeaf->GetValuePointer();
+	fValue = values->at(pos);
+	return &fValue;
 }
 
 template <class T>

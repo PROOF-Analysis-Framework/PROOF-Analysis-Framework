@@ -11,6 +11,7 @@
 
 #include "PAF/project/PAFProject.h"
 #include "PAF/computing_helpers/PAFFindHelper.h"
+#include "PAF/environments/PAFSequentialEnvironment.h"
 
 #include "TSystem.h"
 
@@ -42,7 +43,7 @@ void ArrayDoubleType::Initialise()
 
 void ArrayDoubleType::Test()
 {
-	PAFProject project;
+	PAFProject project(new PAFSequentialEnvironment());
 	PAFISettings* settings = GetPAFISettings();
 	project.SetPAFSettings(settings);
 

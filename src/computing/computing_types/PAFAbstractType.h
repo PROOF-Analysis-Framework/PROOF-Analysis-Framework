@@ -20,12 +20,12 @@ class PAFAbstractType : public PAFIType
 
 		virtual void SetTLeaf(TLeaf* leaf);
 		virtual TLeaf* GetLeaf();
-		
+
 		virtual int GetNData();
 
 	protected:
 		TLeaf* fLeaf;
-		
+
 	ClassDef(PAFAbstractType, 1);
 };
 

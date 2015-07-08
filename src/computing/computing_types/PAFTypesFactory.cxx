@@ -10,6 +10,7 @@
 #include "PAFTypesFactory.h"
 
 #include "PAFPrimitiveType.h"
+#include "PAFArrayPrimitiveType.h"
 #include "PAFTObjectType.h"
 #include "PAFElementType.h"
 #include "PAFElementVectorType.h"
@@ -43,7 +44,14 @@ PAFIType* PAFTypesFactory::GetPAFType(TLeaf* leaf)
 	}
 	else if (leaf->IsA() == TLeafD::Class())
 	{
-		return new PAFPrimitiveType<Double_t>(leaf);
+		if (leaf->GetNdata() > 1)
+		{
+			return new PAFArrayPrimitiveType<Double_t>(leaf);
+		}
+		else
+		{
+			return new PAFPrimitiveType<Double_t>(leaf);
+		}
 	}
 	else if (leaf->IsA() == TLeafElement::Class())
 	{
@@ -71,7 +79,7 @@ PAFIType* PAFTypesFactory::GetPAFType(TLeaf* leaf)
 		{
 			return new PAFElementVectorType<bool>(leaf);		
 		}
-		
+
 		return new PAFElementType(leaf);
 	}
 	else if (leaf->IsA() == TLeafF::Class())

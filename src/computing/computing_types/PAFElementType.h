@@ -18,6 +18,7 @@ class PAFElementType : public PAFAbstractType
 		PAFElementType(TLeaf* leaf);
 		virtual ~PAFElementType();
 
+		virtual void* GetPointer();
 		virtual void* GetPointer(int pos);
 	
 		virtual int GetNData();
