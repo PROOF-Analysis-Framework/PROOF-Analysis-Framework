@@ -1,5 +1,5 @@
 /**
-	@brief Container class which allow us a dynamic name assign to any TObject.
+	@brief Container class which allows us a dynamic name assignment to any TObject.
 	@file PAFNamedItem.cxx
 	@class PAFNamedItem
 	@author I. Gonzalez Caballero, J. Delgado Fernandez

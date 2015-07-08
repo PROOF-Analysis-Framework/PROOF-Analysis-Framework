@@ -8,23 +8,23 @@
 class PAFStopWatch 
 {
 	public:
-		PAFStopWatch();
+                PAFStopWatch() { InitMembers();}
 		virtual ~PAFStopWatch();
 
-		void Start();
-		void Resume();
-		void Stop();
+		inline void Start();
+		inline void Resume();
+		inline void Stop();
 
 		void TakeTime(const char* key);
 
-		TParameter<double>* GetTimeAt(int index);
-		TList* GetTimes();
-		void PrintTimes();
+		TParameter<double>* GetTimeAt(int index) const;
+		TList* GetTimes() {return fTimes;}
+		void PrintTimes() const;
 
 	protected:
 		void InitMembers();
 		
-		void PrintTime(TParameter<double>* time);
+		void PrintTime(TParameter<double>* time) const;
 
 	protected:
 		TList*		fTimes;
@@ -33,3 +33,16 @@ class PAFStopWatch
 	ClassDef(PAFStopWatch, 1);
 };
 
+void PAFStopWatch::Start()
+{
+	fWatch->Start(kTRUE);
+}
+void PAFStopWatch::Resume()
+{
+	fWatch->Continue();
+}
+
+void PAFStopWatch::Stop()
+{
+	fWatch->Stop();
+}

@@ -104,7 +104,7 @@ bool PAFPROOFEnvironment::UploadPackage(PAFPackage* package)
 
 bool PAFPROOFEnvironment::EnablePackage(PAFPackage* package)
 {
-	return fSession->EnablePackage(package->GetName().Data()) == 0;
+	return fSession->EnablePackage(package->GetName()) == 0;
 }
 
 bool PAFPROOFEnvironment::LoadLibrary(PAFLibrary* library)
