@@ -19,7 +19,7 @@ class PAFTObjectType : public PAFAbstractType
 		virtual ~PAFTObjectType();
 
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 
 	ClassDef(PAFTObjectType, 1);
 };

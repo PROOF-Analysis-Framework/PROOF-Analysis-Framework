@@ -9,7 +9,7 @@
 
 #include "PAFPROOFCloudEnvironment.h"
 
-PAFPROOFCloudEnvironment::PAFPROOFCloudEnvironment(int nSlots, int maxSlavesPerNode, bool proofRequest, const TString& proofServer, int proofServerPort)
+PAFPROOFCloudEnvironment::PAFPROOFCloudEnvironment(Int_t nSlots, Int_t maxSlavesPerNode, Bool_t proofRequest, const TString& proofServer, Int_t proofServerPort)
 	: PAFPROOFEnvironment(), fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode), fProofRequest(proofRequest), fProofServer(proofServer), fProofServerPort(proofServerPort)
 {
 
@@ -25,7 +25,8 @@ TProof* PAFPROOFCloudEnvironment::doCreateTProof()
 	}
 
 	TString proofserverchain = "";
-	if ( fProofRequest ) {  // User may disable the request
+	if ( fProofRequest ) 
+	{  // User may disable the request
 		if (gSystem->Exec("proofcloud start") != 0) 
 		{
 			return NULL;

@@ -14,14 +14,14 @@
 class PAFPoDEnvironment : public PAFPROOFEnvironment 
 {
 	public:
-		PAFPoDEnvironment(int nSlots = 10, int maxSlavesPerNode=9999, int timeOut = 60);
+		PAFPoDEnvironment(Int_t nSlots = 10, Int_t maxSlavesPerNode=9999, Int_t timeOut = 60);
 		virtual ~PAFPoDEnvironment();
 
 	protected:
 		TProof* doCreateTProof();
 
 	protected:
-		int fNSlots;
-		int fMaxSlavesPerNode;
-		int fTimeOut;
+		Int_t fNSlots;
+		Int_t fMaxSlavesPerNode;
+		Int_t fTimeOut;
 };

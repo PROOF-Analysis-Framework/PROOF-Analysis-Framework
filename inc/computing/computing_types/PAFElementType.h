@@ -19,9 +19,9 @@ class PAFElementType : public PAFAbstractType
 		virtual ~PAFElementType();
 
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 	
-		virtual int GetNData();
+		virtual Int_t GetNData();
 
 	ClassDef(PAFElementType, 1);
 };

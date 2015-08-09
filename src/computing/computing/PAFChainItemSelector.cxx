@@ -55,17 +55,17 @@ void PAFChainItemSelector::SetDynamicData(PAFVariableContainer* variables)
 	fVariables = variables;
 }
 
-int PAFChainItemSelector::GetParamInt(const char* key)
+Int_t PAFChainItemSelector::GetParamInt(const char* key)
 {
 	return GetParam<int>(key);
 }
 
-float PAFChainItemSelector::GetParamFloat(const char* key)
+Float_t PAFChainItemSelector::GetParamFloat(const char* key)
 {
 	return GetParam<float>(key);
 }
 
-double PAFChainItemSelector::GetParamDouble(const char* key)
+Double_t PAFChainItemSelector::GetParamDouble(const char* key)
 {
 	return GetParam<double>(key);
 }
@@ -74,32 +74,33 @@ TString PAFChainItemSelector::GetParamString(const char* key)
 {
 	return GetParam<TString>(key);
 }
-int PAFChainItemSelector::GetInt(const char* key)
+
+Int_t PAFChainItemSelector::GetInt(const char* key)
 {
 	return Get<int>(key);
 }
 
-float PAFChainItemSelector::GetFloat(const char* key)
+Float_t PAFChainItemSelector::GetFloat(const char* key)
 {
 	return Get<float>(key);
 }
 
-double PAFChainItemSelector::GetDouble(const char* key)
+Double_t PAFChainItemSelector::GetDouble(const char* key)
 {
 	return Get<double>(key);
 }
 
-int PAFChainItemSelector::GetInt(const char* key, int i)
+Int_t PAFChainItemSelector::GetInt(const char* key, Int_t i)
 {
 	return Get<int>(key, i);
 }
 
-float PAFChainItemSelector::GetFloat(const char* key, int i)
+Float_t PAFChainItemSelector::GetFloat(const char* key, Int_t i)
 {
 	return Get<float>(key, i);
 }
 
-double PAFChainItemSelector::GetDouble(const char* key, int i)
+Double_t PAFChainItemSelector::GetDouble(const char* key, Int_t i)
 {
 	return Get<double>(key, i);
 }
@@ -115,12 +116,12 @@ TLeaf* PAFChainItemSelector::GetLeaf(const char* key)
 	return variable->GetLeaf();
 }
 
-bool PAFChainItemSelector::Exists(const char* key)
+Bool_t PAFChainItemSelector::Exists(const char* key)
 {
 	return fVariables->Exists(key);
 }
 
-int PAFChainItemSelector::GetSizeOf(const char* key)
+Int_t PAFChainItemSelector::GetSizeOf(const char* key)
 {
 	PAFIType* variable = fVariables->Get<PAFIType*>(key);
 	return variable->GetNData();

@@ -21,9 +21,9 @@ class PAFElementVectorType : public PAFElementType
 		virtual ~PAFElementVectorType();
 
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 	
-		virtual int GetNData();
+		virtual Int_t GetNData();
 
 	protected:
 		T fValue;
@@ -58,7 +58,7 @@ void* PAFElementVectorType<T>::GetPointer()
 }
 
 template <class T>
-void* PAFElementVectorType<T>::GetPointer(int pos)
+void* PAFElementVectorType<T>::GetPointer(Int_t pos)
 {
 	std::vector<T>* values = (std::vector<T>*)fLeaf->GetValuePointer();
 	fValue = values->at(pos);
@@ -66,7 +66,7 @@ void* PAFElementVectorType<T>::GetPointer(int pos)
 }
 
 template <class T>
-int PAFElementVectorType<T>::GetNData()
+Int_t PAFElementVectorType<T>::GetNData()
 {
 	return (int)((std::vector<T>*)fLeaf->GetValuePointer())->size();
 }

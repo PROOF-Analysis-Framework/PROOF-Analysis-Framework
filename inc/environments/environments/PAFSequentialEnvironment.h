@@ -31,10 +31,10 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment
 		virtual void Process ( PAFBaseSelector* selector, Long64_t nentries );
 		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents);
 
-		virtual bool UploadPackage(PAFPackage* package);
-		virtual bool EnablePackage(PAFPackage* package);
+		virtual Bool_t UploadPackage(PAFPackage* package);
+		virtual Bool_t EnablePackage(PAFPackage* package);
 
-		virtual bool LoadLibrary(PAFLibrary* library);
+		virtual Bool_t LoadLibrary(PAFLibrary* library);
 
 	protected:
 		void InitMembers();
@@ -43,7 +43,7 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment
 		Long64_t GetEntriesTo(Long64_t entriesTree, Long64_t passedEntries, Long64_t firstEvent, Long64_t nEvents);
 		Long64_t GetEntriesTotal(TDSet* dataFiles);
 
-		TTree* GetTree(TDSet* dataFiles, int i);
+		TTree* GetTree(TDSet* dataFiles, Int_t i);
 
 		virtual void DrawFeedback(TSelector* selector);
 

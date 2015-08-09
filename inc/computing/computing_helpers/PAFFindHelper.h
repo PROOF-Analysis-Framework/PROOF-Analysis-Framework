@@ -36,7 +36,7 @@ template <typename T>
 inline T PAFFindHelper::Find(TList* list, TString& name)
 {
 	TObject* tmpobj = 0;
-	for(int i = 0; i < list->GetEntries(); i++)
+	for(Int_t i = 0; i < list->GetEntries(); i++)
 	{
 		tmpobj = list->At(i);
 		if(name.EqualTo(tmpobj->GetName()))

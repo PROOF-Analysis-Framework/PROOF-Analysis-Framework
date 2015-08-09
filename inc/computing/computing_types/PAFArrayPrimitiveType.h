@@ -20,9 +20,9 @@ class PAFArrayPrimitiveType : public PAFAbstractType
 		virtual ~PAFArrayPrimitiveType();
 
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 
-		virtual int GetNData();
+		virtual Int_t GetNData();
 
 	protected:
 		void* fPointer;
@@ -58,14 +58,14 @@ void* PAFArrayPrimitiveType<T>::GetPointer()
 }
 
 template <class T>
-void* PAFArrayPrimitiveType<T>::GetPointer(int pos)
+void* PAFArrayPrimitiveType<T>::GetPointer(Int_t pos)
 {
 	T* values = (T*)fLeaf->GetValuePointer();
 	return &values[pos];
 }
 
 template <class T>
-int PAFArrayPrimitiveType<T>::GetNData()
+Int_t PAFArrayPrimitiveType<T>::GetNData()
 {
 	return fLeaf->GetNdata();
 }

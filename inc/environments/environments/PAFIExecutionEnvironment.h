@@ -34,10 +34,10 @@ class PAFIExecutionEnvironment
 		virtual void SetProgressUpdated(PAFIProgressUpdated* progressUpdated) = 0;
 		virtual PAFIProgressUpdated* GetProgressUpdated() = 0;
 
-		virtual bool UploadPackage(PAFPackage* package) = 0;
-		virtual bool EnablePackage(PAFPackage* package) = 0;
+		virtual Bool_t UploadPackage(PAFPackage* package) = 0;
+		virtual Bool_t EnablePackage(PAFPackage* package) = 0;
 
-		virtual bool LoadLibrary(PAFLibrary* library) = 0;
+		virtual Bool_t LoadLibrary(PAFLibrary* library) = 0;
 
 		virtual void Process(PAFBaseSelector* selector, Long64_t nentries) = 0;
 		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents) = 0;

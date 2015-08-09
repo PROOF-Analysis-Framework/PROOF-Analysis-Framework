@@ -51,7 +51,7 @@ void PAFProject::SetDefaultTreeName(TString& defaultTreeName)
 	fDataFiles->SetObjName(GetNameFromObjName(defaultTreeName));
 
 	TList* oldDataFiles = tmp->GetListOfElements();
-	for(int i = 0; i < oldDataFiles->GetEntries(); i++)
+	for(Int_t i = 0; i < oldDataFiles->GetEntries(); i++)
 	{
 		TDSetElement* item = (TDSetElement*)oldDataFiles->At(i);
 		const char* dir = TString(item->GetDirectory()).EqualTo("/") ? 0 : item->GetDirectory();

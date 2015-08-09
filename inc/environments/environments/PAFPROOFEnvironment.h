@@ -30,10 +30,10 @@ class PAFPROOFEnvironment : public PAFIExecutionEnvironment
 		virtual void SetProgressUpdated(PAFIProgressUpdated* progressUpdated);
 		virtual PAFIProgressUpdated* GetProgressUpdated();
 
-		bool UploadPackage(PAFPackage* package);
-		bool EnablePackage(PAFPackage* package);
+		Bool_t UploadPackage(PAFPackage* package);
+		Bool_t EnablePackage(PAFPackage* package);
 
-		bool LoadLibrary(PAFLibrary* library);
+		Bool_t LoadLibrary(PAFLibrary* library);
 
 		virtual void Process(PAFBaseSelector* selector, Long64_t nentries);
 		virtual void Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents);

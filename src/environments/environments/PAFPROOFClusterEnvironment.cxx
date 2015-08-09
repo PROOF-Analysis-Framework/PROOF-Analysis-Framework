@@ -12,7 +12,7 @@
 #include <fstream>
 #include <string>
 
-PAFPROOFClusterEnvironment::PAFPROOFClusterEnvironment(int nSlots, int maxSlavesPerNode)
+PAFPROOFClusterEnvironment::PAFPROOFClusterEnvironment(Int_t nSlots, Int_t maxSlavesPerNode)
 	: fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode)
 {
 	//Check if startproof is in the path
@@ -53,7 +53,9 @@ TProof* PAFPROOFClusterEnvironment::doCreateTProof()
 	//Use the maximum possible slaves in each node, independently on the number
 	//of real cores or the load
 	if (result)
+	{
 		result->SetParameter("PROOF_MaxSlavesPerNode", fMaxSlavesPerNode);
+	}
 
 	return result;
 }

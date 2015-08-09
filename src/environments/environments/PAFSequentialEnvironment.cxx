@@ -142,7 +142,7 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 	Long64_t passedEntries = 0;
 	
 	TList* listDataFiles = dataFiles->GetListOfElements();
-	for(int i = 0; i < listDataFiles->GetEntries(); i++)
+	for(Int_t i = 0; i < listDataFiles->GetEntries(); i++)
 	{
 		TDSetElement* item = (TDSetElement*)listDataFiles->At(i);
 
@@ -186,7 +186,7 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 void PAFSequentialEnvironment::DrawFeedback(TSelector* selector)
 {
 	TList* feedbacks = fFeedbackCanvas->GetKeys();
-	for(int i = 0; i < feedbacks->GetEntries(); i++)
+	for(Int_t i = 0; i < feedbacks->GetEntries(); i++)
 	{
 		TObjString* item = (TObjString*)feedbacks->At(i);
 		TCanvas* canvas = fFeedbackCanvas->Get<TCanvas*>(item->GetTitle());

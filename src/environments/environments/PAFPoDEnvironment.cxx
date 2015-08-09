@@ -12,7 +12,7 @@
 #include "TSystem.h"
 #include "TMath.h"
 
-PAFPoDEnvironment::PAFPoDEnvironment(int nSlots, int maxSlavesPerNode, int timeOut)
+PAFPoDEnvironment::PAFPoDEnvironment(Int_t nSlots, Int_t maxSlavesPerNode, Int_t timeOut)
 	: PAFPROOFEnvironment(), fNSlots(nSlots), fMaxSlavesPerNode(maxSlavesPerNode), fTimeOut(timeOut)
 {
 	if (!gSystem->Getenv("POD_LOCATION"))
@@ -31,10 +31,10 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 	TProof* result = 0;
 	
 	// Interval between checks in seconds
-	int wait = 1;
+	Int_t wait = 1;
 
 	// Number of waiting cycles
-	int n_waits = fTimeOut / wait;
+	Int_t n_waits = fTimeOut / wait;
 
 	TString podserverstatus=gSystem->GetFromPipe("pod-server status 2>&1");
 	if (podserverstatus.Contains("NOT"))
@@ -44,10 +44,10 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 	}
 
 	//Find if there are already slots being used
-	int activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
+	Int_t activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
 
 	//Initially assume no slots have been allocated
-	int missingSlots = fNSlots - activeSlots;
+	Int_t missingSlots = fNSlots - activeSlots;
 
 	if (missingSlots > 0) 
 	{
@@ -56,11 +56,11 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 		TString response_command = gSystem->GetFromPipe(command);
 		PAF_DEBUG("PAFPoDEnvironment", response_command);
 
-		int slotsReady = 0;
+		Int_t slotsReady = 0;
 		//TODO Implement logger messages.
-		//int srmsize = 1;
-		//int trmsize = (int) TMath::Log10(fTimeOut) + 1;
-		//int rmsize  = srmsize + trmsize + 13;
+		//Int_t srmsize = 1;
+		//Int_t trmsize = (Int_t) TMath::Log10(fTimeOut) + 1;
+		//Int_t rmsize  = srmsize + trmsize + 13;
 		do {
 			gSystem->Sleep(wait*1000);
 			slotsReady = gSystem->GetFromPipe("pod-info -n").Atoi();

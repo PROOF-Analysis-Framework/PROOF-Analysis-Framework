@@ -20,7 +20,7 @@ class PAFPrimitiveType : public PAFAbstractType
 		virtual ~PAFPrimitiveType();
 
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 
 	ClassDef(PAFPrimitiveType<T>, 1);
 };
@@ -53,7 +53,7 @@ void* PAFPrimitiveType<T>::GetPointer()
 }
 
 template <class T>
-void* PAFPrimitiveType<T>::GetPointer(int pos)
+void* PAFPrimitiveType<T>::GetPointer(Int_t pos)
 {
 	T* values = (T*)fLeaf->GetValuePointer();
 	return &values[pos];

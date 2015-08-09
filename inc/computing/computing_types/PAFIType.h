@@ -17,11 +17,11 @@ class PAFIType : public TObject
 {
 	public:
 		virtual void* GetPointer();
-		virtual void* GetPointer(int pos);
+		virtual void* GetPointer(Int_t pos);
 
 		virtual TLeaf* GetLeaf();
 		
-		virtual int GetNData();
+		virtual Int_t GetNData();
 
 	ClassDef(PAFIType, 1);
 };
