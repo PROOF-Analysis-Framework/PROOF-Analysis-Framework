@@ -24,22 +24,22 @@ PAFChainItemSelector::~PAFChainItemSelector()
 
 void PAFChainItemSelector::Initialise()
 {
-	PAF_FATAL("PAFChainItemSelector", "It is being executed an interface method.");
+
 }
 
 void PAFChainItemSelector::InitialiseParameters()
 {
-	PAF_FATAL("PAFChainItemSelector", "It is being executed an interface method.");
+
 }
 
 void PAFChainItemSelector::InsideLoop()
 {
-	PAF_FATAL("PAFChainItemSelector", "It is being executed an interface method.");
+
 }
 
 void PAFChainItemSelector::Summary()
 {
-	PAF_FATAL("PAFChainItemSelector", "It is being executed an interface method.");
+
 }
 
 void PAFChainItemSelector::SetStaticData(TList* input, TSelectorList* output,

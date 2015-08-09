@@ -1,5 +1,8 @@
 add_executable(SequentialEnvironment SequentialEnvironment.cxx AbstractEnvironmentTest.cxx)
 add_test(Environments::SequentialEnvironment SequentialEnvironment)
 
+add_executable(SequentialEnvironmentTwoFiles SequentialEnvironmentTwoFiles.cxx AbstractEnvironmentTest.cxx)
+add_test(Environments::SequentialEnvironmentTwoFiles SequentialEnvironmentTwoFiles)
+
 add_executable(PROOFLiteEnvironment PROOFLiteEnvironment.cxx AbstractEnvironmentTest.cxx)
 add_test(Environments::PROOFLiteEnvironment PROOFLiteEnvironment)
