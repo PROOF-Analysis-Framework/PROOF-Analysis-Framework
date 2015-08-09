@@ -24,20 +24,13 @@ class PAFVariableContainer : public TObject
 		virtual ~PAFVariableContainer();
 
 		template<typename T>
-		void Add(TString& key, T value);
-
-		template<typename T>
 		void Add(const char* key, T value);
-
-		template<typename T>
-		T Get(TString& key);
 
 		template<typename T>
 		T Get(const char* key);
 
 		TList* GetKeys();
 
-		bool Exists(TString& key);
 		bool Exists(const char* key);
 
 	protected:
@@ -47,26 +40,13 @@ class PAFVariableContainer : public TObject
 };
 
 template <typename T>
-inline void PAFVariableContainer::Add(TString& key, T value)
+inline void PAFVariableContainer::Add(const char* key, T value)
 {
-	TObjString* objKey = new TObjString(key.Data());
+	TObjString* objKey = new TObjString(key);
 
 	delete fPairs.Remove(objKey);
 
 	fPairs.Add(objKey, new PAFGenericItemVariableContainer<T>(value));
-}
-
-template <typename T>
-inline void PAFVariableContainer::Add(const char* key, T value)
-{
-	TString tkey(key);
-	Add(tkey, value);
-}
-
-template <typename T>
-inline T PAFVariableContainer::Get(TString& key)
-{
-	return Get<T>(key.Data());
 }
 
 template <typename T>

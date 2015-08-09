@@ -7,7 +7,6 @@
 	@date 2015-02-22
  */
 
-
 #pragma once
 
 #include "TList.h"

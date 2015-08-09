@@ -55,160 +55,75 @@ void PAFChainItemSelector::SetDynamicData(PAFVariableContainer* variables)
 	fVariables = variables;
 }
 
-int PAFChainItemSelector::GetParamInt(TString& key)
+int PAFChainItemSelector::GetParamInt(const char* key)
 {
 	return GetParam<int>(key);
 }
 
-int PAFChainItemSelector::GetParamInt(const char* key)
-{
-	TString tKey(key);
-	return GetParamInt(tKey);
-}
-
-float PAFChainItemSelector::GetParamFloat(TString& key)
+float PAFChainItemSelector::GetParamFloat(const char* key)
 {
 	return GetParam<float>(key);
 }
 
-float PAFChainItemSelector::GetParamFloat(const char* key)
-{
-	TString tKey(key);
-	return GetParamFloat(tKey);
-}
-
-double PAFChainItemSelector::GetParamDouble(TString& key)
+double PAFChainItemSelector::GetParamDouble(const char* key)
 {
 	return GetParam<double>(key);
 }
 
-double PAFChainItemSelector::GetParamDouble(const char* key)
-{
-	TString tKey(key);
-	return GetParamDouble(tKey);
-}
-
-TString PAFChainItemSelector::GetParamString(TString& key)
+TString PAFChainItemSelector::GetParamString(const char* key)
 {
 	return GetParam<TString>(key);
 }
-
-TString PAFChainItemSelector::GetParamString(const char* key)
-{
-	TString tKey(key);
-	return GetParamString(tKey);
-}
-
-int PAFChainItemSelector::GetInt(TString& key)
+int PAFChainItemSelector::GetInt(const char* key)
 {
 	return Get<int>(key);
 }
 
-int PAFChainItemSelector::GetInt(const char* key)
-{
-	TString tKey(key);
-	return GetInt(tKey);
-}
-
-float PAFChainItemSelector::GetFloat(TString& key)
+float PAFChainItemSelector::GetFloat(const char* key)
 {
 	return Get<float>(key);
 }
 
-float PAFChainItemSelector::GetFloat(const char* key)
-{
-	TString tKey(key);
-	return GetFloat(tKey);
-}
-
-double PAFChainItemSelector::GetDouble(TString& key)
+double PAFChainItemSelector::GetDouble(const char* key)
 {
 	return Get<double>(key);
 }
 
-double PAFChainItemSelector::GetDouble(const char* key)
-{
-	TString tKey(key);
-	return Get<double>(tKey);
-}
-
-int PAFChainItemSelector::GetInt(TString& key, int i)
+int PAFChainItemSelector::GetInt(const char* key, int i)
 {
 	return Get<int>(key, i);
 }
 
-int PAFChainItemSelector::GetInt(const char* key, int i)
-{
-	TString tKey(key);
-	return GetInt(tKey, i);
-}
-
-float PAFChainItemSelector::GetFloat(TString& key, int i)
+float PAFChainItemSelector::GetFloat(const char* key, int i)
 {
 	return Get<float>(key, i);
 }
 
-float PAFChainItemSelector::GetFloat(const char* key, int i)
-{
-	TString tKey(key);
-	return GetFloat(tKey, i);
-}
-
-double PAFChainItemSelector::GetDouble(TString& key, int i)
+double PAFChainItemSelector::GetDouble(const char* key, int i)
 {
 	return Get<double>(key, i);
 }
 
-double PAFChainItemSelector::GetDouble(const char* key, int i)
-{
-	TString tKey(key);
-	return GetDouble(tKey, i);
-}
-
-TBranch* PAFChainItemSelector::GetBranch(TString& key)
+TBranch* PAFChainItemSelector::GetBranch(const char* key)
 {
 	return GetLeaf(key)->GetBranch();
 }
 
-TBranch* PAFChainItemSelector::GetBranch(const char* key)
-{
-	TString tKey(key);
-	return GetBranch(tKey);
-}
-
-TLeaf* PAFChainItemSelector::GetLeaf(TString& key)
+TLeaf* PAFChainItemSelector::GetLeaf(const char* key)
 {
 	PAFIType* variable = fVariables->Get<PAFIType*>(key);
 	return variable->GetLeaf();
 }
 
-TLeaf* PAFChainItemSelector::GetLeaf(const char* key)
-{
-	TString tKey(key);
-	return GetLeaf(tKey);
-}
-
-bool PAFChainItemSelector::Exists(TString& key)
+bool PAFChainItemSelector::Exists(const char* key)
 {
 	return fVariables->Exists(key);
 }
 
-bool PAFChainItemSelector::Exists(const char* key)
-{
-	TString tkey(key);
-	return  Exists(tkey);
-}
-
-int PAFChainItemSelector::GetSizeOf(TString& key)
+int PAFChainItemSelector::GetSizeOf(const char* key)
 {
 	PAFIType* variable = fVariables->Get<PAFIType*>(key);
 	return variable->GetNData();
-}
-
-int PAFChainItemSelector::GetSizeOf(const char* key)
-{
-	TString tKey(key);
-	return GetSizeOf(tKey);
 }
 
 TTree* PAFChainItemSelector::CreateTree(const char* name, const char* title) 

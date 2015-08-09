@@ -39,11 +39,6 @@ TList* PAFVariableContainer::GetKeys()
 	return result;
 }
 
-bool PAFVariableContainer::Exists(TString& key)
-{
-	return fPairs.FindObject(key) != NULL;
-}
-
 bool PAFVariableContainer::Exists(const char* key)
 {
 	TString tkey (key);
