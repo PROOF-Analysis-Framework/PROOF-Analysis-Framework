@@ -6,5 +6,6 @@
 *.root
 *.rootmap
 *.DS_Store
-sandbox/.paf/
+examples/.paf/
 test/build/
+build/

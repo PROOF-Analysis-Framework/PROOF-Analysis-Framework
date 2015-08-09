@@ -5,13 +5,13 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2015-06-18
-*/
+ */
 
 #include "PAFProgressUpdatedLogger.h"
 
-#include "../../PAF.h"
-
 #include "TString.h"
+
+#include "PAF.h"
 
 ClassImp(PAFProgressUpdatedLogger);
 
@@ -19,4 +19,3 @@ void PAFProgressUpdatedLogger::ProgressUpdated(Long64_t total, Long64_t processe
 {
 	PAF_INFO("Progress", TString::Format("Completed: %.4f%% of %lld events.", (processed*100)/((double)total), total).Data());
 }
-

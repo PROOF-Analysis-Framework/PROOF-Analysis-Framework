@@ -9,7 +9,7 @@
 
 #include "PAFToolCreateSelector.h"
 
-#include "../exceptions/PAFExceptionCommandExpression.h"
+#include "PAFExceptionCommandExpression.h"
 
 #include "TSystem.h"
 
@@ -42,7 +42,7 @@ PAFToolCreateSelector::~PAFToolCreateSelector()
 
 }
 
-void PAFToolCreateSelector::Execute(TList* params)
+void PAFToolCreateSelector::ExecuteTool(TList* params)
 {
 	if(params->GetSize() != 2)
 	{

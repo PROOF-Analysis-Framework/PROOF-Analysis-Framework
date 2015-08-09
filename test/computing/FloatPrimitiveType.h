@@ -12,7 +12,7 @@
 
 #include "AbstractPrimitiveType.h"
 
-#include "PAF/settings/PAFISettings.h"
+#include "PAFISettings.h"
 
 class FloatPrimitiveType : public AbstractPrimitiveType
 {

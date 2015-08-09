@@ -5,17 +5,32 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2014-12-17
-*/
+ */
 
 #include "PAFLibrary.h"
 
 #include "TSystem.h"
 
-#include "../util/PAFStringUtil.h"
-
-#include "../PAF.h"
+#include "PAF.h"
+#include "PAFStringUtil.h"
 
 ClassImp(PAFLibrary);
+
+PAFLibrary::PAFLibrary(PAFISettings* pafsettings, const char* fileName)
+	: fPAFSettings(pafsettings), fFileName(fileName)
+{
+
+}
+
+PAFLibrary::~PAFLibrary()
+{
+
+}
+
+TString PAFLibrary::GetFileName() const
+{
+	return fFileName;
+}
 
 TString PAFLibrary::GetLibraryName() const
 {
@@ -45,4 +60,14 @@ TString PAFLibrary::GetPARFileName() const
 {	
 	return TString::Format("%s/packages/%s.par", 
 			       gSystem->GetBuildDir(), GetLibraryName().Data());
+}
+
+void PAFLibrary::SetSettings(PAFISettings* pafsettings)
+{
+	fPAFSettings = pafsettings;
+}
+
+PAFISettings* PAFLibrary::GetSettings()
+{
+	return fPAFSettings;
 }

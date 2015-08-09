@@ -9,7 +9,7 @@
 
 #include "PrimitiveTypesSerialization.h"
 
-#include "PAF/variable_container/PAFVariableContainer.h"
+#include "PAFVariableContainer.h"
 
 #include "TBufferXML.h"
 

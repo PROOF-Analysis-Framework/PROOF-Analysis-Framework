@@ -15,15 +15,15 @@
 #include "PAFToolReset.h"
 #include "PAFToolCreateSelector.h"
 
-#include "../exceptions/PAFExceptionCommandExpression.h"
+#include "PAFExceptionCommandExpression.h"
 
 #include <iostream>
 
 int main(int argc, const char* argv[])
 {
 	PAFTools tools;
-	
-	tools.Execute(argc, argv);
+
+	tools.ExecuteTool(argc, argv);
 }
 
 const char* PAFTools::TOOL_NAME = "paf";
@@ -34,7 +34,7 @@ const char* PAFTools::COMMAND_EXPRESSION = "paf tool_name [tool_parameters]";
 
 
 PAFTools::PAFTools()
-	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION), TApplication(TOOL_NAME, 0, 0)
+	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
 {
 	InitMembers();
 }
@@ -72,17 +72,17 @@ TString PAFTools::GetHelpMessage()
 	return result;
 }
 
-void PAFTools::Execute(int argc, const char* argv[])
+void PAFTools::ExecuteTool(int argc, const char* argv[])
 {
 	TList params;
 	for(int i = 1; i < argc; i++)
 	{
 		params.Add(new TObjString(argv[i]));
 	}
-	Execute(&params);
+	ExecuteTool(&params);
 }
 
-void PAFTools::Execute(TList* params)
+void PAFTools::ExecuteTool(TList* params)
 {
 	if(params->IsEmpty())
 	{
@@ -90,7 +90,7 @@ void PAFTools::Execute(TList* params)
 		PrintMessage(GetHelpMessage());
 		return;
 	}
-	
+
 	TString param0 = GetParam(params, 0);
 	if(param0.EqualTo("-h") || param0.EqualTo("--help"))
 	{
@@ -104,7 +104,7 @@ void PAFTools::Execute(TList* params)
 		PrintMessage(TString::Format("Tool \"%s\" not found.\n", param0.Data()));
 		return;
 	}
-	
+
 	PAFITool* tool = fTools[param0];
 	if(params->GetSize() == 2)
 	{
@@ -115,10 +115,10 @@ void PAFTools::Execute(TList* params)
 			return;
 		}
 	}
-	
+
 	try
 	{
-		tool->Execute(params);
+		tool->ExecuteTool(params);
 	}
 	catch (PAFExceptionCommandExpression& ex)
 	{

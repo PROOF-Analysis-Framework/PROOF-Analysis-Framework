@@ -9,8 +9,8 @@
 
 #include "IntPrimitiveType.h"
 
-#include "PAF/project/PAFProject.h"
-#include "PAF/computing_helpers/PAFFindHelper.h"
+#include "PAFProject.h"
+#include "PAFFindHelper.h"
 
 #include "TSystem.h"
 

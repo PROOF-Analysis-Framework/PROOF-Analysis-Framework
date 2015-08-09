@@ -10,3 +10,13 @@
 #include "PAFISettings.h"
 
 ClassImp(PAFISettings);
+
+PAFISettings::PAFISettings()
+{
+
+}
+
+PAFISettings::~PAFISettings()
+{
+
+}

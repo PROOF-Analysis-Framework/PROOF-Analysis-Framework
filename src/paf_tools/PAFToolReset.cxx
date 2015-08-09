@@ -9,7 +9,7 @@
 
 #include "PAFToolReset.h"
 
-#include "../exceptions/PAFExceptionCommandExpression.h"
+#include "PAFExceptionCommandExpression.h"
 
 const char* PAFToolReset::TOOL_NAME = "reset";
 
@@ -29,27 +29,34 @@ PAFToolReset::~PAFToolReset()
 
 }
 
-void PAFToolReset::Execute(TList* params)
+void PAFToolReset::ExecuteTool(TList* params)
 {
+	int result = 0;
+
 	if(params->GetSize() > 2)
 	{
 		throw PAFExceptionCommandExpression(TOOL_NAME);
 	}
-	
+
 	if(params->GetSize() == 1)
 	{
-		system("resetpaf");
+		result = system("resetpaf");
 	}
 	else
 	{
 		TString param1 = GetParam(params, 1);
 		if(param1.EqualTo("-a") || param1.EqualTo("--aggresive"))
 		{
-			system("resetpaf -a");
+			result = system("resetpaf -a");
 		}
 		else
 		{
 			throw PAFExceptionCommandExpression(TOOL_NAME);
 		}
+	}
+
+	if (result != 0)
+	{
+		throw PAFExceptionCommandExpression(TOOL_NAME);
 	}
 }

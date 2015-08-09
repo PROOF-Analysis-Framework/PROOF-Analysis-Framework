@@ -16,7 +16,7 @@
 #include "TRegexp.h"
 #include "THashList.h"
 
-#include "../exceptions/PAFExceptionCommandExpression.h"
+#include "PAFExceptionCommandExpression.h"
 
 const char* PAFToolInspectTree::TOOL_NAME = "inspecttree";
 
@@ -36,7 +36,7 @@ PAFToolInspectTree::~PAFToolInspectTree()
 
 }
 
-void PAFToolInspectTree::Execute(TList* params)
+void PAFToolInspectTree::ExecuteTool(TList* params)
 {
 	if(params->GetSize() == 1)
 	{
@@ -179,8 +179,10 @@ void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, boo
 }
 void PAFToolInspectTree::PrintDescription(const char* desc)
 {
-       if (desc)
-	 PrintMessage(TString::Format("Desc.: %s ", desc));
+	if (desc)
+	{
+		PrintMessage(TString::Format("Desc.: %s ", desc));
+	}
 }
 
 void PAFToolInspectTree::PrintVariable(const char* type, const char* name)

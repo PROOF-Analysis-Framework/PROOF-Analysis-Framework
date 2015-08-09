@@ -11,7 +11,7 @@
 
 #include "PAFTest.h"
 
-#include "PAF/packages/PAFPackage.h"
+#include "PAFPackage.h"
 
 class PackageGetDirectory : public PAFTest, public PAFPackage
 {

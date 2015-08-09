@@ -1,7 +1,5 @@
 #include "GetSizeOfBoolTestSelector.h"
 
-#include "PAF/PAF.h"
-
 ClassImp(GetSizeOfBoolTestSelector);
 
 void GetSizeOfBoolTestSelector::Initialise() 
@@ -11,7 +9,6 @@ void GetSizeOfBoolTestSelector::Initialise()
 
 void GetSizeOfBoolTestSelector::InsideLoop() 
 {
-	PAF_DEBUG("Sel", "1");
 	TLeaf* leaf = GetLeaf("value");
 	long entry = leaf->GetBranch()->GetReadEntry();
 

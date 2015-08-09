@@ -5,15 +5,32 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2014-12-04
-*/
+ */
 
 #include "PAFPackage.h"
 
 #include "TSystem.h"
 
-#include "../PAF.h"
+#include "PAF.h"
 
 ClassImp(PAFPackage);
+
+PAFPackage::PAFPackage()
+	: fPAFSettings(0), fName() 
+{
+
+}
+
+PAFPackage::PAFPackage(PAFISettings* pafsettings, const char* name)
+	: fPAFSettings(pafsettings), fName(name)
+{
+
+}
+
+PAFPackage::~PAFPackage()
+{
+
+}
 
 void PAFPackage::PreparePackage() const
 {
@@ -47,6 +64,26 @@ void PAFPackage::CompileAsLibrary() const
 	TString compileaslibrary_command = TString::Format("%s/bin/CompileLibrary.sh -s -d %s %s", fPAFSettings->GetPAFPATH()->Data(),  GetPackagesDir().Data(), GetName());
 	TString response_compileaslibrary_command = gSystem->GetFromPipe(compileaslibrary_command);
 	PAF_DEBUG("PAFPackage", response_compileaslibrary_command);
+}
+
+const char* PAFPackage::GetName() const
+{
+	return fName.Data();
+}
+
+void PAFPackage::SetName(const char* name)
+{
+	fName = name;
+}
+
+PAFISettings* PAFPackage::GetSettings()
+{
+	return fPAFSettings;
+}
+
+void PAFPackage::SetSettings(PAFISettings* pafsettings)
+{
+	fPAFSettings = pafsettings;
 }
 
 TString PAFPackage::GetLibraryFileName() const

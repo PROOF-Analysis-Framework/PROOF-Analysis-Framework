@@ -1,5 +1,7 @@
 #include "ArrayDoubleTestSelector.h"
 
+#include "PAF.h"
+
 ClassImp(ArrayDoubleTestSelector);
 
 void ArrayDoubleTestSelector::Initialise() 
@@ -9,10 +11,12 @@ void ArrayDoubleTestSelector::Initialise()
 
 void ArrayDoubleTestSelector::InsideLoop() 
 {
+	PAF_DEBUG("Selector", "Reading with syntactic sugar.");
+	double result = Get<double>("value", 0) + Get<double>("value", 1);
+	PAF_DEBUG("Selector", "Bare metal reading.");
+	double resultArray = Get<double*>("value")[0] + Get<double*>("value")[1];
 	TLeaf* leaf = GetLeaf("value");
 	long entry = leaf->GetBranch()->GetReadEntry();
-	double result = Get<double>("value", 0) + Get<double>("value", 1);
-	double resultArray = Get<double*>("value")[0] + Get<double*>("value")[1];
 	if(result == resultArray)
 	{
 		sHisto->Fill(entry, result);

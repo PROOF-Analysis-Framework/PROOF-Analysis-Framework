@@ -5,7 +5,7 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2014-06-17
-*/
+ */
 
 #include "PAFElementType.h"
 #include "TBranch.h"
@@ -34,7 +34,7 @@ void* PAFElementType::GetPointer()
 	return fLeaf->GetBranch()->GetAddress();
 }
 
-void* PAFElementType::GetPointer(int pos)
+void* PAFElementType::GetPointer(int /*pos*/)
 {
 	return fLeaf->GetBranch()->GetAddress();
 }
@@ -43,4 +43,3 @@ int PAFElementType::GetNData()
 {
 	return 0;
 }
-

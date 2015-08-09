@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PAF/computing/PAFChainItemSelector.h"
+#include "PAFChainItemSelector.h"
 
 class GetSizeOfBoolTestSelector : public PAFChainItemSelector
 {

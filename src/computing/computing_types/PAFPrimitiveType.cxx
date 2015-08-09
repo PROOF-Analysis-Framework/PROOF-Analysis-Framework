@@ -5,9 +5,8 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2014-06-17
-*/
+ */
 
 #include "PAFPrimitiveType.h"
 
 templateClassImp(PAFPrimitiveType)
-

@@ -9,7 +9,7 @@
 
 #include "PrimitiveTypes.h"
 
-#include "PAF/variable_container/PAFVariableContainer.h"
+#include "PAFVariableContainer.h"
 
 int main()
 {

@@ -10,9 +10,9 @@
 
 #include "VectorTLorentzType.h"
 
-#include "PAF/project/PAFProject.h"
-#include "PAF/computing_helpers/PAFFindHelper.h"
-#include "PAF/environments/PAFSequentialEnvironment.h"
+#include "PAFProject.h"
+#include "PAFFindHelper.h"
+#include "PAFSequentialEnvironment.h"
 
 #include "TSystem.h"
 #include "TLorentzVector.h"

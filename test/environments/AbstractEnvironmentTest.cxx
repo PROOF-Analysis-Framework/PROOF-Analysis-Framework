@@ -9,7 +9,7 @@
 
 #include "AbstractEnvironmentTest.h"
 
-#include "PAF/settings/PAFManualSettings.h"
+#include "PAFManualSettings.h"
 
 #include "TSystem.h"
 #include "TFile.h"

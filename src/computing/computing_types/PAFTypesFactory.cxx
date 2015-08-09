@@ -5,7 +5,7 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2014-06-17
-*/
+ */
 
 #include "PAFTypesFactory.h"
 
@@ -15,7 +15,7 @@
 #include "PAFElementType.h"
 #include "PAFElementVectorType.h"
 
-#include "../../PAF.h"
+#include "PAF.h"
 
 #include "TLeafB.h"
 #include "TLeafC.h"
@@ -58,7 +58,7 @@ PAFIType* PAFTypesFactory::GetPAFType(TLeaf* leaf)
 		TString tType(leaf->GetTypeName());
 
 		//TODO vector is the first conditional and nested should be all of this.
-		//TODO Other types is not controlled yet (char, uchar, short, ushort, uint, ulong).
+		//TODO Other types are not controlled yet (char, uchar, short, ushort, uint, ulong).
 		if(tType.EqualTo("vector<double>"))
 		{
 			return new PAFElementVectorType<double>(leaf);
@@ -69,15 +69,15 @@ PAFIType* PAFTypesFactory::GetPAFType(TLeaf* leaf)
 		}
 		else if(tType.EqualTo("vector<int>"))
 		{
-			return new PAFElementVectorType<int>(leaf);		
+			return new PAFElementVectorType<int>(leaf);
 		}
 		else if(tType.EqualTo("vector<long>"))
 		{
-			return new PAFElementVectorType<long>(leaf);		
+			return new PAFElementVectorType<long>(leaf);
 		}
 		else if(tType.EqualTo("vector<bool>"))
 		{
-			return new PAFElementVectorType<bool>(leaf);		
+			return new PAFElementVectorType<bool>(leaf);
 		}
 
 		return new PAFElementType(leaf);
@@ -111,4 +111,3 @@ PAFIType* PAFTypesFactory::GetPAFType(TLeaf* leaf)
 		return NULL;
 	}
 }
-

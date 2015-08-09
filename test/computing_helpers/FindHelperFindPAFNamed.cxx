@@ -9,7 +9,7 @@
 
 #include "FindHelperFindPAFNamed.h"
 
-#include "PAF/computing_helpers/PAFFindHelper.h"
+#include "PAFFindHelper.h"
 
 #include "TObjString.h"
 

@@ -11,3 +11,8 @@
 
 ClassImp(PAFPackageSelector);
 
+PAFPackageSelector::PAFPackageSelector(PAFISettings* pafsettings, const char* name)
+	: PAFPackage(pafsettings, name)
+{
+
+}

@@ -9,9 +9,9 @@
 
 #include "PROOFLiteEnvironment.h"
 
-#include "PAF/settings/PAFManualSettings.h"
-#include "PAF/project/PAFProject.h"
-#include "PAF/environments/PAFPROOFLiteEnvironment.h"
+#include "PAFManualSettings.h"
+#include "PAFProject.h"
+#include "PAFPROOFLiteEnvironment.h"
 
 #include "TSystem.h"
 

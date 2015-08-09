@@ -1,4 +1,4 @@
-add_executable(IntPrimitiveType IntPrimitiveType.cxx AbstractPrimitiveType.cxx)
+ROOT_EXECUTABLE(IntPrimitiveType IntPrimitiveType.cxx AbstractPrimitiveType.cxx)
 add_test(Computing::IntPrimitiveType IntPrimitiveType)
 
 add_executable(FloatPrimitiveType FloatPrimitiveType.cxx AbstractPrimitiveType.cxx)

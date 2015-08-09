@@ -9,9 +9,9 @@
 
 #include "ArrayDoubleType.h"
 
-#include "PAF/project/PAFProject.h"
-#include "PAF/computing_helpers/PAFFindHelper.h"
-#include "PAF/environments/PAFSequentialEnvironment.h"
+#include "PAFProject.h"
+#include "PAFFindHelper.h"
+#include "PAFSequentialEnvironment.h"
 
 #include "TSystem.h"
 
@@ -28,7 +28,7 @@ void ArrayDoubleType::Initialise()
 	TTree tree("tree", "Default tree");
 
 	double* number = new double[2];
-	
+
 	tree.Branch("value", number, "value[2]/D");
 
 	for (int i = 0; i < 40; i++)
@@ -49,7 +49,7 @@ void ArrayDoubleType::Test()
 
 	project.AddDataFile(TString::Format("%s/ArrayDouble.root", gSystem->pwd()));
 	project.AddSelectorPackage("ArrayDoubleTestSelector");
-	
+
 	TList* result = project.Run();
 
 	TH1* histogram = PAFFindHelper::Find<TH1*>(result, "histogram");

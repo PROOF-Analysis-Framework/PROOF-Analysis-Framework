@@ -9,7 +9,7 @@
 
 #include "AddDataFiles.h"
 
-#include "PAF/project/PAFProject.h"
+#include "PAFProject.h"
 
 
 int main()

@@ -2,8 +2,6 @@
 
 #include "TLorentzVector.h"
 
-#include <iostream>
-
 ClassImp(VectorTLorentzTestSelector);
 
 void VectorTLorentzTestSelector::Initialise() 

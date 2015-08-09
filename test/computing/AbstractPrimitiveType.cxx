@@ -9,7 +9,7 @@
 
 #include "AbstractPrimitiveType.h"
 
-#include "PAF/settings/PAFManualSettings.h"
+#include "PAFManualSettings.h"
 
 #include "TSystem.h"
 

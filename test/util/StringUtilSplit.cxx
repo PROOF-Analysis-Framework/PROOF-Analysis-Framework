@@ -9,7 +9,7 @@
 
 #include "StringUtilSplit.h"
 
-#include "PAF/util/PAFStringUtil.h"
+#include "PAFStringUtil.h"
 
 int main()
 {

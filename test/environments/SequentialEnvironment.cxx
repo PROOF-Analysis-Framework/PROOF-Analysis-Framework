@@ -9,9 +9,9 @@
 
 #include "SequentialEnvironment.h"
 
-#include "PAF/settings/PAFManualSettings.h"
-#include "PAF/project/PAFProject.h"
-#include "PAF/environments/PAFSequentialEnvironment.h"
+#include "PAFManualSettings.h"
+#include "PAFProject.h"
+#include "PAFSequentialEnvironment.h"
 
 #include "TSystem.h"
 

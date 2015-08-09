@@ -5,11 +5,17 @@
 	@author I. Gonzalez Caballero, J. Delgado Fernandez
 	@version 1.0
 	@date 2015-01-26
-*/
+ */
 
 #include "PAFVariableContainer.h"
 
 ClassImp(PAFVariableContainer);
+
+PAFVariableContainer::PAFVariableContainer()
+	: TObject(), fPairs() 
+{
+ 
+}
 
 PAFVariableContainer::~PAFVariableContainer()
 {
@@ -43,4 +49,3 @@ bool PAFVariableContainer::Exists(const char* key)
 	TString tkey (key);
 	return Exists(tkey);
 }
-

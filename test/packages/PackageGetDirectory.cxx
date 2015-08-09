@@ -9,8 +9,8 @@
 
 #include "PackageGetDirectory.h"
 
-#include "PAF/util/PAFStringUtil.h"
-#include "PAF/settings/PAFManualSettings.h"
+#include "PAFStringUtil.h"
+#include "PAFManualSettings.h"
 
 #include "TSystem.h"
 

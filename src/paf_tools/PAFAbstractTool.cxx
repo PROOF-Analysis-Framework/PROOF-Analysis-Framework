@@ -48,4 +48,3 @@ void PAFAbstractTool::PrintMessage(const char* message)
 {
 	std::cout << message << std::endl;
 }
-

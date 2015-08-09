@@ -11,7 +11,7 @@
 
 #include "PAFTest.h"
 
-#include "PAF/settings/PAFISettings.h"
+#include "PAFISettings.h"
 
 class AbstractEnvironmentTest : public PAFTest
 {
