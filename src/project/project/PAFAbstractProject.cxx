@@ -187,12 +187,12 @@ PAFVariableContainer* PAFAbstractProject::GetInputParameters()
 	return fInputParameters;
 }
 
-void PAFAbstractProject::SetDynamicHistograms(vector< TString >* dynamicHistograms)
+void PAFAbstractProject::SetDynamicHistograms(std::vector< TString >* dynamicHistograms)
 {
 	fDynamicHistograms = dynamicHistograms;
 }
 
-vector< TString >* PAFAbstractProject::GetDynamicHistograms()
+std::vector< TString >* PAFAbstractProject::GetDynamicHistograms()
 {
 	return fDynamicHistograms;
 }
