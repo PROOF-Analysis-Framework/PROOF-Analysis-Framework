@@ -86,7 +86,7 @@ compilepackage() {
     # XXX Be aware of any missing files in this list (--exclude CVS does not work on Mac)
     #tar $verbose -c -z -f $basepath/$parpackagename -C $basepath $packagename
 	cd $basepath$packagename
-	make -s
+	make -s && echo "Successful compilation"
 }
 
 

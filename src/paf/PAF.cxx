@@ -38,5 +38,5 @@ void PAF_ERROR(const char* module, const char* msg)
 void PAF_FATAL(const char* module, const char* msg)
 {
 	fLogger->Log(FATAL, module, msg);
-	gSystem->Exit(-1);
+	_exit(-1);
 }
