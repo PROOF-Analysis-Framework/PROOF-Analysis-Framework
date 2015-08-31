@@ -4,10 +4,6 @@ project(PAF)
 
 # You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
-# This option is not supported. The lines below may help to find the way to support this.
-# LIST(APPEND CMAKE_MODULE_PATH $ENV{ROOTSYS}/etc/cmake)
-# LIST(APPEND CMAKE_MODULE_PATH $ENV{ROOTSYS}/cmake/modules)
-# include(RootNewMacros)
 #   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
 # Check if ROOTSYS is defined and in that case include it
 
