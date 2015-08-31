@@ -15,7 +15,6 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment
 {
 	public:
 		PAFSequentialEnvironment();
-		PAFSequentialEnvironment(Long64_t updateRate);
 		virtual ~PAFSequentialEnvironment();
 
 		void Initialise() {}
@@ -51,5 +50,4 @@ class PAFSequentialEnvironment : public PAFIExecutionEnvironment
 		TList*			fInputList;
 		PAFVariableContainer* 	fFeedbackCanvas;
 		PAFIProgressUpdated*	fProgressUpdated;
-		Long64_t		fUpdateRate;
 };

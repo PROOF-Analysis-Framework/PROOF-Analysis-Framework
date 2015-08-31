@@ -20,13 +20,7 @@
 #include "PAF.h"
 
 PAFSequentialEnvironment::PAFSequentialEnvironment()
-	: PAFIExecutionEnvironment(), fInputList(0), fFeedbackCanvas(0), fProgressUpdated(0), fUpdateRate(1)
-{
-	InitMembers();
-}
-
-PAFSequentialEnvironment::PAFSequentialEnvironment(Long64_t updateRate)
-	: PAFIExecutionEnvironment(), fInputList(0), fFeedbackCanvas(0), fProgressUpdated(0), fUpdateRate(updateRate)
+	: PAFIExecutionEnvironment(), fInputList(0), fFeedbackCanvas(0), fProgressUpdated(0)
 {
 	InitMembers();
 }
@@ -162,12 +156,17 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 		Long64_t from = GetEntriesFrom(passedEntries, firstEvent);
 		Long64_t to = GetEntriesTo(tree->GetEntriesFast(), passedEntries, firstEvent, nEvents);
 		fProgressUpdated->ProgressUpdated(total, processedEvents);
-			
+
+		//Rate at which progress is printed in the terminal set to
+		//happen every ~1%
+		int updateRate = total/100; 
+
+		//Loop over the events
 		for(Long64_t entry = from; entry < to; entry++)
 		{
 			selector->Process(entry);
 			processedEvents++;
-			if(entry % fUpdateRate == 0)
+			if(processedEvents % updateRate == 0)
 			{
 				DrawFeedback(selector);
 				fProgressUpdated->ProgressUpdated(total, processedEvents);
@@ -179,7 +178,10 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 		delete tree;
 		file.Close();
 	}
+	// Print and plot results at the end
+	fProgressUpdated->ProgressUpdated(total, processedEvents);
 	DrawFeedback(selector);
+
 	selector->Terminate();
 }
 

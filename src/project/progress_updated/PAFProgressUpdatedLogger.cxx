@@ -17,5 +17,5 @@ ClassImp(PAFProgressUpdatedLogger);
 
 void PAFProgressUpdatedLogger::ProgressUpdated(Long64_t total, Long64_t processed)
 {
-	PAF_INFO("Progress", TString::Format("Completed: %.4f%% of %lld events.", (processed*100)/((double)total), total).Data());
+	PAF_INFO("Progress", TString::Format("Completed: %.2f%% of %lld events.", (processed*100)/((double)total), total).Data());
 }
