@@ -159,7 +159,7 @@ void PAFSequentialEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFil
 
 		//Rate at which progress is printed in the terminal set to
 		//happen every ~1%
-		int updateRate = total/100; 
+		int updateRate = total < 100? 1:total/100; 
 
 		//Loop over the events
 		for(Long64_t entry = from; entry < to; entry++)
