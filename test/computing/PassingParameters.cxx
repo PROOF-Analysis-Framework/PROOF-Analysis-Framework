@@ -43,7 +43,7 @@ void PassingParameters::Initialise()
 
 void PassingParameters::Test()
 {
-	PAFProject project(new PAFSequentialEnvironment(50));
+	PAFProject project(new PAFSequentialEnvironment());
 	PAFISettings* settings = GetPAFISettings();
 	project.SetPAFSettings(settings);
 
