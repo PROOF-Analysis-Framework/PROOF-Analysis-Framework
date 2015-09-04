@@ -13,9 +13,12 @@
 #include "PAFFindHelper.h"
 
 #include "TSystem.h"
+#include "TROOT.h"
 
 int main()
 {
+	gROOT->SetBatch();
+
 	LongPrimitiveType test;
 	return PAFTest::Evaluate(&test);
 }

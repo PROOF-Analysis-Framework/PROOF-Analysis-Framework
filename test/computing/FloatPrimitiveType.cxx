@@ -13,10 +13,12 @@
 #include "PAFFindHelper.h"
 
 #include "TSystem.h"
+#include "TROOT.h"
 
 int main()
 {
 	FloatPrimitiveType test;
+	gROOT->SetBatch();
 	return PAFTest::Evaluate(&test);
 }
 

@@ -14,9 +14,12 @@
 #include "PAFPROOFLiteEnvironment.h"
 
 #include "TSystem.h"
+#include "TROOT.h"
 
 int main()
 {
+	gROOT->SetBatch();
+
 	PROOFLiteEnvironment test;
 	return PAFTest::Evaluate(&test);
 }
