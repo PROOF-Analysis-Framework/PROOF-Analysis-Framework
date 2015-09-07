@@ -26,9 +26,9 @@ class PAFToolInspectTree : public PAFAbstractTool
 		void PrintDescription(const char* desc);
 		void PrintVariable(const char* type, const char* name);
 		void PrintSnippet(const char* type, const char* name);
-		void PrintVariables(TTree* tree, const TString& branchName, bool snippet);
+		void PrintVariables(TTree* tree, TString* branchName, bool snippet);
 
-		TTree* GetTree(TFile* rootFile, const TString& treeName);
+		TTree* GetTree(TFile* rootFile, TString* treeName);
 		TTree* GetAutoTree(TFile* rootFile);
 		void GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path);
 

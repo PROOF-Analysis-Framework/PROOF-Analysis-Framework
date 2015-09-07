@@ -91,25 +91,25 @@ void PAFTools::ExecuteTool(TList* params)
 		return;
 	}
 
-	TString param0 = GetParam(params, 0);
-	if(param0.EqualTo("-h") || param0.EqualTo("--help"))
+	TString* param0 = GetParam(params, 0);
+	if(param0->EqualTo("-h") || param0->EqualTo("--help"))
 	{
 		PrintMessage(GetCommandExpression());
 		PrintMessage(GetHelpMessage());
 		return;
 	}
 
-	if(fTools.find(param0) == fTools.end())
+	if(fTools.find(*param0) == fTools.end())
 	{
-		PrintMessage(TString::Format("Tool \"%s\" not found.\n", param0.Data()));
+		PrintMessage(TString::Format("Tool \"%s\" not found.\n", param0->Data()));
 		return;
 	}
 
-	PAFITool* tool = fTools[param0];
+	PAFITool* tool = fTools[*param0];
 	if(params->GetSize() == 2)
 	{
-		TString param1 = GetParam(params, 1);
-		if (param1.EqualTo("-h") || param1.EqualTo("--help"))
+		TString* param1 = GetParam(params, 1);
+		if (param1->EqualTo("-h") || param1->EqualTo("--help"))
 		{
 			PrintMessage(tool->GetHelpMessage());
 			return;
