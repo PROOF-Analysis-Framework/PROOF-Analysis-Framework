@@ -34,6 +34,12 @@ TString PAFAbstractTool::GetHelpMessage()
 	return fHelpMessage;
 }
 
+void PAFAbstractTool::Exit(const TString& message, Int_t error)
+{
+	PrintMessage(message.Data());
+	exit(error);
+}
+
 TString PAFAbstractTool::GetParam(TList* params, int i)
 {
 	return ((TObjString*)params->At(i))->GetString();

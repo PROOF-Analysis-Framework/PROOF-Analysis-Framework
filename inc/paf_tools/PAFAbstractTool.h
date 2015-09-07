@@ -21,6 +21,7 @@ class PAFAbstractTool : public PAFITool
 		virtual TString GetCommandExpression();
 
 	protected:
+		virtual void Exit(const TString& message, Int_t error = -1);
 		virtual TString GetParam(TList* params, int i);
 		virtual void PrintMessage(TString& message);
 		virtual void PrintMessage(const char* message);

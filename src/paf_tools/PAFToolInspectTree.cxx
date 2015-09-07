@@ -46,7 +46,13 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 	TString branchName;
 	TString treeName;
 	Bool_t snippet = kFALSE;
-	TFile* rootFile = new TFile(GetParam(params, params->GetSize() - 1));
+	TString file = GetParam(params, params->GetSize() - 1);
+	TFile* rootFile = new TFile(file);
+	
+	if (!rootFile->IsOpen())
+	{
+		Exit(TString::Format("File \"%s\" does not exists.", file.Data()), -1);
+	}
 	
 	for(int i = 1; i < params->GetSize(); i = i + 2)
 	{
@@ -66,21 +72,18 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 	}
 	
 	TTree* tree = treeName.Length() ? GetTree(rootFile, treeName) : GetAutoTree(rootFile);
-	
-	if(tree)
-	{
-		PrintVariables(tree, branchName, snippet);
-	}
-	else
-	{
-		PrintMessage("There is no tree satisfying the specified parameters.");
-	}
+	PrintVariables(tree, branchName, snippet);
 }
 
 TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const TString& treeName)
-{
+{	
 	TObject* result = rootFile->Get(treeName.Data());
 
+	if (!result)
+	{
+		Exit(TString::Format("Tree \"%s\" does not exists in this file.", treeName.Data()), -1);
+	}
+	
 	if(result->IsA() == TTree::Class())
 	{
 		return (TTree*)result;
@@ -139,6 +142,7 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 			const char* tree_name = trees->At(i)->GetName();
 			PrintMessage( TString::Format("\t -%s", tree_name).Data());
 		}
+		Exit("Execute again the command specifying the branch desired (Ex: \"-b name_of_branch\").");
 	}
 	
 	delete trees;
