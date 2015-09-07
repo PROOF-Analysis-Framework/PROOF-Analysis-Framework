@@ -43,9 +43,9 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 		throw PAFExceptionCommandExpression(TOOL_NAME);
 	}
 	
-	const char* branchName = NULL;
-	const char* treeName = NULL;
-	bool snippet = kFALSE;
+	TString branchName;
+	TString treeName;
+	Bool_t snippet = kFALSE;
 	TFile* rootFile = new TFile(GetParam(params, params->GetSize() - 1));
 	
 	for(int i = 1; i < params->GetSize(); i = i + 2)
@@ -65,7 +65,7 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 		}
 	}
 	
-	TTree* tree = treeName ? GetTree(rootFile, treeName) : GetAutoTree(rootFile);
+	TTree* tree = treeName.Length() ? GetTree(rootFile, treeName) : GetAutoTree(rootFile);
 	
 	if(tree)
 	{
@@ -77,9 +77,9 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 	}
 }
 
-TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
+TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const TString& treeName)
 {
-	TObject* result = rootFile->Get(treeName);
+	TObject* result = rootFile->Get(treeName.Data());
 
 	if(result->IsA() == TTree::Class())
 	{
@@ -146,26 +146,33 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 	return result;
 }
 
-void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, bool snippet)
+void PAFToolInspectTree::PrintVariables(TTree* tree, const TString& branchName, bool snippet)
 {
-	TString tBranchName = branchName ? TString(branchName) : TString("*");
-	TRegexp* regex = new TRegexp(tBranchName, kTRUE);
+	TRegexp* regex = NULL;
+	if (branchName.Length())
+	{
+		regex = new TRegexp(branchName, kTRUE);
+	}
+	else
+	{
+		regex = new TRegexp("*", kTRUE);
+	}
 	
 	TObjArray* leaves = tree->GetListOfLeaves();
 	int nb = leaves->GetEntriesFast();
 	for (int i = 0; i < nb; i++)
 	{
 		TLeaf* leaf = (TLeaf*)leaves->UncheckedAt(i);
-		const TString name(leaf->GetName());
-		int length;
-		if(regex->Index(name, &length) != -1)
+		const TString name(leaf->GetTitle());
+		int length = 0;
+		if(regex->Index(name.Data(), &length) != -1)
 		{
 			TString type(leaf->GetTypeName());
 			if(leaf->IsA() == TLeafElement::Class() || leaf->IsA() == TLeafObject::Class())
 			{
 				type.Append("*");
 			}
-			PrintVariable(type.Data(), leaf->GetTitle());
+			PrintVariable(type.Data(), name.Data());
 			PrintDescription(leaf->GetBranch()->GetTitle());
 			if(snippet)
 			{
