@@ -40,3 +40,8 @@ void PAF_FATAL(const char* module, const char* msg)
 	fLogger->Log(FATAL, module, msg);
 	_exit(-1);
 }
+
+void PAF_LOG_LEVEL(PAFLogLevel loglevel)
+{
+	fLogger->SetLogLevel(loglevel);
+}
