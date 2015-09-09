@@ -13,6 +13,11 @@ export PATH=$PATH:$PAFPATH/bin
 # Add PAF lib path to libraries that ROOT should find.
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PAFPATH/lib
 
+# Autocomplete
+if [ -f $PAFPATH/etc/pafautocomplete.sh ]; then
+  source $PAFPATH/etc/pafautocomplete.sh
+fi
+
 if [ -z $ROOTSYS ]; then
   echo "WARNING: It seems you have not configured your ROOT environment"
   echo "         This is usually done with 'source /opt/root/bin/thisroot.sh'"
