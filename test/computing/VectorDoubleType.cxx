@@ -14,9 +14,12 @@
 #include "PAFFindHelper.h"
 
 #include "TSystem.h"
+#include "TROOT.h"
 
 int main()
 {
+	gROOT->SetBatch();
+
 	VectorDoubleType test;
 	return PAFTest::Evaluate(&test);
 }

@@ -9,8 +9,11 @@
 
 #pragma once
 
+#include "PAFLoggerEnum.h"
+
 void PAF_DEBUG(const char* module, const char* msg);
 void PAF_INFO(const char* module, const char* msg);
 void PAF_WARN(const char* module, const char* msg);
 void PAF_ERROR(const char* module, const char* msg);
 void PAF_FATAL(const char* module, const char* msg);
+void PAF_LOG_LEVEL(PAFLogLevel loglevel);

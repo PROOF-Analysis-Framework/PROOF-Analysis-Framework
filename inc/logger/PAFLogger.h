@@ -16,7 +16,6 @@ class PAFLogger
 	public:
 		static void Log(PAFLogLevel loglevel, const char* module, const char* msg);
 
-	protected:
 		static PAFILogger* GetLogger() { return fLogger; }
 		static void SetLogger(PAFILogger* logger) { fLogger = logger; }
 

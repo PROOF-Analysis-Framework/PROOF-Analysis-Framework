@@ -14,8 +14,12 @@
 
 #include "TSystem.h"
 
+#include "TROOT.h"
+
 int main()
 {
+	gROOT->SetBatch();
+	
 	IntPrimitiveType test;
 	return PAFTest::Evaluate(&test);
 }

@@ -11,6 +11,8 @@
 
 #include "PAFITool.h"
 
+#include "Rtypes.h"
+
 class PAFAbstractTool : public PAFITool
 {
 	public:
@@ -21,7 +23,10 @@ class PAFAbstractTool : public PAFITool
 		virtual TString GetCommandExpression();
 
 	protected:
-		virtual TString GetParam(TList* params, int i);
+		virtual void Exit(const TString& message, Int_t error = -1);
+		virtual TString* GetParam(TList* params, Int_t i);
+		virtual TString* GetParam(TList* params, const TString& keys, const TString& keyl);
+		virtual Bool_t ExistsParam(TList* params, const TString& keys, const TString& keyl);
 		virtual void PrintMessage(TString& message);
 		virtual void PrintMessage(const char* message);
 

@@ -43,44 +43,30 @@ void PAFToolInspectTree::ExecuteTool(TList* params)
 		throw PAFExceptionCommandExpression(TOOL_NAME);
 	}
 	
-	const char* branchName = NULL;
-	const char* treeName = NULL;
-	bool snippet = kFALSE;
-	TFile* rootFile = new TFile(GetParam(params, params->GetSize() - 1));
+	TString* branchName = GetParam(params, "-b", "--branch");
+	TString* treeName = GetParam(params, "-t", "--tree");
+	Bool_t snippet = ExistsParam(params, "-s", "--snippet");
+	TString* file = GetParam(params, params->GetSize() - 1);
+	TFile* rootFile = new TFile(file->Data());
 	
-	for(int i = 1; i < params->GetSize(); i = i + 2)
+	if (!rootFile->IsOpen())
 	{
-		TString item = GetParam(params, i);
-		if(item.EqualTo("-b") || item.EqualTo("--branch"))
-		{
-			branchName = GetParam(params, i + 1);
-		} 
-		else if (item.EqualTo("-t") || item.EqualTo("--tree")) 
-		{
-			treeName = GetParam(params, i + 1);
-		} 
-		else if (item.EqualTo("-s") || item.EqualTo("--snippet")) 
-		{
-			snippet = kTRUE;
-		}
+		Exit(TString::Format("File \"%s\" does not exists.", file->Data()), -1);
 	}
 	
 	TTree* tree = treeName ? GetTree(rootFile, treeName) : GetAutoTree(rootFile);
-	
-	if(tree)
-	{
-		PrintVariables(tree, branchName, snippet);
-	}
-	else
-	{
-		PrintMessage("There is no tree satisfying the specified parameters.");
-	}
+	PrintVariables(tree, branchName, snippet);
 }
 
-TTree* PAFToolInspectTree::GetTree(TFile* rootFile, const char* treeName)
-{
-	TObject* result = rootFile->Get(treeName);
+TTree* PAFToolInspectTree::GetTree(TFile* rootFile, TString* treeName)
+{	
+	TObject* result = rootFile->Get(treeName->Data());
 
+	if (!result)
+	{
+		Exit(TString::Format("Tree \"%s\" does not exists in this file.", treeName->Data()), -1);
+	}
+	
 	if(result->IsA() == TTree::Class())
 	{
 		return (TTree*)result;
@@ -127,9 +113,10 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 	}
 	else if(trees->GetSize() == 1)
 	{
-		const char* tree_name = trees->First()->GetName();
-		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", tree_name));
+		TString* tree_name = new TString(trees->First()->GetName());
+		PrintMessage( TString::Format("Selecting the unique Tree: \"%s\"", tree_name->Data()));
 		result = GetTree(rootFile, tree_name);
+		delete tree_name;
 	}
 	else
 	{
@@ -139,6 +126,7 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 			const char* tree_name = trees->At(i)->GetName();
 			PrintMessage( TString::Format("\t -%s", tree_name).Data());
 		}
+		Exit("Execute again the command specifying the branch desired (Ex: \"-b name_of_branch\").");
 	}
 	
 	delete trees;
@@ -146,26 +134,25 @@ TTree* PAFToolInspectTree::GetAutoTree(TFile* rootFile)
 	return result;
 }
 
-void PAFToolInspectTree::PrintVariables(TTree* tree, const char* branchName, bool snippet)
+void PAFToolInspectTree::PrintVariables(TTree* tree, TString* branchName, bool snippet)
 {
-	TString tBranchName = branchName ? TString(branchName) : TString("*");
-	TRegexp* regex = new TRegexp(tBranchName, kTRUE);
+	TRegexp* regex = branchName ? new TRegexp(branchName->Data(), kTRUE) : new TRegexp("*", kTRUE);
 	
 	TObjArray* leaves = tree->GetListOfLeaves();
-	int nb = leaves->GetEntriesFast();
-	for (int i = 0; i < nb; i++)
+	Int_t nb = leaves->GetEntriesFast();
+	for (Int_t i = 0; i < nb; i++)
 	{
 		TLeaf* leaf = (TLeaf*)leaves->UncheckedAt(i);
-		const TString name(leaf->GetName());
-		int length;
-		if(regex->Index(name, &length) != -1)
+		const TString name(leaf->GetTitle());
+		Int_t length = 0;
+		if(regex->Index(name.Data(), &length) != -1)
 		{
 			TString type(leaf->GetTypeName());
 			if(leaf->IsA() == TLeafElement::Class() || leaf->IsA() == TLeafObject::Class())
 			{
 				type.Append("*");
 			}
-			PrintVariable(type.Data(), leaf->GetTitle());
+			PrintVariable(type.Data(), name.Data());
 			PrintDescription(leaf->GetBranch()->GetTitle());
 			if(snippet)
 			{
