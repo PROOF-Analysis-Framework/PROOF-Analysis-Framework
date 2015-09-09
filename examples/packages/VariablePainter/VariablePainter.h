@@ -2,7 +2,7 @@
 
 #include "PAFChainItemSelector.h"
 
-#include <TH1F.h>
+#include "TH1F.h"
 
 class VariablePainter : public PAFChainItemSelector {
 	public:

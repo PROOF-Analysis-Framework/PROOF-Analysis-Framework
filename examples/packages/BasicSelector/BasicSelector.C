@@ -11,7 +11,7 @@ void BasicSelector::Initialise()
 
 void BasicSelector::InsideLoop() 
 {
-	float t_metpf_et = Get<float>("T_METgen_ET");
+	float t_metpf_et = Get<float>("ootpum2");
 	etHisto->Fill(t_metpf_et);
 }
 
