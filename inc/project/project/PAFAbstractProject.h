@@ -63,7 +63,7 @@ class PAFAbstractProject
 		void SetInputParameters(PAFVariableContainer* inputParameters);
 		PAFVariableContainer* GetInputParameters();
 		template <typename T>
-		void SetInputParam(TString& key, T param);
+		void SetInputParam(const TString& key, T param);
 		template <typename T>
 		void SetInputParam(const char* key, T param);
 
@@ -111,28 +111,27 @@ class PAFAbstractProject
 };
 
 template <typename T>
-inline void PAFAbstractProject::SetInputParam(TString& key, T param)
+inline void PAFAbstractProject::SetInputParam(const TString& key, T param)
 {
-	fInputParameters->Add(key, param);
+	SetInputParam(key.Data(), param);
 }
 
 template <typename T>
 inline void PAFAbstractProject::SetInputParam(const char* key, T param)
 {
-	TString tkey(key);
-	SetInputParam(tkey, param);
+	fInputParameters->Add(key, param);
 }
 
 template<>
-inline void PAFAbstractProject::SetInputParam(TString& key, const char* param)
+inline void PAFAbstractProject::SetInputParam(const TString& key, const char* param)
 {
 	TString tparam(param);
-	SetInputParam(key, tparam);
+	SetInputParam(key.Data(), tparam);
 }
 
 template <>
 inline void PAFAbstractProject::SetInputParam(const char* key, const char* param)
 {
-	TString tkey(key);
-	SetInputParam(tkey, param);
+	TString tparam(param);
+	SetInputParam(key, tparam);
 }
