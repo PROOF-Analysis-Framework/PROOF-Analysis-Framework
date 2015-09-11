@@ -54,12 +54,14 @@ PAFElementVectorType<T>::~PAFElementVectorType()
 template <class T>
 void* PAFElementVectorType<T>::GetPointer()
 {
+	EnableBranch();
 	return fLeaf->GetValuePointer();
 }
 
 template <class T>
 void* PAFElementVectorType<T>::GetPointer(Int_t pos)
 {
+	EnableBranch();
 	std::vector<T>* values = (std::vector<T>*)fLeaf->GetValuePointer();
 	fValue = values->at(pos);
 	return &fValue;
@@ -68,5 +70,6 @@ void* PAFElementVectorType<T>::GetPointer(Int_t pos)
 template <class T>
 Int_t PAFElementVectorType<T>::GetNData()
 {
+	EnableBranch();
 	return (int)((std::vector<T>*)fLeaf->GetValuePointer())->size();
 }

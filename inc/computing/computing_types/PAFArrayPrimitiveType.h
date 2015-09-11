@@ -53,6 +53,7 @@ PAFArrayPrimitiveType<T>::~PAFArrayPrimitiveType()
 template <class T>
 void* PAFArrayPrimitiveType<T>::GetPointer()
 {
+	EnableBranch();
 	fPointer = fLeaf->GetValuePointer();
 	return &fPointer;
 }
@@ -60,6 +61,7 @@ void* PAFArrayPrimitiveType<T>::GetPointer()
 template <class T>
 void* PAFArrayPrimitiveType<T>::GetPointer(Int_t pos)
 {
+	EnableBranch();
 	T* values = (T*)fLeaf->GetValuePointer();
 	return &values[pos];
 }
@@ -67,5 +69,6 @@ void* PAFArrayPrimitiveType<T>::GetPointer(Int_t pos)
 template <class T>
 Int_t PAFArrayPrimitiveType<T>::GetNData()
 {
+	EnableBranch();
 	return fLeaf->GetNdata();
 }

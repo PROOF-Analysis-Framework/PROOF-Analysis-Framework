@@ -10,6 +10,7 @@
 #include "PAFBaseSelector.h"
 
 #include "TLeaf.h"
+#include "TROOT.h"
 
 #include "PAF.h"
 #include "PAFFindHelper.h"
@@ -50,8 +51,16 @@ void PAFBaseSelector::Init(TTree* tree)
 
 	fTree = tree;
 
-	//fTree->SetBranchStatus("*", 0);
-
+	if (ROOT::GetROOT()->GetVersionInt() >= 60000)
+	{
+		fTree->SetBranchStatus("*", 0);
+		PAF_DEBUG("PAFBaseSelector", "Enabling lazy loading of branches.");
+	}
+	else
+	{
+		PAF_DEBUG("PAFBaseSelector", "It was not possible to enable the lazy loading due to a bug in your ROOT version. Please, use ROOT6 or higher.");
+	}
+	
 	TObjArray* leaves = tree->GetListOfLeaves();
 	PAFTypesFactory factory;
 	Int_t nb = leaves->GetEntriesFast();

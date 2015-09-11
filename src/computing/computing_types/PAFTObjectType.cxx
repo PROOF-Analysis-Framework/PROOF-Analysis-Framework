@@ -30,11 +30,13 @@ PAFTObjectType::~PAFTObjectType()
 
 void* PAFTObjectType::GetPointer()
 {
+	EnableBranch();
 	return fLeaf->GetValuePointer();
 }
 
 
 void* PAFTObjectType::GetPointer(int /*pos*/)
 {
+	EnableBranch();
 	return fLeaf->GetValuePointer();
 }

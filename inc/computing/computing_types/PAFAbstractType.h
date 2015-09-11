@@ -22,9 +22,12 @@ class PAFAbstractType : public PAFIType
 		virtual TLeaf* GetLeaf();
 
 		virtual Int_t GetNData();
+		
+		virtual void EnableBranch();
 
 	protected:
 		TLeaf* fLeaf;
+		void* chore;
 
 	ClassDef(PAFAbstractType, 1);
 };

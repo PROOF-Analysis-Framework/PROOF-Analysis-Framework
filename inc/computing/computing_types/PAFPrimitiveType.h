@@ -48,6 +48,7 @@ PAFPrimitiveType<T>::~PAFPrimitiveType()
 template <class T>
 void* PAFPrimitiveType<T>::GetPointer()
 {
+	EnableBranch();
 	T* values = (T*)fLeaf->GetValuePointer();
 	return &values[0];
 }
@@ -55,6 +56,7 @@ void* PAFPrimitiveType<T>::GetPointer()
 template <class T>
 void* PAFPrimitiveType<T>::GetPointer(Int_t pos)
 {
+	EnableBranch();
 	T* values = (T*)fLeaf->GetValuePointer();
 	return &values[pos];
 }
