@@ -44,11 +44,11 @@ class PAFChainItemSelector : public PAFISelector
 		void SetParam(const char* key, T object);
 
 		template<typename T>
-		T GetParam(const char* key);
-		Int_t GetParamInt(const char* key);
-		Float_t GetParamFloat(const char* key);
-		Double_t GetParamDouble(const char* key);
-		TString GetParamString(const char* key);
+		T GetParam(const char* key) const;
+		Int_t GetParamInt(const char* key) const;
+		Float_t GetParamFloat(const char* key) const;
+		Double_t GetParamDouble(const char* key) const;
+		TString GetParamString(const char* key) const;
 
 		template<typename T>
 		void AssignParam(const char* key, T& target);
@@ -131,7 +131,7 @@ inline void PAFChainItemSelector::SetParam(const char* key, T object)
 }
 
 template <typename T>
-T PAFChainItemSelector::GetParam(const char* key)
+T PAFChainItemSelector::GetParam(const char* key) const
 {
 	return fSelectorParams->Get<T>(key);
 }

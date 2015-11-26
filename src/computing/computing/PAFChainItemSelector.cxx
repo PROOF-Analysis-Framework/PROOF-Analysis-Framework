@@ -55,22 +55,22 @@ void PAFChainItemSelector::SetDynamicData(PAFVariableContainer* variables)
 	fVariables = variables;
 }
 
-Int_t PAFChainItemSelector::GetParamInt(const char* key)
+Int_t PAFChainItemSelector::GetParamInt(const char* key) const
 {
 	return GetParam<int>(key);
 }
 
-Float_t PAFChainItemSelector::GetParamFloat(const char* key)
+Float_t PAFChainItemSelector::GetParamFloat(const char* key) const
 {
 	return GetParam<float>(key);
 }
 
-Double_t PAFChainItemSelector::GetParamDouble(const char* key)
+Double_t PAFChainItemSelector::GetParamDouble(const char* key) const
 {
 	return GetParam<double>(key);
 }
 
-TString PAFChainItemSelector::GetParamString(const char* key)
+TString PAFChainItemSelector::GetParamString(const char* key) const
 {
 	return GetParam<TString>(key);
 }
