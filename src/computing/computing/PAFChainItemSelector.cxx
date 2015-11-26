@@ -75,32 +75,32 @@ TString PAFChainItemSelector::GetParamString(const char* key)
 	return GetParam<TString>(key);
 }
 
-Int_t PAFChainItemSelector::GetInt(const char* key)
+Int_t PAFChainItemSelector::GetInt(const char* key) const
 {
 	return Get<int>(key);
 }
 
-Float_t PAFChainItemSelector::GetFloat(const char* key)
+Float_t PAFChainItemSelector::GetFloat(const char* key) const
 {
 	return Get<float>(key);
 }
 
-Double_t PAFChainItemSelector::GetDouble(const char* key)
+Double_t PAFChainItemSelector::GetDouble(const char* key) const
 {
 	return Get<double>(key);
 }
 
-Int_t PAFChainItemSelector::GetInt(const char* key, Int_t i)
+Int_t PAFChainItemSelector::GetInt(const char* key, Int_t i) const
 {
 	return Get<int>(key, i);
 }
 
-Float_t PAFChainItemSelector::GetFloat(const char* key, Int_t i)
+Float_t PAFChainItemSelector::GetFloat(const char* key, Int_t i) const
 {
 	return Get<float>(key, i);
 }
 
-Double_t PAFChainItemSelector::GetDouble(const char* key, Int_t i)
+Double_t PAFChainItemSelector::GetDouble(const char* key, Int_t i) const
 {
 	return Get<double>(key, i);
 }
