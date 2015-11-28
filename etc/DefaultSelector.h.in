@@ -18,7 +18,7 @@ class %NAME% : public PAFChainItemSelector
 {
  public:
   // Constructor and destructor
-  %NAME%() : PAFChainItemSelector() {}
+  %NAME%();
   virtual ~%NAME%() {}
   
   // Mandatory methods
