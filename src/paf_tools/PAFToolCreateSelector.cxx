@@ -7,37 +7,37 @@
 	@date 2015-05-28
  */
 
+
+// Includes
+// + PAF
 #include "PAFToolCreateSelector.h"
-
 #include "PAFExceptionCommandExpression.h"
-
+// + ROOT
 #include "TSystem.h"
-
+// + C++
 #include <fstream>
 
-const char* PAFToolCreateSelector::TOOL_NAME = "createselector";
 
-const char* PAFToolCreateSelector::HELP_MESSAGE = "Creates the skeleton of a selector in the first PAF repository with the name specified.";
+// Some tool hardcoded information
+static const char* TOOL_NAME = "createselector";
+static const char* SHORT_DESCRIPTION = "Creates the skeleton of a selector";
+static const char* SHORT_NAME = "cs";
+static const char* COMMAND_EXPRESSION = "createselector|cs selector_name";
+static const char* PARAMETERS_HELP = "selector_name: Name of the selector (mandatory)";
 
-const char* PAFToolCreateSelector::COMMAND_EXPRESSION = "createselector selector_name";
 
-const char* PAFToolCreateSelector::PAFREPOSITORIES_ENV = "PAFREPOSITORIES";
-const char* PAFToolCreateSelector::PAFPATH_ENV = "PAFPATH";
-const char* PAFToolCreateSelector::FIELDS_SEPARATOR = ":";
+static const char* PAFREPOSITORIES_ENV = "PAFREPOSITORIES";
+static const char* PAFPATH_ENV = "PAFPATH";
+static const char* FIELDS_SEPARATOR = ":";
 
-const char* PAFToolCreateSelector::TEMPLATE_SELECTOR_NAME = "DefaultSelector";
-const char* PAFToolCreateSelector::TEMPLATE_EXTENSION = ".in";
-const char* PAFToolCreateSelector::HEADER_EXTENSION = ".h";
-const char* PAFToolCreateSelector::SOURCE_EXTENSION = ".C";
-const char* PAFToolCreateSelector::DIRECTORY = "/";
+static const char* TEMPLATE_SELECTOR_NAME = "DefaultSelector";
+static const char* TEMPLATE_EXTENSION = ".in";
+static const char* HEADER_EXTENSION = ".h";
+static const char* SOURCE_EXTENSION = ".C";
+static const char* DIRECTORY = "/";
 
 PAFToolCreateSelector::PAFToolCreateSelector()
-	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
-{
-
-}
-
-PAFToolCreateSelector::~PAFToolCreateSelector()
+  : PAFAbstractTool(TOOL_NAME, SHORT_DESCRIPTION, SHORT_NAME, COMMAND_EXPRESSION, PARAMETERS_HELP)
 {
 
 }

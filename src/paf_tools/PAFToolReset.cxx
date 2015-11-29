@@ -11,15 +11,16 @@
 
 #include "PAFExceptionCommandExpression.h"
 
-const char* PAFToolReset::TOOL_NAME = "reset";
+static const char* TOOL_NAME = "reset";
+static const char* SHORT_DESCRIPTION = "Resets the PAF environment by closing any session that might be opened and deleting any file created";
+static const char* SHORT_NAME = 0;
+static const char* COMMAND_EXPRESSION = "reset [-a | --aggresive]";
+static const char* PARAMETERS_HELP = "\"-a | --aggresive\" Aggressive cleaning of files in the packages not in the official list. If this is not specified the Makefile and the PROOF-INFO directory are left untouched. Note that unless these files already exist, they are created by PAF.";
 
-const char* PAFToolReset::HELP_MESSAGE = "Resets the PAF environment by closing any session that might be opened and deleting any file created.\n\t\"-a | --aggresive\" Aggressive cleaning of files in the packages not in the official list. If this is not specified the Makefile and the PROOF-INFO directory are left untouched. Note that unless these files already exist, they are created by PAF.";
-
-const char* PAFToolReset::COMMAND_EXPRESSION = "reset [-a | --aggresive]";
 
 
 PAFToolReset::PAFToolReset()
-	: PAFAbstractTool(TOOL_NAME, HELP_MESSAGE, COMMAND_EXPRESSION)
+  : PAFAbstractTool(TOOL_NAME, SHORT_DESCRIPTION, SHORT_NAME, COMMAND_EXPRESSION, PARAMETERS_HELP)
 {
 
 }

@@ -9,8 +9,10 @@
 
 #pragma once
 
+// Includes
+// + PAF
 #include "PAFAbstractTool.h"
-
+// + ROOT
 #include "TFile.h"
 #include "TTree.h"
 
@@ -32,7 +34,4 @@ class PAFToolInspectTree : public PAFAbstractTool
 		TTree* GetAutoTree(TFile* rootFile);
 		void GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path);
 
-		static const char* TOOL_NAME;
-		static const char* HELP_MESSAGE;
-		static const char* COMMAND_EXPRESSION;
 };

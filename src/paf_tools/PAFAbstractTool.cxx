@@ -7,36 +7,57 @@
 	@date 2015-04-30
  */
 
+
+// Includes
+// + PAF
 #include "PAFAbstractTool.h"
-
-#include <iostream>
-
+// + ROOT
 #include "TObjString.h"
 
-PAFAbstractTool::PAFAbstractTool(TString toolName, TString helpMessage, TString commandExpression)
-	: fToolName(toolName), fHelpMessage(helpMessage), fCommandExpression(commandExpression)
+PAFAbstractTool::PAFAbstractTool(const TString& toolName,
+				 const TString& shortDescription, 
+				 const TString& shortToolName,
+				 const TString& commandExpression,
+				 const TString& parametersHelp)
+
+  : fToolName(toolName), 
+    fShortDescription(shortDescription),
+    fToolShortName(shortToolName),
+    fCommandExpression(commandExpression),
+    fParametersHelp(parametersHelp)
 {
 	
 }
 
-TString PAFAbstractTool::GetToolName()
+TString PAFAbstractTool::GetToolName() const
 {
 	return fToolName;
 }
 
-TString PAFAbstractTool::GetCommandExpression()
+TString PAFAbstractTool::GetToolShortName() const
+{
+	return fToolShortName;
+}
+
+TString PAFAbstractTool::GetShortDescription() const
+{
+	return fShortDescription;
+}
+
+TString PAFAbstractTool::GetCommandExpression() const 
 {
 	return fCommandExpression;
 }
 
-TString PAFAbstractTool::GetHelpMessage()
+TString PAFAbstractTool::GetParametersHelp() const
 {
-	return fHelpMessage;
+
+	return fParametersHelp;
 }
 
 void PAFAbstractTool::Exit(const TString& message, Int_t error)
 {
-	PrintMessage(message.Data());
+        PrintMessage(message.Data(), std::cerr);
 	exit(error);
 }
 
@@ -78,12 +99,37 @@ Bool_t PAFAbstractTool::ExistsParam(TList* params, const TString& keys, const TS
 	return kFALSE;
 }
 
-void PAFAbstractTool::PrintMessage(TString& message)
+std::ostream& PAFAbstractTool::PrintHelp(std::ostream& os) const
 {
-	PrintMessage(message.Data());
+	TString name("TOOL\n\t");
+	name += fToolName;
+	name += " - ";
+	name += fShortDescription;
+	name += "\n\n";
+
+	TString usage("USAGE\n\tpaf ");
+	usage += fCommandExpression;
+	usage += "\n\n";
+
+	TString pdescription("PARAMETERS\n\t");
+	pdescription += fParametersHelp;
+	pdescription += "\n";
+	
+	PrintMessage(name, os);
+	PrintMessage(usage, os);
+	PrintMessage(pdescription, os);
+
+	return os;
 }
 
-void PAFAbstractTool::PrintMessage(const char* message)
+
+std::ostream& PAFAbstractTool::PrintMessage(const TString& message, std::ostream& os) const
 {
-	std::cout << message << std::endl;
+        return PrintMessage(message.Data(), os);
+}
+
+std::ostream& PAFAbstractTool::PrintMessage(const char* message, std::ostream& os) const
+{
+	os << message << std::endl;
+	return os;
 }
