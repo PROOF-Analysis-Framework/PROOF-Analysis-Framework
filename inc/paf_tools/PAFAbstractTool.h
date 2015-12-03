@@ -42,6 +42,8 @@ class PAFAbstractTool : public PAFITool
 
 	protected:
 		virtual void Exit(const TString& message, Int_t error = -1);
+		virtual TString GetParameter(TList* params, Int_t i);
+		virtual TString GetParameter(TList* params, const TString& keys, const TString& keyl);
 		virtual TString* GetParam(TList* params, Int_t i);
 		virtual TString* GetParam(TList* params, const TString& keys, const TString& keyl);
 		virtual Bool_t ExistsParam(TList* params, const TString& keys, const TString& keyl);
