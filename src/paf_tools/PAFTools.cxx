@@ -14,6 +14,7 @@
 #include "PAFToolInspectTree.h"
 #include "PAFToolReset.h"
 #include "PAFToolCreateSelector.h"
+#include "PAFToolAddHisto.h"
 
 #include "PAFExceptionCommandExpression.h"
 
@@ -61,6 +62,10 @@ void PAFTools::InitTools()
 	PAFITool* createselector = new PAFToolCreateSelector();
 	fTools[createselector->GetToolName()] = createselector;
 	fToolsShort[createselector->GetToolShortName()] = createselector;
+
+	PAFITool* addhisto = new PAFToolAddHisto();
+	fTools[addhisto->GetToolName()] = addhisto;
+	fToolsShort[addhisto->GetToolShortName()] = addhisto;
 
 }
 
@@ -115,28 +120,28 @@ void PAFTools::ExecuteTool(TList* params)
 		return;
 	}
 
-	TString* param0 = GetParam(params, 0);
-	if(param0->EqualTo("-h") || param0->EqualTo("--help"))
+	TString param0 = GetParameter(params, 0);
+	if(param0.EqualTo("-h") || param0.EqualTo("--help"))
 	{
 		PrintHelp();
 		return;
 	}
 
-	if(fTools.find(*param0) == fTools.end() && 
-	   fToolsShort.find(*param0) == fToolsShort.end())
+	if(fTools.find(param0) == fTools.end() && 
+	   fToolsShort.find(param0) == fToolsShort.end())
 	{
-		PrintMessage(TString::Format("ERROR: Tool \"%s\" not found.\n", param0->Data()));
+		PrintMessage(TString::Format("ERROR: Tool \"%s\" not found.\n", param0.Data()));
 		PrintHelp();
 		return;
 	}
 
-	PAFITool* tool = fTools[*param0];
+	PAFITool* tool = fTools[param0];
 	if (!tool)
-	  tool = fToolsShort[*param0];
+	  tool = fToolsShort[param0];
 	if(params->GetSize() == 2)
 	{
-		TString* param1 = GetParam(params, 1);
-		if (param1->EqualTo("-h") || param1->EqualTo("--help"))
+		TString param1 = GetParameter(params, 1);
+		if (param1.EqualTo("-h") || param1.EqualTo("--help"))
 		{
 			tool->PrintHelp();
 			return;
