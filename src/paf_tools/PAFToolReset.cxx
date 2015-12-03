@@ -45,8 +45,8 @@ void PAFToolReset::ExecuteTool(TList* params)
 	}
 	else
 	{
-		TString* param1 = GetParam(params, 1);
-		if(param1->EqualTo("-a") || param1->EqualTo("--aggresive"))
+		TString param1 = GetParameter(params, 1);
+		if(param1.EqualTo("-a") || param1.EqualTo("--aggresive"))
 		{
 			result = system("resetpaf -a");
 		}
