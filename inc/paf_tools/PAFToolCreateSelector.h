@@ -20,6 +20,7 @@ class PAFToolCreateSelector : public PAFAbstractTool
 		virtual void ExecuteTool(TList* params);
 
 	protected:
-		void CreateFileTemplated(TString& iFileName, TString& oFileName, TString& from, TString& to);
+		void CreateFileTemplated(const TString& iFileName, const TString& oFileName, 
+					 const TString& from, const TString& to) const;
 
 };

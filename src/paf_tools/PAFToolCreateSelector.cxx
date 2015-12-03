@@ -71,7 +71,8 @@ void PAFToolCreateSelector::ExecuteTool(TList* params)
 }
 
 
-void PAFToolCreateSelector::CreateFileTemplated(TString& iFileName, TString& oFileName, TString& from, TString& to)
+void PAFToolCreateSelector::CreateFileTemplated(const TString& iFileName, const TString& oFileName, 
+						const TString& from, const TString& to) const
 {
 	std::fstream fileInput(iFileName.Data(), std::fstream::in);
 	TString file;
