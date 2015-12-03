@@ -246,34 +246,16 @@ void PAFToolAddHisto::ExecuteTool(TList* params)
 	   << "\"" << endl;
   }
   
-
+  // Require the wrong parameters or those not correctly set
   AskForParameters();
 
+  // Show some output
   Dump();
 
+  // Modify selector
   InsertInHeader();
   InsertInImplementation();
 
-  // TString fromString("%NAME%");
-  
-  // TString* selectorName = GetParam(params, 1);
-  
-  // TString pathDirectory = TString::Format("%s/etc", gSystem->Getenv(PAFPATH_ENV));
-  // TString repositoryPaths(gSystem->Getenv(PAFREPOSITORIES_ENV));
-  // int firstRepositoryLength = repositoryPaths.First(FIELDS_SEPARATOR) == -1 ? repositoryPaths.Length() : repositoryPaths.First(FIELDS_SEPARATOR);
-  // TString repositoryPath = TString(gSystem->Getenv(PAFREPOSITORIES_ENV), firstRepositoryLength);
-  // repositoryPath.Append(DIRECTORY).Append(selectorName->Data());
-  
-  // gSystem->mkdir(repositoryPath, kTRUE);
-  
-  // TString fileNameTemplateHeader = pathDirectory.Copy().Append(DIRECTORY).Append(TEMPLATE_SELECTOR_NAME).Append(HEADER_EXTENSION).Append(TEMPLATE_EXTENSION);
-  // TString fileNameTargetHeader = repositoryPath.Copy().Append(DIRECTORY).Append(selectorName->Data()).Append(HEADER_EXTENSION);
-
-  // TString fileNameTemplateSource = pathDirectory.Copy().Append(DIRECTORY).Append(TEMPLATE_SELECTOR_NAME).Append(SOURCE_EXTENSION).Append(TEMPLATE_EXTENSION);
-  // TString fileNameTargetSource = repositoryPath.Copy().Append(DIRECTORY).Append(selectorName->Data()).Append(SOURCE_EXTENSION);
-  
-  // CreateFileTemplated(fileNameTemplateHeader, fileNameTargetHeader, fromString, *selectorName);
-  // CreateFileTemplated(fileNameTemplateSource, fileNameTargetSource, fromString, *selectorName);
 }
  
  
