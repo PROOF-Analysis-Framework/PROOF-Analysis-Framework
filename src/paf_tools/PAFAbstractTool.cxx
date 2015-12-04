@@ -61,7 +61,7 @@ void PAFAbstractTool::Exit(const TString& message, Int_t error)
 	exit(error);
 }
 
-TString PAFAbstractTool::GetParameter(TList* params, Int_t i)
+TString PAFAbstractTool::GetParameter(TList* params, Int_t i) const
 {
         TObjString* objstr = (TObjString*) params->At(i);
 	if (!objstr)
@@ -69,7 +69,7 @@ TString PAFAbstractTool::GetParameter(TList* params, Int_t i)
 	return TString(objstr->GetString());
 }
 
-TString PAFAbstractTool::GetParameter(TList* params, const TString& keys, const TString& keyl)
+TString PAFAbstractTool::GetParameter(TList* params, const TString& keys, const TString& keyl) const
 {
 	for (Int_t i = 0; i < params->GetEntries(); i++)
 	{
@@ -86,31 +86,7 @@ TString PAFAbstractTool::GetParameter(TList* params, const TString& keys, const 
 }
 
 
-TString* PAFAbstractTool::GetParam(TList* params, Int_t i)
-{
-        TObjString* objstr = (TObjString*) params->At(i);
-	if (!objstr)
-	  return 0;
-	return new TString(objstr->GetString());
-}
-
-TString* PAFAbstractTool::GetParam(TList* params, const TString& keys, const TString& keyl)
-{
-	for (Int_t i = 0; i < params->GetEntries(); i++)
-	{
-		TString item = GetParameter(params, i);
-		if (item.EqualTo(keys) || item.EqualTo(keyl))
-		{
-			if (i < params->GetEntries() - 1)
-			{
-				return GetParam(params, i + 1);
-			}
-		}
-	}
-	return NULL;
-}
-
-Bool_t PAFAbstractTool::ExistsParam(TList* params, const TString& keys, const TString& keyl)
+Bool_t PAFAbstractTool::ExistsParam(TList* params, const TString& keys, const TString& keyl) const
 {
 	for (Int_t i = 0; i < params->GetEntries(); i++)
 	{

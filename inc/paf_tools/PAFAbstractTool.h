@@ -42,13 +42,11 @@ class PAFAbstractTool : public PAFITool
 
 	protected:
 		virtual void Exit(const TString& message, Int_t error = -1);
-		virtual TString GetParameter(TList* params, Int_t i);
-		virtual TString GetParameter(TList* params, const TString& keys, const TString& keyl);
-		virtual TString* GetParam(TList* params, Int_t i);
-		virtual TString* GetParam(TList* params, const TString& keys, const TString& keyl);
-		virtual Bool_t ExistsParam(TList* params, const TString& keys, const TString& keyl);
+		virtual TString GetParameter(TList* params, Int_t i) const;
+		virtual TString GetParameter(TList* params, const TString& keys, const TString& keyl) const;
+		virtual Bool_t ExistsParam(TList* params, const TString& keys, const TString& keyl) const;
 
-		// Printing methods... do we really need them?
+		// Printing methods
 		virtual std::ostream& PrintMessage(const TString& message, 
 						   std::ostream& os = std::cout) const;
 		virtual std::ostream& PrintMessage(const char* message, 
