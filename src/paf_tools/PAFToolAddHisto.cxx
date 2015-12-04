@@ -63,7 +63,7 @@ void PAFToolAddHisto::Dump() const {
 }
 
 bool PAFToolAddHisto::IsDouble(const char* value) const {
-  char* rep = "";
+  char* rep;
   strtod(value,&rep);
   if (strlen(rep) == 0)
     return true;
@@ -71,7 +71,7 @@ bool PAFToolAddHisto::IsDouble(const char* value) const {
 }
 
 bool PAFToolAddHisto::IsLongInt(const char* value) const {
-  char* rep = "";
+  char* rep;
   strtold(value,&rep);
   if (strlen(rep) == 0)
     return true;
