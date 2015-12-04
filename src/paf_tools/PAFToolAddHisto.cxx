@@ -18,6 +18,7 @@
 // + C++
 #include <fstream>
 
+static const char* PAFToolHistoTypeNames[] = {"None", "F", "D", "All"};
 
 // Some tool hardcoded information
 static const char* TOOL_NAME = "addhistogram";

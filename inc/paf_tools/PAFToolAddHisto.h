@@ -12,7 +12,6 @@
 #include "PAFAbstractTool.h"
 
 enum PAFToolHistoType {kNone, kF, kD, kAll};
-static const char* PAFToolHistoTypeNames[] = {"None", "F", "D", "All"};
 
 class PAFToolAddHisto : public PAFAbstractTool
 {
@@ -63,5 +62,7 @@ class PAFToolAddHisto : public PAFAbstractTool
   Int_t            fNBins;
   Double_t         fXMin;
   Double_t         fXMax;
+
+
   
 };
