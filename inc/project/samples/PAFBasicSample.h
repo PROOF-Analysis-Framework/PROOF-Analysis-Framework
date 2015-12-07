@@ -1,0 +1,39 @@
+/**
+	@brief ...
+	@file PAFBasicSample.h
+	@class PAFBasicSample
+	@author I. Gonzalez Caballero, J. Delgado Fernandez, N. Fernández  Álvarez
+	@version 1.0
+	@date 2015-12-08
+ */
+
+
+#pragma once
+
+#include "PAFAbstractSample.h"
+#include "TList.h"
+#include "TDirectory.h"
+#include "TFile.h"
+
+class PAFBasicSample : public PAFAbstractSample {
+
+public:
+
+    PAFBasicSample();
+
+    void Check();
+
+    virtual ~PAFBasicSample();
+
+
+private:
+    TString GetDefaultTreeName();
+
+    bool ExistsTree(TFile *rootFile, const char *treeName);
+
+    void SetDefaultTreeName(const char *defaultTreeName);
+
+    void GetListOfTrees(TDirectory *directory, TList *resultTrees, const char *path);
+
+
+};
