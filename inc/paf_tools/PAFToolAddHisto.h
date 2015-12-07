@@ -11,7 +11,7 @@
 
 #include "PAFAbstractTool.h"
 
-enum PAFToolHistoType {kNone, kF, kD, kAll};
+	enum PAFToolHistoType {kPAFToolAddHistoNone, kF, kD, kAll};
 
 class PAFToolAddHisto : public PAFAbstractTool
 {

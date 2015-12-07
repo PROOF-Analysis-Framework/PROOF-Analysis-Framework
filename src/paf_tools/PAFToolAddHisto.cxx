@@ -41,7 +41,7 @@ using namespace std;
 PAFToolAddHisto::PAFToolAddHisto()
   : PAFAbstractTool(TOOL_NAME, SHORT_DESCRIPTION, SHORT_NAME, COMMAND_EXPRESSION, PARAMETERS_HELP),
     fSelectorName(""),
-    fType(kNone),
+    fType(kPAFToolAddHistoNone),
     fHistogramName(""),
     fTitle(""),
     fNBins(-1),
@@ -81,7 +81,7 @@ bool PAFToolAddHisto::IsLongInt(const char* value) const {
 
 
 bool PAFToolAddHisto::SetHistoType(const char* htype) {
-  for (int k = kNone+1; k < kAll -1; k++) {
+  for (int k = kPAFToolAddHistoNone+1; k < kAll -1; k++) {
     if (TString(htype) == PAFToolHistoTypeNames[k]) {
       fType = (PAFToolHistoType) k;
       return true;
@@ -152,9 +152,9 @@ void PAFToolAddHisto::AskForParameters() {
 
 
 
-  while (fType == kNone) {
+  while (fType == kPAFToolAddHistoNone) {
     TString message("Histogram type (");
-    for (int k = kNone+1; k < kAll; k++) {
+    for (int k = kPAFToolAddHistoNone+1; k < kAll; k++) {
       message += PAFToolHistoTypeNames[k];
       if (k != (kAll -1))
 	message += ", ";
