@@ -127,3 +127,5 @@ void PAFBasicSample::GetListOfTrees(TDirectory *directory, TList *resultTrees, c
     }
 
 }
+
+ClassImp(PAFBasicSample);

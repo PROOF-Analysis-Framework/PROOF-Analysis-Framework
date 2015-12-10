@@ -14,6 +14,7 @@
 #include "TList.h"
 #include "TDirectory.h"
 #include "TFile.h"
+#include "Rtypes.h"
 
 class PAFBasicSample : public PAFAbstractSample {
 
@@ -35,5 +36,6 @@ private:
 
     void GetListOfTrees(TDirectory *directory, TList *resultTrees, const char *path);
 
+ClassDef(PAFBasicSample,1);
 
 };

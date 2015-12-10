@@ -1,13 +1,16 @@
-
+class Try;
 
 void RunChainedSelectorSamples() {
 	PAFProject *myProject = new PAFProject();
 
-	PAFBasicSample *sample = new PAFBasicSample();
+	/*PAFBasicSample *sample = new PAFBasicSample();
 	sample->SetSampleName("Sample name");
 	sample->AddDataFile("/pub/example.root", "Tree");
 
-	myProject->AddSample(sample);
+	myProject->AddSample(sample);*/
+
+	Try* try = new Try();
+	try->hello();
 
 
 

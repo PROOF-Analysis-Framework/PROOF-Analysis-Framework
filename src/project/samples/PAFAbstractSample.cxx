@@ -6,6 +6,16 @@
 #include "PAFAbstractSample.h"
 
 
+
+PAFAbstractSample::PAFAbstractSample() {
+
+}
+
+PAFAbstractSample::~PAFAbstractSample() {
+
+}
+
+
 void PAFAbstractSample::SetSampleName(TString sampleName) {
 
     this->sampleName = sampleName;
@@ -16,39 +26,33 @@ TString PAFAbstractSample::GetSampleName() {
     return this->sampleName;
 }
 
-void PAFAbstractSample::AddDataFile(TString& fileName, TString& objname)
-{
+void PAFAbstractSample::AddDataFile(TString &fileName, TString &objname) {
     TString directory = GetDirectoryFromObjName(objname);
     TString name = GetNameFromObjName(objname);
 
     sample->Add(fileName,
-                    name.IsNull() ? NULL : name.Data(),
-                    directory.IsNull() ? NULL : directory.Data());
+                name.IsNull() ? NULL : name.Data(),
+                directory.IsNull() ? NULL : directory.Data());
 }
 
-void PAFAbstractSample::AddDataFile(const char* fileName, const char* objname)
-{
+void PAFAbstractSample::AddDataFile(const char *fileName, const char *objname) {
     TString tFileName(fileName);
     TString tObjName(objname);
     AddDataFile(tFileName, tObjName);
 }
 
-void PAFAbstractSample::AddDataFile(TFileInfo* dataFile)
-{
+void PAFAbstractSample::AddDataFile(TFileInfo *dataFile) {
     sample->Add(dataFile);
 }
 
-TString PAFAbstractSample::GetDirectoryFromObjName(TString& objName)
-{
+TString PAFAbstractSample::GetDirectoryFromObjName(TString &objName) {
     TString tObjName = objName;
-    std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+    std::vector<TString *> *parts = PAFStringUtil::Split(&tObjName, "/");
 
     TString result;
 
-    if(parts->size() > 0)
-    {
-        for(unsigned int i = 0; i < parts->size() - 1; i++)
-        {
+    if (parts->size() > 0) {
+        for (unsigned int i = 0; i < parts->size() - 1; i++) {
             result.Append(parts->at(i)->Data());
         }
     }
@@ -59,15 +63,13 @@ TString PAFAbstractSample::GetDirectoryFromObjName(TString& objName)
     return result;
 }
 
-TString PAFAbstractSample::GetNameFromObjName(TString& objName)
-{
+TString PAFAbstractSample::GetNameFromObjName(TString &objName) {
     TString tObjName = objName;
-    std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+    std::vector<TString *> *parts = PAFStringUtil::Split(&tObjName, "/");
 
     TString result;
 
-    if(parts->size() > 0)
-    {
+    if (parts->size() > 0) {
         result = (parts->at(parts->size() - 1))->Copy();
     }
 
@@ -76,3 +78,12 @@ TString PAFAbstractSample::GetNameFromObjName(TString& objName)
 
     return result;
 }
+
+void PAFAbstractSample::Check()
+{
+
+}
+
+
+
+ClassImp(PAFAbstractSample);
