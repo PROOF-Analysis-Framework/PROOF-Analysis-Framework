@@ -13,7 +13,7 @@
 
 #include "TSystem.h"
 
-PAFLogger* fLogger = new PAFLogger();
+PAFLogger* fLogger = PAFLogger::GetInstance();
 
 void PAF_DEBUG(const char* module, const char* msg)
 {
