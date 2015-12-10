@@ -19,6 +19,10 @@ PAFPoDEnvironment::PAFPoDEnvironment(Int_t nSlots, Int_t maxSlavesPerNode, Int_t
 	{
 		PAF_FATAL("PAFPoDEnvironment", "PoD is not configured in your session.\nPlease configure PoD and retry\nHint: Look for PoD_env.sh");
 	}
+	if (fNSlots <=0 )
+	{
+		PAF_FATAL("PAFPoDEnvironment", "The number of slots requested for PAFPoDEnvironment should be greater than 0.");	       
+	}
 }
 
 PAFPoDEnvironment::~PAFPoDEnvironment()
@@ -45,6 +49,8 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 
 	//Find if there are already slots being used
 	Int_t activeSlots = gSystem->GetFromPipe("pod-info -n").Atoi();
+	PAF_DEBUG("PAFPoDEnvironment",
+		  Form("'pod-info -n' returns %d slots already in use", activeSlots));
 
 	//Initially assume no slots have been allocated
 	Int_t missingSlots = fNSlots - activeSlots;
@@ -52,6 +58,8 @@ TProof* PAFPoDEnvironment::doCreateTProof()
 	if (missingSlots > 0) 
 	{
 		TString command = Form ("pod-submit -r pbs -n %d", missingSlots);
+		PAF_DEBUG("PAFPoDEnvironment",
+			  Form("Executing '%s'", command.Data()));
 
 		TString response_command = gSystem->GetFromPipe(command);
 		PAF_DEBUG("PAFPoDEnvironment", response_command);
