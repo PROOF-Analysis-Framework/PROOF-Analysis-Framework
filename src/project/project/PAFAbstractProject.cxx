@@ -210,10 +210,16 @@ void PAFAbstractProject::AddDynamicHistogram(const char* histogram)
 
 void PAFAbstractProject::AddDynamicHistograms()
 {
+    // Return if no dynamic histogram was set
+    if (! fDynamicHistograms->size()) return;
+
+    // Add dynamic histograms
     for (unsigned int i = 0; i < fDynamicHistograms->size(); i++) 
 	{
       fExecutionEnvironment->AddFeedback(fDynamicHistograms->at(i));
     }
+
+    // Create feedbak so dynamic histograms are shown
     fExecutionEnvironment->CreateDrawFeedback();
 }
 
