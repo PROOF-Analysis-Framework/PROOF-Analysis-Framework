@@ -27,7 +27,7 @@ public:
     virtual ~PAFBasicSample();
 
 
-private:
+protected:
     TString GetDefaultTreeName();
 
     bool ExistsTree(TFile *rootFile, const char *treeName);
@@ -36,6 +36,6 @@ private:
 
     void GetListOfTrees(TDirectory *directory, TList *resultTrees, const char *path);
 
-ClassDef(PAFBasicSample,1);
+    ClassDef(PAFBasicSample,1);
 
 };
