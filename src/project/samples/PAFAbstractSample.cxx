@@ -5,6 +5,7 @@
 #include <PAFStringUtil.h>
 #include "PAFAbstractSample.h"
 
+ClassImp(PAFAbstractSample);
 
 
 PAFAbstractSample::PAFAbstractSample() {
@@ -86,4 +87,3 @@ void PAFAbstractSample::Check()
 
 
 
-ClassImp(PAFAbstractSample);
