@@ -8,6 +8,7 @@
 #include "TTree.h"
 #include "THashList.h"
 
+ClassImp(PAFBasicSample);
 
 PAFBasicSample::PAFBasicSample() {
     this->sample = new TDSet("PAFFiles", "");
@@ -128,4 +129,3 @@ void PAFBasicSample::GetListOfTrees(TDirectory *directory, TList *resultTrees, c
 
 }
 
-ClassImp(PAFBasicSample);
