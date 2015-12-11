@@ -118,7 +118,7 @@ void PAFPROOFEnvironment::LoadPAF()
 	//FIXME This smells too bad.
 	PAFISettings* settings = new PAFEnvironmentVariableSettings();
 	
-	fSession->Exec("TH1* th1 = 0"); //TODO Remove this trick. Needed in Ubuntu.
+	fSession->Exec("TH1* th1 = 0;"); //TODO Remove this trick. Needed in Ubuntu.
 	PAFLibrary paf(settings, "$PAFPATH/lib/libPAF.so");
 	LoadLibrary(&paf);
 }
