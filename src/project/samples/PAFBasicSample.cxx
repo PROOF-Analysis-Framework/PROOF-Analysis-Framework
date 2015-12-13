@@ -12,6 +12,9 @@ ClassImp(PAFBasicSample);
 
 PAFBasicSample::PAFBasicSample() {
     this->sample = new TDSet("PAFFiles", "");
+    this->fFirstEvent = 0;
+    this->fNEvents = -1;
+
 }
 
 
@@ -20,7 +23,7 @@ PAFBasicSample::~PAFBasicSample() {
 }
 
 void PAFBasicSample::Check() {
-
+    PAF_INFO("SAMPLE", "CHECKING SAMPLE");
     TDSetElement *firstElement = (TDSetElement *) this->sample->GetListOfElements()->First();
 
     if (firstElement == NULL) {
@@ -33,11 +36,13 @@ void PAFBasicSample::Check() {
 
     //If there is a Tree name specified, return.
     if (!GetDefaultTreeName().IsNull()) {
+        PAF_INFO("SAMPLE", "TREE NAME HAS BEEN SPECIFIED");
         return;
     }
 
     //If the first file has a Tree specified, return.
     if (!TString(firstElement->GetObjName()).IsNull()) {
+        PAF_INFO("SAMPLE", "TREE NAME HAS BEEN SPECIFIED");
         return;
     }
 
@@ -56,11 +61,11 @@ void PAFBasicSample::Check() {
         GetListOfTrees(&file, trees, "");
 
         if (trees->GetEntries() == 0) {
-            PAF_FATAL("Project", "The ROOT file specified does not have any Tree.");
+            PAF_FATAL("SAMPLE", "The ROOT file specified does not have any Tree.");
         }
         else if (trees->GetEntries() == 1) {
             const char *treeName = trees->First()->GetName();
-            PAF_DEBUG("Project", TString::Format("Using Tree called \"%s\".", treeName).Data());
+            PAF_DEBUG("SAMPLE", TString::Format("Using Tree called \"%s\".", treeName).Data());
             SetDefaultTreeName(treeName);
         }
         else {
@@ -70,14 +75,16 @@ void PAFBasicSample::Check() {
                 trees_message.Append(trees->At(i)->GetName());
                 trees_message.Append("\n");
             }
-            PAF_ERROR("Project", trees_message.Data());
-            PAF_FATAL("Project",
+            PAF_ERROR("sample", trees_message.Data());
+            PAF_FATAL("SAMPLE",
                       "The ROOT files specified have more than one tree. No tree has a common name, please, specify with PAFProject::SetDefaultTreeName.");
         }
 
         trees->Clear();
         delete trees;
     }
+
+    PAF_INFO("SAMPLE", "SAMPLE CHECKING HAS TERMINTED SUCCESFULY");
 }
 
 TString PAFBasicSample::GetDefaultTreeName() {
@@ -127,5 +134,11 @@ void PAFBasicSample::GetListOfTrees(TDirectory *directory, TList *resultTrees, c
         }
     }
 
+}
+
+void PAFBasicSample::doRun(PAFIExecutionEnvironment *executionEnvironment, PAFBaseSelector *selector) {
+    std::cout << "Executing the sample " << this->sampleName << std::endl;
+    executionEnvironment->Process(selector, this->sample, fFirstEvent, fNEvents);
+    std::cout << "Execution finished" << std::endl;
 }
 

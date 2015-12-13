@@ -80,10 +80,12 @@ TString PAFAbstractSample::GetNameFromObjName(TString &objName) {
     return result;
 }
 
-void PAFAbstractSample::Check()
-{
+void PAFAbstractSample::Check() {
 
 }
 
+
+void PAFAbstractSample::doRun(PAFIExecutionEnvironment *executionEnvironment,
+                              PAFBaseSelector *selector) { }
 
 

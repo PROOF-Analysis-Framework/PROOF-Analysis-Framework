@@ -24,6 +24,8 @@ public:
 
     void Check();
 
+    void doRun(PAFIExecutionEnvironment *executionEnvironment, PAFBaseSelector *selector);
+
     virtual ~PAFBasicSample();
 
 

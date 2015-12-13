@@ -231,6 +231,7 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 
 TString PAFProject::GetDirectoryFromObjName(TString& objName)
 {
+
 	TString tObjName = objName;
 	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
 	
