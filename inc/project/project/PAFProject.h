@@ -22,22 +22,24 @@ class PAFProject : public PAFAbstractProject
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 		virtual ~PAFProject();
 
-		void SetDefaultTreeName(TString& defaultTreeName);
+		void SetDefaultTreeName(const TString& defaultTreeName);
 		void SetDefaultTreeName(const char* defaultTreeName);
-		TString GetDefaultTreeName();
+		TString GetDefaultTreeName() const;
 
 		void SetDataFiles(TDSet* dataFiles);
 		TDSet* GetDataFiles();
 
-		void AddDataFile(TString& fileName, TString& objname);
+		void AddDataFile(const TString& fileName, const char* objname);
 		void AddDataFile(const char* fileName, const char* objname = 0);
 		void AddDataFile(TFileInfo* dataFile);
 
+		void AddDataFiles(const std::vector<TString>& files, const char* objname = 0);
+
 		void SetFirstEvent(Long64_t firstEvent);
-		Long64_t GetFirstEvent();
+		Long64_t GetFirstEvent() const;
 
 		void SetNEvents(Long64_t nEvents);
-		Long64_t GetNEvents();
+		Long64_t GetNEvents() const;
 
 		virtual void doRun(PAFBaseSelector* selector);
 		virtual void doProjectChecks();
@@ -48,8 +50,8 @@ class PAFProject : public PAFAbstractProject
 		bool ExistsTree(TFile* rootFile, const char* treeName);
 		void GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path);
 
-		virtual TString GetDirectoryFromObjName(TString& objName);
-		virtual TString GetNameFromObjName(TString& objName);
+		virtual TString GetDirectoryFromObjName(const TString& objName);
+		virtual TString GetNameFromObjName(const TString& objName);
 
 	protected:
 		TDSet* 	fDataFiles;

@@ -37,12 +37,12 @@ PAFProject::~PAFProject()
 	delete fDataFiles;
 }
 
-TString PAFProject::GetDefaultTreeName()
+TString PAFProject::GetDefaultTreeName() const
 {
 	return TString(fDataFiles->GetObjName());
 }
 
-void PAFProject::SetDefaultTreeName(TString& defaultTreeName)
+void PAFProject::SetDefaultTreeName(const TString& defaultTreeName)
 {
 	TDSet* tmp = fDataFiles;
 	fDataFiles = new TDSet("PAFFiles", "");
@@ -76,10 +76,11 @@ void PAFProject::SetDataFiles(TDSet* dataFiles)
 	fDataFiles = dataFiles;
 }
 
-void PAFProject::AddDataFile(TString& fileName, TString& objname)
+void PAFProject::AddDataFile(const TString& fileName, const char* objname)
 {
-	TString directory = GetDirectoryFromObjName(objname);
-	TString name = GetNameFromObjName(objname);
+        TString tObjName(objname);
+	TString directory = GetDirectoryFromObjName(tObjName);
+	TString name = GetNameFromObjName(tObjName);
 	
 	fDataFiles->Add(fileName, 
 			name.IsNull() ? NULL : name.Data(),
@@ -88,9 +89,7 @@ void PAFProject::AddDataFile(TString& fileName, TString& objname)
 
 void PAFProject::AddDataFile(const char* fileName, const char* objname)
 {
-	TString tFileName(fileName);
-	TString tObjName(objname);
-	AddDataFile(tFileName, tObjName);
+	AddDataFile(TString(fileName), objname);
 }
 
 void PAFProject::AddDataFile(TFileInfo* dataFile)
@@ -98,12 +97,20 @@ void PAFProject::AddDataFile(TFileInfo* dataFile)
 	fDataFiles->Add(dataFile);
 }
 
+void PAFProject::AddDataFiles(const std::vector<TString>& files, const char* objname)
+{
+        for(std::vector<TString>::const_iterator it = files.begin(); it != files.end(); ++it) 
+	{
+	        AddDataFile(*it, objname);
+	}
+}
+
 void PAFProject::SetFirstEvent(Long64_t firstEvent)
 {
 	fFirstEvent = firstEvent;
 }
 
-Long64_t PAFProject::GetFirstEvent()
+Long64_t PAFProject::GetFirstEvent() const
 {
 	return fFirstEvent;
 }
@@ -113,7 +120,7 @@ void PAFProject::SetNEvents(Long64_t nEvents)
 	fNEvents = nEvents;
 }
 
-Long64_t PAFProject::GetNEvents()
+Long64_t PAFProject::GetNEvents() const
 {
 	return fNEvents;
 }
@@ -229,7 +236,7 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 	fExecutionEnvironment->Process(selector, fDataFiles, fFirstEvent, fNEvents);
 }
 
-TString PAFProject::GetDirectoryFromObjName(TString& objName)
+TString PAFProject::GetDirectoryFromObjName(const TString& objName)
 {
 	TString tObjName = objName;
 	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
@@ -250,7 +257,7 @@ TString PAFProject::GetDirectoryFromObjName(TString& objName)
 	return result;
 }
 
-TString PAFProject::GetNameFromObjName(TString& objName)
+TString PAFProject::GetNameFromObjName(const TString& objName)
 {
 	TString tObjName = objName;
 	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
