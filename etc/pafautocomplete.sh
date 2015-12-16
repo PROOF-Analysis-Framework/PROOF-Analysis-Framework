@@ -6,8 +6,7 @@ _paf()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     
     # Basic options
-    _paf_commands="-h --help createselector inspecttree reset"
-
+    _paf_commands="-h --help addhistogram ah createselector cs inspecttree it reset"
     # Completion of basic arbuments
     case "${prev}" in
 	reset)
@@ -15,17 +14,26 @@ _paf()
 	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
             return 0
             ;;
-	createselector)
+	cs|createselector)
 	    local opts="-h --help"
 	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
             return 0
             ;;
-	inspecttree)
-	    local rootfiles=$( ls *.root 2> /dev/null )
-	    local opts="-h -b -t -s --help --branch --tree --snippet $rootfiles"
-	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+	it|inspecttree)
+	    local IFS=$'\n'
+	    local LASTCHAR=' '
+	    compopt -o nospace -o filenames
+	    COMPREPLY=( $(compgen -o plusdirs -f -X '!*.root' -- "${cur}") )
             return 0
             ;;
+	ah|addhistogram)
+	    local opts="-h --help"
+	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+	    return 0
+	    ;;
+	-h|--help)
+	    return 0
+	    ;;
 	*)
 	    ;;
     esac
