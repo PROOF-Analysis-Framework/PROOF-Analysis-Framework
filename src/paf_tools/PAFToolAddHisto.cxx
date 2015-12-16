@@ -27,7 +27,7 @@ static const char* SHORT_NAME = "ah";
 static const char* COMMAND_EXPRESSION = "addhistogram|ah [--help] [selectorname F|D hname [htitle] nbins xmin xmax]";
 static const char* PARAMETERS_HELP = "\
 \"--help\": Show this help\n\
-\"selectorname\": Name of the selector to be used\n\
+\t\"selectorname\": Name of the selector to be used\n\
 \t\"F|D\" type of histogram [TH1F, TH2F]\n\
 \t\"hname\": histogram name\n\
 \t\"htitle\": histogram title. If skipped it will take the same value as hname\n\
