@@ -312,12 +312,12 @@ bool PAFToolAddHisto::InsertTextInFile(const TString& inputfile, const TString& 
 
 bool PAFToolAddHisto::InsertInHeader() const {
   // String to be searched for insertion
-  TString rep("// %ENDDATAMEMBERS");
+  TString rep("// %ENDDATAMEMBERS%");
 
   // String to be inserted
   TString inc("TH1");
   inc += PAFToolHistoTypeNames[fType];
-  inc += " ";
+  inc += "* ";
   inc += fHistogramName;
   inc += ";";
 
@@ -356,7 +356,7 @@ bool PAFToolAddHisto::InsertInImplementation() const {
 
 bool PAFToolAddHisto::InsertInConstructor(const TString& ifile) const {
   // String to be searched for insertion
-  TString rep("// %ENDCONSTRUCTOR");
+  TString rep("// %ENDCONSTRUCTOR%");
 
   // String to be inserted
   TString inc = TString::Format("%s = 0;", fHistogramName.Data());
@@ -373,7 +373,7 @@ bool PAFToolAddHisto::InsertInConstructor(const TString& ifile) const {
 
 bool PAFToolAddHisto::InsertInInitialization(const TString& ifile) const {
   // String to be searched for insertion
-  TString rep("// %ENDHISTOINIT");
+  TString rep("// %ENDHISTOINIT%");
 
   // String to be inserted
   TString inc = TString::Format("%s = CreateH1%s(\"%s\", \"%s\", %i, %f, %f);",
@@ -397,7 +397,7 @@ bool PAFToolAddHisto::InsertInInitialization(const TString& ifile) const {
 bool PAFToolAddHisto::InsertInSummary(const TString& ifile) const {
 
   // String to be searched for insertion
-  TString rep("// %ENDSUMMARY");
+  TString rep("// %ENDSUMMARY%");
 
   // String to be inserted
   TString inc = TString::Format("%s = FindOutput<TH1%s>(\"%s\");",

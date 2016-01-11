@@ -20,8 +20,8 @@ ClassImp(%NAME%);
 {
   // Leave the following lines if you intend to use
   // the paf tools to add objects to your anlysis
-  // %STARTCONSTRUCTOR
-  // %ENDCONSTRUCTOR
+  // %STARTCONSTRUCTOR%
+  // %ENDCONSTRUCTOR%
 
 
 }
@@ -37,8 +37,8 @@ void %NAME%::Initialise()
 
   // Leave the following lines if you intend to use
   // the paf tools to add objects to your anlysis
-  // %STARTHISTOINIT
-  // %ENDHISTOINIT
+  // %STARTHISTOINIT%
+  // %ENDHISTOINIT%
   
 }
 
@@ -69,7 +69,7 @@ void %NAME%::Summary()
 
   // Leave the following lines if you intend to use
   // the paf tools to add objects to your anlysis
-  // %STARTSUMMARY
-  // %ENDSUMMARY
+  // %STARTSUMMARY%
+  // %ENDSUMMARY%
 
 }

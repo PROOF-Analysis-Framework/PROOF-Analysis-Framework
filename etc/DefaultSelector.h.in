@@ -10,7 +10,7 @@
 #pragma once
 
 // Includes
-#include "PAF/computing/PAFChainItemSelector.h"
+#include "PAFChainItemSelector.h"
 
 
 // Your selector class
@@ -36,9 +36,9 @@ class %NAME% : public PAFChainItemSelector
   // and data members
 
   // Leave the following lines if you intend to use
-  // the paf tools to add objects to your anlysis
-  // %STARTDATAMEMBERS
-  // %ENDDATAMEMBERS
+  // the paf tools to add objects to your analysis
+  // %STARTDATAMEMBERS%
+  // %ENDDATAMEMBERS%
   
   ClassDef(%NAME%,0);
 };
