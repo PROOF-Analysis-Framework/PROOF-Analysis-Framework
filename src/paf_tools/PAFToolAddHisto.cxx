@@ -107,7 +107,7 @@ bool PAFToolAddHisto::SetXMin(const char* xmin) {
 
 bool PAFToolAddHisto::SetXMax(const char* xmax) {
   if (IsDouble(xmax)) {
-    fXMax = atoi(xmax);
+    fXMax = atof(xmax);
     return true;
   }
   return false;
