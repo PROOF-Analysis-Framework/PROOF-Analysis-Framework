@@ -66,10 +66,11 @@ void PAFPackage::CompileAsLibrary() const
 						fName.Data(),
 						compileaslibrary_command.Data()
 						).Data());*/
+	PAF_DEBUG("PAFPackage", TString::Format("Compiling package %s...", fName.Data()).Data());
 	TString response_compileaslibrary_command = gSystem->GetFromPipe(compileaslibrary_command);
 	if (response_compileaslibrary_command.Index("Successful compilation") == response_compileaslibrary_command.Length() - 22)
 	{
-		PAF_DEBUG("PAFPackage", TString::Format("%s compiled.", fName.Data()).Data());
+	        PAF_DEBUG("PAFPackage", "                  #==> compiled.");
 	}
 	else
 	{
