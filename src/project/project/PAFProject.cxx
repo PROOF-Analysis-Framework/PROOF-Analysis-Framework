@@ -171,7 +171,7 @@ void PAFProject::doProjectChecks()
 	TDSetElement* firstElement = (TDSetElement*)GetDataFiles()->GetListOfElements()->First();
 	if(firstElement == NULL)
 	{
-		PAF_FATAL("Project", "There is no ROOT file specified.");
+		PAF_FATAL("PAFProject", "There is no ROOT file specified.");
 	}
 	
 	//If there is a Tree name specified, return.
@@ -190,12 +190,12 @@ void PAFProject::doProjectChecks()
 	
 	if(ExistsTree(&file, "Tree"))
 	{
-		PAF_DEBUG("Project", "Automatic selection of \"Tree\" tree");
+		PAF_DEBUG("PAFProject", "Automatic selection of \"Tree\" tree");
 		SetDefaultTreeName("Tree");
 	}
 	else if (ExistsTree(&file, "tree"))
 	{
-		PAF_DEBUG("Project", "Automatic selection of \"tree\" tree");
+		PAF_DEBUG("PAFProject", "Automatic selection of \"tree\" tree");
 		SetDefaultTreeName("tree");
 	}
 	else
@@ -205,12 +205,12 @@ void PAFProject::doProjectChecks()
 		
 		if(trees->GetEntries() == 0)
 		{
-			PAF_FATAL("Project", "The ROOT file specified does not have any Tree.");
+			PAF_FATAL("PAFProject", "The ROOT file specified does not have any Tree.");
 		}
 		else if (trees->GetEntries() == 1)
 		{
 			const char* treeName = trees->First()->GetName();
-			PAF_DEBUG("Project", TString::Format("Using Tree called \"%s\".", treeName).Data());
+			PAF_DEBUG("PAFProject", TString::Format("Using Tree called \"%s\".", treeName).Data());
 			SetDefaultTreeName(treeName);
 		}
 		else
@@ -222,8 +222,8 @@ void PAFProject::doProjectChecks()
 				trees_message.Append(trees->At(i)->GetName());
 				trees_message.Append("\n");
 			}
-			PAF_ERROR("Project", trees_message.Data());
-			PAF_FATAL("Project", "The ROOT files specified have more than one tree. No tree has a common name, please, specify with PAFProject::SetDefaultTreeName.");
+			PAF_ERROR("PAFProject", trees_message.Data());
+			PAF_FATAL("PAFProject", "The ROOT files specified have more than one tree. No tree has a common name, please, specify with PAFProject::SetDefaultTreeName.");
 		}
 		
 		trees->Clear();
