@@ -227,6 +227,7 @@ void PAFProject::doProjectChecks()
 void PAFProject::doRun(PAFBaseSelector* selector)
 {
 	fExecutionEnvironment->Process(selector, fDataFiles, fFirstEvent, fNEvents);
+
 }
 
 TString PAFProject::GetDirectoryFromObjName(TString& objName)

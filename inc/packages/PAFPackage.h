@@ -25,6 +25,8 @@ class PAFPackage : public TObject
 		void CreateParFile() const;
 		void CompileAsLibrary() const;
 
+		bool isCompiled() const;
+
 		void SetName(const char* name);
 		virtual const char* GetName() const;
 

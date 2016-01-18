@@ -79,12 +79,16 @@ void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, Long64_t nentries)
 {
 	fSession->SetPrintProgress(&UpdateProgress);
 	fSession->Process(selector, nentries);
+	fSession->CleanupSession(fSession->GetSessionTag());
+
 }
 
 void PAFPROOFEnvironment::Process(PAFBaseSelector* selector, TDSet* dataFiles, Long64_t firstEvent, Long64_t nEvents)
 {
 	fSession->SetPrintProgress(&UpdateProgress);
 	fSession->Process(dataFiles, selector, "", nEvents, firstEvent);
+	fSession->CleanupSession(fSession->GetSessionTag());
+
 }
 
 void PAFPROOFEnvironment::SetPROOFUpload(PAFPROOFIUploadLibrary* proofUploadLibrary)

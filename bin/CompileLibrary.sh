@@ -57,7 +57,7 @@ myecho() {
 }
 
 myerror() {
-    echo -e -n "\033[1;31mPAF [E] " $* 1>&2
+    echo -e -n "\033[31m[ERROR] " $* 1>&2
     echo -e "\033[0m" 1>&2
 }
 
@@ -66,12 +66,12 @@ myerror() {
 # Compile specified package in -d destination.
 compilepackage() {
     myecho ">> Creating $parpackagename for package in $basepath..."
-
+    
     if [ ! -d $destpath/PROOF-INF -o ! -e $destpath/PROOF-INF/SETUP.C ] ; then
-	    myerror "Could not find PROOF package files"
+	myerror "Could not find PROOF package files"
     	myerror "$packagedir is not a PROOF package. Exiting!"
     fi
-
+    
     if [ -f $basepath/$parpackagename ]; then
         if [ $silent -ne 0 ]; then
             myecho "Moving $basepath/$parpackagename to $basepath/$parpackagename.bak"
@@ -85,8 +85,8 @@ compilepackage() {
     fi
     # XXX Be aware of any missing files in this list (--exclude CVS does not work on Mac)
     #tar $verbose -c -z -f $basepath/$parpackagename -C $basepath $packagename
-	cd $basepath$packagename
-	make -s && echo "Successful compilation"
+    cd $basepath$packagename
+    make -s && echo "Successful compilation"
 }
 
 
