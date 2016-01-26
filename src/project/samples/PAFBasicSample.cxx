@@ -12,6 +12,7 @@ ClassImp(PAFBasicSample);
 
 PAFBasicSample::PAFBasicSample() {
     this->sample = new TDSet("PAFFiles", "");
+    this->samples = new std::vector<PAFAbstractSample *>();
     this->fFirstEvent = 0;
     this->fNEvents = -1;
 
@@ -141,9 +142,21 @@ void PAFBasicSample::GetListOfTrees(TDirectory *directory, TList *resultTrees, c
 }
 
 void PAFBasicSample::doRun(PAFIExecutionEnvironment *executionEnvironment, PAFBaseSelector *selector) {
-    std::cout << "Executing the sample " << this->sampleName << std::endl;
-    executionEnvironment->Process(selector, this->sample, fFirstEvent, fNEvents);
 
+    TDSet *elements = GetDataFiles();
+    std::cout << "Executing the sample " << this->sampleName << std::endl;
+    executionEnvironment->Process(selector, elements, fFirstEvent, fNEvents);
     std::cout << "Execution finished" << std::endl;
 }
 
+TDSet *PAFBasicSample::GetDataFiles() {
+    TDSet *files = new TDSet("PAFFiles", "");
+    files->Add(this->sample);
+
+    for (int i = 0; i < this->samples->size(); i++) {
+        files->Add(this->samples->at(i)->GetDataFiles());
+    }
+
+    return files;
+
+}

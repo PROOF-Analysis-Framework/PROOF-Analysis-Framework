@@ -147,7 +147,6 @@
 
 #pragma link C++ class PAFBasicSample+;
 #pragma link C++ class PAFAbstractSample+;
-#pragma link C++ class PAFComplexSample+;
 
 #pragma link C++ class PAFMonitor+;
 #pragma link C++ class PAFRESTMonitor+;

@@ -123,12 +123,14 @@ TString PAFPackage::GetPackagesDir() const {
 }
 
 bool PAFPackage::isCompiled() const {
+
+    /**
+     *TODO: CAmbiar por GetPathInfo en TSYSTEM
+     *
+     */
     TString libPath = TString::Format("%s%s/lib%s.so", GetPackagesDir().Data(), GetName(), GetName());
     ifstream file(libPath.Data(), std::ios::binary | std::ios::ate);
-    if (file.tellg() != -1) {
-        PAF_INFO("PREPARING PACKAGES", libPath.Data());
-        PAF_INFO("PREPARING PACKAGES", "EXISTS");
-    }
+
     return file.tellg() != -1;
 }
 

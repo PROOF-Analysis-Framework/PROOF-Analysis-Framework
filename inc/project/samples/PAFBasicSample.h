@@ -28,6 +28,8 @@ public:
 
     virtual ~PAFBasicSample();
 
+    TDSet* GetDataFiles();
+
 
 protected:
     TString GetDefaultTreeName();

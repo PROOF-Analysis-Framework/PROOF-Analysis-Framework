@@ -16,6 +16,14 @@ PAFAbstractSample::~PAFAbstractSample() {
 
 }
 
+void PAFAbstractSample::Add(PAFAbstractSample* sample) {
+    this->samples->push_back(sample);
+}
+
+void PAFAbstractSample::Add(const char* fileName) {
+    AddDataFile(fileName, "Tree");
+}
+
 
 void PAFAbstractSample::SetSampleName(TString sampleName) {
 
@@ -84,6 +92,7 @@ void PAFAbstractSample::Check() {
 
 }
 
+TDSet* PAFAbstractSample::GetDataFiles() { }
 
 void PAFAbstractSample::doRun(PAFIExecutionEnvironment *executionEnvironment,
                               PAFBaseSelector *selector) { }
