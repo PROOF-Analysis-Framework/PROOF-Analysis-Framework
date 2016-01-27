@@ -17,7 +17,7 @@ void PAFRESTMonitor::RegisterEvent(PAFMonitorEvent *monitorEvent) {
  * This method will send all the data, now it will just print what we have
  */
 void PAFRESTMonitor::SendData() {
-    for (int i = 0; i < pafMonitorEvents->size(); i++) {
+    for (unsigned int i = 0; i < pafMonitorEvents->size(); i++) {
         PAF_INFO("PAF MON", this->pafMonitorEvents->at(i)->GetEventType()->Data());
     }
 }

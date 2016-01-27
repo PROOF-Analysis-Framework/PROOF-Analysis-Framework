@@ -22,24 +22,11 @@ public:
 
     PAFBasicSample();
 
-    void Check();
-
-    void doRun(PAFIExecutionEnvironment *executionEnvironment, PAFBaseSelector *selector);
+    PAFBasicSample(TDSet *fDataFiles);
 
     virtual ~PAFBasicSample();
 
-    TDSet* GetDataFiles();
 
-
-protected:
-    TString GetDefaultTreeName();
-
-    bool ExistsTree(TFile *rootFile, const char *treeName);
-
-    void SetDefaultTreeName(const char *defaultTreeName);
-
-    void GetListOfTrees(TDirectory *directory, TList *resultTrees, const char *path);
-
-    ClassDef(PAFBasicSample,1);
+ClassDef(PAFBasicSample, 1);
 
 };

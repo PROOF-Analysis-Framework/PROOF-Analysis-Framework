@@ -20,8 +20,9 @@ public :
     PAFAbstractSample();
 
 
-    void Add(PAFAbstractSample* sample);
-    void Add(const char* fileName);
+    void Add(PAFAbstractSample *sample);
+
+    void Add(const char *fileName);
 
     void AddDataFile(const char *fileName, const char *objname);
 
@@ -37,19 +38,14 @@ public :
 
     TString GetNameFromObjName(TString &objName);
 
-    virtual TDSet* GetDataFiles() = 0;
-
-    virtual void doRun(PAFIExecutionEnvironment *executionEnvironment, PAFBaseSelector *selector) = 0;
-
-
-    virtual void Check() = 0;
+    TDSet *GetDataFiles();
 
     virtual ~PAFAbstractSample();
 
 protected:
     TString sampleName;
     TDSet *sample;
-    std::vector<PAFAbstractSample*>*    samples;
+    std::vector<PAFAbstractSample *> *samples;
     Long64_t fFirstEvent;
     Long64_t fNEvents;
 

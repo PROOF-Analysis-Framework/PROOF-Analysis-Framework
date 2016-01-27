@@ -18,7 +18,7 @@ void PAFMonitor::RegisterEvent(PAFMonitorEvent *monitorEvent) {
 void PAFMonitor::SendData() {
 
 
-    for (int i = 0; i < this->pafMonitorEvents->size(); i++) {
+    for (unsigned int i = 0; i < this->pafMonitorEvents->size(); i++) {
         PAF_INFO("PAF MON", this->pafMonitorEvents->at(i)->GetEventType()->Data());
     }
 }

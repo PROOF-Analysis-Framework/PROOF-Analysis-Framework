@@ -16,11 +16,11 @@ PAFAbstractSample::~PAFAbstractSample() {
 
 }
 
-void PAFAbstractSample::Add(PAFAbstractSample* sample) {
+void PAFAbstractSample::Add(PAFAbstractSample *sample) {
     this->samples->push_back(sample);
 }
 
-void PAFAbstractSample::Add(const char* fileName) {
+void PAFAbstractSample::Add(const char *fileName) {
     AddDataFile(fileName, "Tree");
 }
 
@@ -88,13 +88,14 @@ TString PAFAbstractSample::GetNameFromObjName(TString &objName) {
     return result;
 }
 
-void PAFAbstractSample::Check() {
+TDSet *PAFAbstractSample::GetDataFiles() {
+    TDSet *files = new TDSet("PAFFiles", "");
+    files->Add(this->sample);
 
+    for (unsigned long i = 0; i < this->samples->size(); i++) {
+        files->Add(this->samples->at(i)->GetDataFiles());
+    }
+
+    return files;
 }
-
-TDSet* PAFAbstractSample::GetDataFiles() { }
-
-void PAFAbstractSample::doRun(PAFIExecutionEnvironment *executionEnvironment,
-                              PAFBaseSelector *selector) { }
-
 
