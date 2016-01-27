@@ -22,8 +22,4 @@ class PAFToolReset : public PAFAbstractTool
 
 		virtual void ExecuteTool(TList* params);
 
-	protected:
-		static const char* TOOL_NAME;
-		static const char* HELP_MESSAGE;
-		static const char* COMMAND_EXPRESSION;
 };

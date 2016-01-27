@@ -37,28 +37,28 @@ class PAFAbstractProject
 
 		void SetPackages(std::vector<PAFPackage*>* packages);
 		std::vector<PAFPackage*>* GetPackages();
-		void AddPackage(TString& packageName);
+		void AddPackage(const TString& packageName);
 		void AddPackage(const char* packageName);
 		void AddPackage(PAFPackage* package);
 
 		void SetSelectorPackages(std::vector<PAFPackageSelector*>* selectorPackages);
 		std::vector<PAFPackageSelector*>* GetSelectorPackages();
-		void AddSelectorPackage(TString& packageSelectorName);
+		void AddSelectorPackage(const TString& packageSelectorName);
 		void AddSelectorPackage(const char* packageSelectorName);
 		void AddSelectorPackage(PAFPackageSelector* packageSelector);
 
 		void SetLibraries(std::vector<PAFLibrary*>* libraries);
 		std::vector<PAFLibrary*>* GetLibraries();
-		void AddLibrary(TString& libraryName);
+		void AddLibrary(const TString& libraryName);
 		void AddLibrary(const char* libraryName);
 		void AddLibrary(PAFLibrary* library);
 
 		void SetPAFSettings(PAFISettings* settings);
 		PAFISettings* GetPAFSettings();
 
-		void SetOutputFile(TString& fileName);
+		void SetOutputFile(const TString& fileName);
 		void SetOutputFile(const char* fileName);
-		TString GetOutputFile();
+		TString GetOutputFile() const;
 
 		void SetInputParameters(PAFVariableContainer* inputParameters);
 		PAFVariableContainer* GetInputParameters();
@@ -69,11 +69,11 @@ class PAFAbstractProject
 
 		void SetDynamicHistograms(std::vector<TString>* dynamicHistograms);
 		std::vector<TString>* GetDynamicHistograms();
-		void AddDynamicHistogram(TString& histogram);
+		void AddDynamicHistogram(const TString& histogram);
 		void AddDynamicHistogram(const char* histogram);
 
 		void SetCompileOnSlaves(bool compileOnSlaves);
-		bool GetCompileOnSlaves();
+		bool GetCompileOnSlaves() const;
 
 		void SetProgressUpdated(PAFIProgressUpdated* progressUpdated);
 		PAFIProgressUpdated* GetProgressUpdatedFunction();

@@ -80,7 +80,7 @@ void DefaultProgressUpdatedFunction(Long64_t /*total*/, Long64_t /*proc*/)
 
 }
 
-void PAFAbstractProject::AddPackage(TString& packageName)
+void PAFAbstractProject::AddPackage(const TString& packageName)
 {
 	PAFPackage* result = new PAFPackage(GetPAFSettings(), packageName);
 	AddPackage(result);
@@ -107,7 +107,7 @@ std::vector< PAFPackageSelector* >* PAFAbstractProject::GetSelectorPackages()
 	return fSelectorPackages;
 }
 
-void PAFAbstractProject::AddSelectorPackage(TString& packageSelectorName)
+void PAFAbstractProject::AddSelectorPackage(const TString& packageSelectorName)
 {
 	PAFPackageSelector* result = new PAFPackageSelector(GetPAFSettings(), packageSelectorName);
 	AddSelectorPackage(result);
@@ -134,7 +134,7 @@ std::vector< PAFLibrary* >* PAFAbstractProject::GetLibraries()
 	return fLibraries;
 }
 
-void PAFAbstractProject::AddLibrary(TString& libraryName)
+void PAFAbstractProject::AddLibrary(const TString& libraryName)
 {
 	PAFLibrary* result = new PAFLibrary(fPAFSettings, libraryName);
 	AddLibrary(result);
@@ -162,7 +162,7 @@ PAFISettings* PAFAbstractProject::GetPAFSettings()
 	return fPAFSettings;
 }
 
-void PAFAbstractProject::SetOutputFile(TString& fileName)
+void PAFAbstractProject::SetOutputFile(const TString& fileName)
 {
 	fOutputFile = fileName;
 }
@@ -172,7 +172,7 @@ void PAFAbstractProject::SetOutputFile(const char* fileName)
 	fOutputFile = TString(fileName);
 }
 
-TString PAFAbstractProject::GetOutputFile()
+TString PAFAbstractProject::GetOutputFile() const
 {
 	return fOutputFile;
 }
@@ -197,7 +197,7 @@ std::vector< TString >* PAFAbstractProject::GetDynamicHistograms()
 	return fDynamicHistograms;
 }
 
-void PAFAbstractProject::AddDynamicHistogram(TString& histogram)
+void PAFAbstractProject::AddDynamicHistogram(const TString& histogram)
 {
 	fDynamicHistograms->push_back(histogram);
 }
@@ -210,10 +210,16 @@ void PAFAbstractProject::AddDynamicHistogram(const char* histogram)
 
 void PAFAbstractProject::AddDynamicHistograms()
 {
+    // Return if no dynamic histogram was set
+    if (! fDynamicHistograms->size()) return;
+
+    // Add dynamic histograms
     for (unsigned int i = 0; i < fDynamicHistograms->size(); i++) 
-	{
+    {
       fExecutionEnvironment->AddFeedback(fDynamicHistograms->at(i));
     }
+
+    // Create feedbak so dynamic histograms are shown
     fExecutionEnvironment->CreateDrawFeedback();
 }
 
@@ -222,7 +228,7 @@ void PAFAbstractProject::SetCompileOnSlaves(bool compileOnSlaves)
 	fCompileOnSlaves = compileOnSlaves;
 }
 
-bool PAFAbstractProject::GetCompileOnSlaves()
+bool PAFAbstractProject::GetCompileOnSlaves() const
 {
 	return fCompileOnSlaves;
 }

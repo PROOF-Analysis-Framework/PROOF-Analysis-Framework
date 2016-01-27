@@ -13,16 +13,23 @@
 
 class PAFLogger
 {
-	public:
-		static void Log(PAFLogLevel loglevel, const char* module, const char* msg);
+ public:
+  static PAFLogger* GetInstance();
 
-		static PAFILogger* GetLogger() { return fLogger; }
-		static void SetLogger(PAFILogger* logger) { fLogger = logger; }
+  void Log(PAFLogLevel loglevel, const char* module, const char* msg);
+  
+  PAFILogger* GetLogger() { return fLogger; }
+  void SetLogger(PAFILogger* logger) { fLogger = logger; }
+  
+  PAFLogLevel GetLogLevel() const { return fLogLevel; }
+  void SetLogLevel(PAFLogLevel loglevel) { fLogLevel = loglevel; }
+  
+ protected:
+  PAFLogger();  //Hide constructor to make this class a singleton
+  virtual ~PAFLogger();
 
-		static PAFLogLevel GetLogLevel() { return fLogLevel; }
-		static void SetLogLevel(PAFLogLevel loglevel) { fLogLevel = loglevel; }
-
-	private:
-		static PAFILogger* fLogger;
-		static PAFLogLevel fLogLevel;
+ protected:
+  static PAFLogger*  fTheLogger;
+  PAFILogger* fLogger;
+  PAFLogLevel fLogLevel;
 };

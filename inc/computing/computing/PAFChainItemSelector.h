@@ -44,27 +44,27 @@ class PAFChainItemSelector : public PAFISelector
 		void SetParam(const char* key, T object);
 
 		template<typename T>
-		T GetParam(const char* key);
-		Int_t GetParamInt(const char* key);
-		Float_t GetParamFloat(const char* key);
-		Double_t GetParamDouble(const char* key);
-		TString GetParamString(const char* key);
+		T GetParam(const char* key) const;
+		Int_t GetParamInt(const char* key) const;
+		Float_t GetParamFloat(const char* key) const;
+		Double_t GetParamDouble(const char* key) const;
+		TString GetParamString(const char* key) const;
 
 		template<typename T>
 		void AssignParam(const char* key, T& target);
 
 		template<typename T>
-		T Get(const char* key);
-		Int_t GetInt(const char* key);
-		Float_t GetFloat(const char* key);
-		Double_t GetDouble(const char* key);
+		T Get(const char* key) const;
+		Int_t GetInt(const char* key) const;
+		Float_t GetFloat(const char* key) const;
+		Double_t GetDouble(const char* key) const;
 
 		
 		template<typename T>
-		T Get(const char* key, Int_t i);
-		Int_t GetInt(const char* key, Int_t i);
-		Float_t GetFloat(const char* key, Int_t i);
-		Double_t GetDouble(const char* key, Int_t i);
+		T Get(const char* key, Int_t i) const;
+		Int_t GetInt(const char* key, Int_t i) const;
+		Float_t GetFloat(const char* key, Int_t i) const;
+		Double_t GetDouble(const char* key, Int_t i) const;
 		
 		template<typename T>
 		void Assign(const char* key, T& target);
@@ -131,7 +131,7 @@ inline void PAFChainItemSelector::SetParam(const char* key, T object)
 }
 
 template <typename T>
-T PAFChainItemSelector::GetParam(const char* key)
+T PAFChainItemSelector::GetParam(const char* key) const
 {
 	return fSelectorParams->Get<T>(key);
 }
@@ -143,14 +143,14 @@ void PAFChainItemSelector::AssignParam(const char* key, T& target)
 }
 
 template <typename T>
-T PAFChainItemSelector::Get(const char* key)
+T PAFChainItemSelector::Get(const char* key) const
 {
 	T* value = (T*)fVariables->Get<PAFIType*>(key)->GetPointer();
 	return *value;
 }
 
 template <typename T>
-T PAFChainItemSelector::Get(const char* key, Int_t i)
+T PAFChainItemSelector::Get(const char* key, Int_t i) const
 {
 	T* value = (T*)fVariables->Get<PAFIType*>(key)->GetPointer(i);
 	return *value;

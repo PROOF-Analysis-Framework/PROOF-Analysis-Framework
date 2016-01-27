@@ -13,7 +13,10 @@
 
 class PAFILogger
 {
-	public:
-		virtual void Log(PAFLogLevel level, const char* module, const char* msg) = 0;
-		virtual void Flush() = 0;
+ public:
+  PAFILogger() {};
+  virtual ~PAFILogger() {}
+
+  virtual void Log(PAFLogLevel level, const char* module, const char* msg) = 0;
+  virtual void Flush() = 0;
 };

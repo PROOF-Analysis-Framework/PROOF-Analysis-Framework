@@ -25,18 +25,16 @@ class PAFTools : public PAFAbstractTool
 		PAFTools();
 		virtual ~PAFTools();
 
-		virtual TString GetHelpMessage();
+		// Print the help message
+		virtual std::ostream& PrintHelp(std::ostream& os = std::cout) const;
 
 		void ExecuteTool(int argc, const char* argv[]);
 		void ExecuteTool(TList* params);
 
 	protected:
 		std::map<TString, PAFITool*> fTools;
+		std::map<TString, PAFITool*> fToolsShort;
 
 		void InitMembers();
 		void InitTools();
-
-		static const char* TOOL_NAME;
-		static const char* HELP_MESSAGE;
-		static const char* COMMAND_EXPRESSION;
 };
