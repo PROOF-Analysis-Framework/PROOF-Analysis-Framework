@@ -35,14 +35,14 @@ PAFPackage::~PAFPackage() {
 }
 
 void PAFPackage::PreparePackage() const {
-    if (!isCompiled()) {
+    //if (!isCompiled()) {
         TString packages_dir = GetPackagesDir();
         gSystem->MakeDirectory(packages_dir);
 
         TString build_command = GetPreparePackageCommand();
         TString response_build_command = gSystem->GetFromPipe(build_command);
         PAF_DEBUG("PAFPackage", response_build_command);
-    }
+    //}
 }
 
 TString PAFPackage::GetPreparePackageCommand() const {

@@ -138,7 +138,7 @@ void PAFProject::GetListOfTrees(TDirectory *directory, TList *resultTrees, const
 
 void PAFProject::doProjectChecks() {
 
-    for (unsigned long i = 0; i < this->fSamples->size(); i++) {
+    for (unsigned long i = 0; i < fSamples->size(); i++) {
 
         TDSetElement *firstElement = (TDSetElement *) fSamples->at(i)->GetDataFiles()->GetListOfElements()->First();
 
@@ -199,8 +199,10 @@ void PAFProject::doProjectChecks() {
 
 void PAFProject::doRun(PAFBaseSelector *selector) {
 
-    if (!this - fDataFiles->GetListOfElements()->IsEmpty()) {
-        this->fSamples->push_back(new PAFBasicSample(this->fDataFiles));
+    if (!this->fDataFiles->GetListOfElements()->IsEmpty()) {
+        PAFBasicSample *tdsetSammple = new PAFBasicSample(this->fDataFiles);
+        tdsetSammple->SetSampleName("pafoutput");
+        this->fSamples->push_back(tdsetSammple);
     }
 
     for (unsigned long i = 0; i < this->fSamples->size(); i++) {
@@ -225,7 +227,7 @@ void PAFProject::doRun(PAFBaseSelector *selector) {
 TString PAFProject::GetDirectoryFromObjName(TString &objName) {
 
     TString tObjName = objName;
-    std::vector < TString * > *parts = PAFStringUtil::Split(&tObjName, "/");
+    std::vector<TString *> *parts = PAFStringUtil::Split(&tObjName, "/");
 
     TString result;
 
@@ -243,7 +245,7 @@ TString PAFProject::GetDirectoryFromObjName(TString &objName) {
 
 TString PAFProject::GetNameFromObjName(TString &objName) {
     TString tObjName = objName;
-    std::vector < TString * > *parts = PAFStringUtil::Split(&tObjName, "/");
+    std::vector<TString *> *parts = PAFStringUtil::Split(&tObjName, "/");
 
     TString result;
 
