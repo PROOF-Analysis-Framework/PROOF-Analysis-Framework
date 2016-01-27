@@ -67,7 +67,6 @@ void PAFPackage::CompileAsLibrary() const {
         TString compileaslibrary_command = TString::Format("%s/bin/CompileLibrary.sh -s -d %s %s",
                                                            fPAFSettings->GetPAFPATH()->Data(), GetPackagesDir().Data(),
                                                            GetName());
-        PAF_INFO("compiling", compileaslibrary_command.Data());
         TString response_compileaslibrary_command = gSystem->GetFromPipe(compileaslibrary_command);
         if (response_compileaslibrary_command.Index("Successful compilation") ==
             response_compileaslibrary_command.Length() - 22) {

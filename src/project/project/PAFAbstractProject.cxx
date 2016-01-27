@@ -307,6 +307,7 @@ TList *PAFAbstractProject::Run() {
     timer.TakeTime("Environment ready");
     PAF_DEBUG("PAFProject", "Launching process");
 
+    doProjectChecks();
     doRun(selector);
 
     timer.TakeTime("Processed");
