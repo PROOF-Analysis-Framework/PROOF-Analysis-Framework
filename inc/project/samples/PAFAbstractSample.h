@@ -38,6 +38,10 @@ public :
 
     TString GetNameFromObjName(TString &objName);
 
+    void SetOutpoutNameFormat(const char *format);
+
+    TString GetFormattedName();
+
     TDSet *GetDataFiles();
 
     virtual ~PAFAbstractSample();
@@ -48,6 +52,7 @@ protected:
     std::vector<PAFAbstractSample *> *samples;
     Long64_t fFirstEvent;
     Long64_t fNEvents;
+    TString* sampleOutputNameFormat;
 
 ClassDef(PAFAbstractSample, 1);
 

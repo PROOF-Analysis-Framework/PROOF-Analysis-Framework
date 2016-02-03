@@ -218,7 +218,7 @@ void PAFProject::doRun(PAFBaseSelector *selector) {
 
         selector->SetSelectorParams(fInputParameters);
         selector->SetPAFSelector(fPAFSelector);
-        selector->SetOutputFile(this->fSamples->at(i)->GetSampleName() + ".root");
+        selector->SetOutputFile(this->fSamples->at(i)->GetFormattedName() + ".root");
 
         fExecutionEnvironment->Process(selector, sampleFiles, fFirstEvent, fNEvents);
     }

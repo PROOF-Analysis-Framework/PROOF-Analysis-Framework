@@ -11,6 +11,7 @@ PAFBasicSample::PAFBasicSample() {
     this->samples = new std::vector<PAFAbstractSample *>();
     this->fFirstEvent = 0;
     this->fNEvents = -1;
+    this->sampleOutputNameFormat = new TString("%s");    // if no formate is provided, the default output name will be the name of the sample
 
 }
 
@@ -19,6 +20,7 @@ PAFBasicSample::PAFBasicSample(TDSet *fDataFiles) {
     this->samples = new std::vector<PAFAbstractSample *>();
     this->fFirstEvent = 0;
     this->fNEvents = -1;
+    this->sampleOutputNameFormat = new TString("%s");
 
 }
 
