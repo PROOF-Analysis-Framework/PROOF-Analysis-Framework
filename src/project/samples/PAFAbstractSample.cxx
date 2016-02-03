@@ -99,7 +99,7 @@ TDSet *PAFAbstractSample::GetDataFiles() {
     return files;
 }
 
-void PAFAbstractSample::SetOutpoutNameFormat(const char *format) {
+void PAFAbstractSample::SetOutputNameFormat(const char *format) {
     this->sampleOutputNameFormat = new TString(format);
 }
 

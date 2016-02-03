@@ -38,7 +38,7 @@ public :
 
     TString GetNameFromObjName(TString &objName);
 
-    void SetOutpoutNameFormat(const char *format);
+    void SetOutputNameFormat(const char *format);
 
     TString GetFormattedName();
 
