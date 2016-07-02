@@ -144,5 +144,6 @@
 #pragma link C++ class PAFGenericItemVariableContainer<char*>+;
 #pragma link C++ class PAFGenericItemVariableContainer<const char*>+;
 #pragma link C++ class PAFGenericItemVariableContainer<void*>+;
+#pragma link C++ class PAFRESTLogger+;
 
 #endif

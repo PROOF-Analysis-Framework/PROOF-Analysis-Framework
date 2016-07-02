@@ -8,7 +8,7 @@
 */
 
 #include "PAFConsoleLogger.h"
-
+#include "PAFRESTLogger.h"
 #include <iostream>
 
 // Colors for the different levels copied from https://root.cern.ch/doc/master/MsgLogger_8cxx_source.html
@@ -29,4 +29,6 @@ void PAFConsoleLogger::Log(PAFLogLevel level, const char * module, const char * 
 	  // Reset color
 	  << "\033[0m" 
 	  << std::endl;
+	  
+	  PAFRESTLogger::GetInstance()->Log("Info", msg);
 }

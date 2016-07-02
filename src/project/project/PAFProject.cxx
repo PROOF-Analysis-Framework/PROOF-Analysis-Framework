@@ -10,8 +10,10 @@
 #include "PAFProject.h"
 
 #include "PAFStringUtil.h"
+#include "PAFRESTLogger.h"
 
 ClassImp(PAFProject);
+
 
 PAFProject::PAFProject()
 	: PAFAbstractProject()
