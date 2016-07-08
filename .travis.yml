@@ -10,3 +10,5 @@ script:
     - mkdir build
     - cd build
     - cmake .. && make
+sudo: required
+dist: trusty
