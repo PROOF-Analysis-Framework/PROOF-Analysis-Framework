@@ -14,6 +14,7 @@
 #include "PAFToolInspectTree.h"
 #include "PAFToolReset.h"
 #include "PAFToolCreateSelector.h"
+#include "PAFToolCreateProject.h"
 #include "PAFToolAddHisto.h"
 
 #include "PAFExceptionCommandExpression.h"
@@ -62,6 +63,10 @@ void PAFTools::InitTools()
 	PAFITool* createselector = new PAFToolCreateSelector();
 	fTools[createselector->GetToolName()] = createselector;
 	fToolsShort[createselector->GetToolShortName()] = createselector;
+
+	PAFITool* createproject = new PAFToolCreateProject();
+	fTools[createproject->GetToolName()] = createproject;
+	fToolsShort[createproject->GetToolShortName()] = createproject;
 
 	PAFITool* addhisto = new PAFToolAddHisto();
 	fTools[addhisto->GetToolName()] = addhisto;
