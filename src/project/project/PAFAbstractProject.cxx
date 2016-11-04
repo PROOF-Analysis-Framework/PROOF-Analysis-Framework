@@ -316,7 +316,7 @@ void PAFAbstractProject::PreparePAFSelector()
 
 	if(fSelectorPackages->size() == 0)
 	{
-		PAF_FATAL("PAFProject", "No PAFSelector specified.");
+		PAF_FATAL("PAAbstractFProject", "No PAFSelector specified.");
 	}
 	else if (fSelectorPackages->size() == 1)
 	{
@@ -338,35 +338,57 @@ void PAFAbstractProject::PreparePAFSelector()
 
 TList* PAFAbstractProject::Run()
 {
-	PAF_DEBUG("Project", "Checking project configuration.");
+	PAF_DEBUG("PAFAbstractProject", "Checking project configuration.");
 	doProjectChecks();
 
+
+	// Initialize timer
 	PAFStopWatch timer;
 	timer.Start();
+
+
+	// Prepare and compile if needed the packages
+	PAF_DEBUG("PAFAbstractProject", "Preparing and compiling packages.");
 	PreparePackages();
-	PAF_DEBUG("Project", "Launching configured project.");
+	timer.TakeTime("Packages preparation finished");
+
+
+	// Starting the environment
+	PAF_DEBUG("PAFAbstractProject", "Initializing the selected environment.");
 	fExecutionEnvironment->Initialise();
-	timer.TakeTime("Execution environment initilized");
+	timer.TakeTime("Execution environment initialized");
+
+	// Loading libraries
+	PAF_DEBUG("PAFAbstractProject", "Loading libraries.");
 	LoadProjectItems();
+
+	// Deal with selectors
+	PAF_DEBUG("PAFAbstractProject", "Compiling and uploading selectors.");	
 	PreparePAFSelector();
-	AddDynamicHistograms();
-
-	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
 	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFSelector", fPAFSelector));
-	fExecutionEnvironment->SetProgressUpdated(fProgressUpdated);
-
 	PAFBaseSelector* selector = new PAFBaseSelector(); 
 	selector->SetSelectorParams(fInputParameters);
 	selector->SetPAFSelector(fPAFSelector);
 	selector->SetOutputFile(fOutputFile);
 	
+	// Set dynamic histograms and progress update
+	PAF_DEBUG("PAFAbstractProject", "Final settings.");	
+	AddDynamicHistograms();
+	fExecutionEnvironment->SetProgressUpdated(fProgressUpdated);
+
+	// Upload input parameters
+	PAF_DEBUG("PAFAbstractProject", "Upload input parameters.");	
+	fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", fInputParameters));
+
+
 	timer.TakeTime("Environment ready");
-	PAF_DEBUG("PAFProject", "Launching process");
 
+
+	PAF_DEBUG("PAFAbstractProject", "Processing data.");
 	doRun(selector);
-
 	timer.TakeTime("Processed");
-	PAF_DEBUG("PAFProject", "Process completed.");
+
+	PAF_DEBUG("PAFAbstractProject", "Process completed. Dispose.");
 	fExecutionEnvironment->Dispose();
 
 	return selector->GetOutputList();
