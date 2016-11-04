@@ -14,7 +14,7 @@
 class PAFPROOFLiteEnvironment : public PAFPROOFEnvironment 
 {
 	public:
-		PAFPROOFLiteEnvironment(Int_t nSlots);
+		PAFPROOFLiteEnvironment(Int_t nSlots = 0);
 
 	protected:
 		TProof* doCreateTProof();
