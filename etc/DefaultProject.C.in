@@ -10,11 +10,11 @@ void %NAME%() {
   // (1) Create the PAF project. 
   // By default this would the PROOF Lite environment
   // Other options:
-  // + Sequential:    new PAFProject(new PAFSequentialEnvironmen())
+  // + Sequential:    new PAFProject(new PAFSequentialEnvironment())
   // + PROOF Lite:    new PAFProject(new PAFPROOFLiteEnvironment())
-  // + PoD:           new PAFProject(new PAFPoDEnvironmen())
-  // + PROOF Cluster: new PAFProject(new PAFPROOFClusterEnvironmen())
-  // + PROOF Cloud:   new PAFProject(new PAFPROOFCloudEnvironmen())
+  // + PoD:           new PAFProject(new PAFPoDEnvironment())
+  // + PROOF Cluster: new PAFProject(new PAFPROOFClusterEnvironment())
+  // + PROOF Cloud:   new PAFProject(new PAFPROOFCloudEnvironment())
   PAFProject* myProject = new PAFProject();
   
 
