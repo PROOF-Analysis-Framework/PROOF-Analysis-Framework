@@ -400,7 +400,7 @@ bool PAFToolAddHisto::InsertInSummary(const TString& ifile) const {
   TString rep("// %ENDSUMMARY%");
 
   // String to be inserted
-  TString inc = TString::Format("%s = FindOutput<TH1%s>(\"%s\");",
+  TString inc = TString::Format("%s = FindOutput<TH1%s*>(\"%s\");",
 			       	fHistogramName.Data(),
 				PAFToolHistoTypeNames[fType],
 				fHistogramName.Data()
