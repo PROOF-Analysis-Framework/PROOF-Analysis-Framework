@@ -97,6 +97,31 @@
 #pragma link C++ function PAFProject::SetInputParam<TString*>(const char*, TString*);
 #pragma link C++ function PAFProject::SetInputParam<void*>(const char*, void*);
 
+#pragma link C++ class PAFSample+;
+
+#pragma link C++ function PAFSample::SetParam<bool>(const char*, bool);
+#pragma link C++ function PAFSample::SetParam<int>(const char*, int);
+#pragma link C++ function PAFSample::SetParam<float>(const char*, float);
+#pragma link C++ function PAFSample::SetParam<double>(const char*, double);
+#pragma link C++ function PAFSample::SetParam<TObject>(const char*, TObject&);
+#pragma link C++ function PAFSample::SetParam<TString>(const char*, TString&);
+#pragma link C++ function PAFSample::SetParam<TObject*>(const char*, TObject*);
+#pragma link C++ function PAFSample::SetParam<TString*>(const char*, TString*);
+#pragma link C++ function PAFSample::SetParam<void*>(const char*, void*);
+
+#pragma link C++ class PAFSampleCollection+;
+
+#pragma link C++ function PAFSampleCollection::SetParam<bool>(const char*, bool);
+#pragma link C++ function PAFSampleCollection::SetParam<int>(const char*, int);
+#pragma link C++ function PAFSampleCollection::SetParam<float>(const char*, float);
+#pragma link C++ function PAFSampleCollection::SetParam<double>(const char*, double);
+#pragma link C++ function PAFSampleCollection::SetParam<TObject>(const char*, TObject&);
+#pragma link C++ function PAFSampleCollection::SetParam<TString>(const char*, TString&);
+#pragma link C++ function PAFSampleCollection::SetParam<TObject*>(const char*, TObject*);
+#pragma link C++ function PAFSampleCollection::SetParam<TString*>(const char*, TString*);
+#pragma link C++ function PAFSampleCollection::SetParam<void*>(const char*, void*);
+
+
 #pragma link C++ class PAFEnvironmentVariableSettings+;
 #pragma link C++ class PAFISettings+;
 #pragma link C++ class PAFManualSettings+;
