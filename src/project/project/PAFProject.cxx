@@ -266,9 +266,10 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 	globalinputparams->Add(fSampleCollection->GetParameters());
 
 
+	unsigned int nSamples = fSampleCollection->GetNSamples();
         PAF_INFO("PAFProject", 
-		  TString::Format("Iterating over %d samples",fSampleCollection->GetNSamples()));
-	for (unsigned int i = 0; i < fSampleCollection->GetNSamples(); i++) {
+		  TString::Format("Iterating over %d samples", nSamples));
+	for (unsigned int i = 0; i < nSamples; i++) {
 
 	  PAFSample* currentsample = fSampleCollection->GetSample(i);
 	  PAF_DEBUG("PAFProject", 
@@ -286,6 +287,12 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 	  PAF_DEBUG("PAFProject", "Setting input parameters in selector");
 	  selector->SetSelectorParams(allinputparams);
 	  fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", allinputparams));
+
+	  PAF_DEBUG("PAFProject", "Setting output file in selector");
+	  TString outputfile(fOutputFile);
+	  if (nSamples > 1)
+	    outputfile = PAFStringUtil::InsertStringInROOTFile(fOutputFile, currentsample->GetName());
+	  selector->SetOutputFile(outputfile);
 
 	  PAF_DEBUG("PAFProject", "... and finally processing the data");
 	  fExecutionEnvironment->Process(selector, dataFiles, fFirstEvent, fNEvents);
