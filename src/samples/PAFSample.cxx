@@ -10,8 +10,7 @@
 #include "PAFSample.h"
 
 #include "PAF.h"
-#include "PAFObjectUtil.h"
-
+#include "PAFStringUtil.h"
 
 ClassImp(PAFSample);
 
@@ -30,14 +29,11 @@ PAFSample::~PAFSample() {
 
 
 
-
-
-
 void PAFSample::AddDataFile(const TString& fileName, const char* objname)
 {
         TString tObjName(objname);
-	TString directory = PAFObjectUtil::GetDirectoryFromObjName(tObjName);
-	TString name = PAFObjectUtil::GetNameFromObjName(tObjName);
+	TString directory = PAFStringUtil::GetDirectoryFromObjName(tObjName);
+	TString name = PAFStringUtil::GetNameFromObjName(tObjName);
 	PAF_DEBUG("PAFSample", TString::Format("name = \"%s\"", name.Data()));
 	fDataFiles->Add(fileName, 
 			name.IsNull() ? NULL : name.Data(),
@@ -64,8 +60,8 @@ void PAFSample::SetDefaultTreeName(const TString& defaultTreeName)
 	TDSet* tmp = fDataFiles;
 	fDataFiles = new TDSet("PAFFiles", "");
 
-	fDataFiles->SetDirectory(PAFObjectUtil::GetDirectoryFromObjName(defaultTreeName));
-	fDataFiles->SetObjName(PAFObjectUtil::GetNameFromObjName(defaultTreeName));
+	fDataFiles->SetDirectory(PAFStringUtil::GetDirectoryFromObjName(defaultTreeName));
+	fDataFiles->SetObjName(PAFStringUtil::GetNameFromObjName(defaultTreeName));
 
 	TList* oldDataFiles = tmp->GetListOfElements();
 	for(Int_t i = 0; i < oldDataFiles->GetEntries(); i++)
