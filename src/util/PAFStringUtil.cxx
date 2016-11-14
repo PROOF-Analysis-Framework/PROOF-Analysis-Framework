@@ -27,3 +27,44 @@ std::vector< TString* >* PAFStringUtil::Split(TString* string, const char* cs)
 
 	return result;
 }
+
+
+TString PAFStringUtil::GetDirectoryFromObjName(const TString& objName)
+{
+	TString tObjName = objName;
+	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+	
+	TString result;
+	
+	if(parts->size() > 0)
+	{
+		for(unsigned int i = 0; i < parts->size() - 1; i++)
+		{
+			result.Append(parts->at(i)->Data());
+		}
+	}
+	
+	parts->clear();
+	delete parts;
+	
+	return result;
+}
+
+
+TString PAFStringUtil::GetNameFromObjName(const TString& objName)
+{
+	TString tObjName = objName;
+	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
+	
+	TString result;
+	
+	if(parts->size() > 0)
+	{
+		result = (parts->at(parts->size() - 1))->Copy();
+	}
+	
+	parts->clear();
+	delete parts;
+	
+	return result;
+}

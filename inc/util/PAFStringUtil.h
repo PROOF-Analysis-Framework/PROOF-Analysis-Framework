@@ -16,4 +16,6 @@ class PAFStringUtil
 {
 	public:
 		static std::vector< TString* >* Split(TString* string, const char* cs);
+		static TString GetDirectoryFromObjName(const TString& objName);
+		static TString GetNameFromObjName(const TString& objName);
 };
