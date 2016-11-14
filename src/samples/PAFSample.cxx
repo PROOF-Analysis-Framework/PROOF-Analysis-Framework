@@ -34,7 +34,6 @@ void PAFSample::AddDataFile(const TString& fileName, const char* objname)
         TString tObjName(objname);
 	TString directory = PAFStringUtil::GetDirectoryFromObjName(tObjName);
 	TString name = PAFStringUtil::GetNameFromObjName(tObjName);
-	PAF_DEBUG("PAFSample", TString::Format("name = \"%s\"", name.Data()));
 	fDataFiles->Add(fileName, 
 			name.IsNull() ? NULL : name.Data(),
 			directory.IsNull() ? NULL : directory.Data());
@@ -56,7 +55,6 @@ void PAFSample::AddDataFiles(const std::vector<TString>& files, const char* objn
 
 void PAFSample::SetDefaultTreeName(const TString& defaultTreeName)
 {
-  PAF_DEBUG("PAFSample", TString::Format("Set default tree name to %s", defaultTreeName.Data()));
 	TDSet* tmp = fDataFiles;
 	fDataFiles = new TDSet("PAFFiles", "");
 
