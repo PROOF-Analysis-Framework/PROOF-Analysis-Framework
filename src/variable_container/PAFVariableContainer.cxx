@@ -9,18 +9,27 @@
 
 #include "PAFVariableContainer.h"
 
+#include "PAF.h"
+
 ClassImp(PAFVariableContainer);
 
-PAFVariableContainer::PAFVariableContainer()
-	: TObject(), fPairs() 
-{
- 
+void PAFVariableContainer::Add(PAFVariableContainer* other) {
+  if (other) {
+	const THashTable* table = other->fPairs.GetTable();
+	
+	TIterator* it = table->MakeIterator();
+	TObject* current = 0;
+	while( (current = it->Next()) )
+	{
+		TPair* item = (TPair*)current;
+		PAF_DEBUG("PAFVarCont", ((TObjString*)item->Key())->GetString());
+		fPairs.Add(item->Key()->Clone(), item->Value()->Clone());
+	}
+  }
+
 }
 
-PAFVariableContainer::~PAFVariableContainer()
-{
 
-}
 
 TList* PAFVariableContainer::GetKeys()
 {
@@ -44,3 +53,4 @@ bool PAFVariableContainer::Exists(const char* key)
 	TString tkey (key);
 	return Exists(tkey);
 }
+

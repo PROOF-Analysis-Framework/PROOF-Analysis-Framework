@@ -20,14 +20,18 @@
 class PAFVariableContainer : public TObject
 {
 	public:
-		PAFVariableContainer();
-		virtual ~PAFVariableContainer();
+		inline PAFVariableContainer();
+		inline virtual ~PAFVariableContainer();
 
 		template<typename T>
 		void Add(const char* key, T value);
 
+		void Add(const char* key, const char* value);
+
 		template<typename T>
 		T Get(const char* key);
+
+		void Add(PAFVariableContainer*);
 
 		TList* GetKeys();
 
@@ -39,6 +43,10 @@ class PAFVariableContainer : public TObject
 	ClassDef(PAFVariableContainer, 1);
 };
 
+
+
+//----------------------------------------------------------------------
+// Template methods
 template <typename T>
 inline void PAFVariableContainer::Add(const char* key, T value)
 {
@@ -56,3 +64,21 @@ inline T PAFVariableContainer::Get(const char* key)
 	PAFGenericItemVariableContainer<T>* result = (PAFGenericItemVariableContainer<T>*)fPairs.GetValue(&tKey);
 	return result->Get();
 }
+
+inline void PAFVariableContainer::Add(const char* key, const char* value)
+{
+	TObjString* objKey = new TObjString(key);
+	TString strvalue(value);
+
+	delete fPairs.Remove(objKey);
+
+	fPairs.Add(objKey,  new PAFGenericItemVariableContainer<TString>(strvalue));
+}
+
+
+//----------------------------------------------------------------------
+// Inline methods
+
+PAFVariableContainer::PAFVariableContainer():TObject(), fPairs() {}
+
+PAFVariableContainer::~PAFVariableContainer() {}
