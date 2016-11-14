@@ -11,7 +11,10 @@
 
 #include "PAFAbstractProject.h"
 
-#include "TDSet.h"
+// PAF includes
+#include "PAFSampleCollection.h"
+
+// ROOT includes
 #include "TFileInfo.h"
 #include "TFile.h"
 
@@ -22,18 +25,20 @@ class PAFProject : public PAFAbstractProject
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 		virtual ~PAFProject();
 
-		void SetDefaultTreeName(const TString& defaultTreeName);
-		void SetDefaultTreeName(const char* defaultTreeName);
-		TString GetDefaultTreeName() const;
+		inline void SetDefaultTreeName(const TString& defaultTreeName);
 
-		void SetDataFiles(TDSet* dataFiles);
-		TDSet* GetDataFiles();
+		void SetDataFiles(TDSet* dataFiles, const char* samplename = "PAFDefaultSample");
+		TDSet* GetDataFiles(const char* samplename = "PAFDefaultSample");
 
-		void AddDataFile(const TString& fileName, const char* objname);
-		void AddDataFile(const char* fileName, const char* objname = 0);
-		void AddDataFile(TFileInfo* dataFile);
+		void AddDataFile(const TString& fileName, const char* objname = 0, 
+				 const char* samplename = "PAFDefaultSample");
+		void AddDataFile(TFileInfo* dataFile, const char* samplename = "PAFDefaultSample");
 
-		void AddDataFiles(const std::vector<TString>& files, const char* objname = 0);
+		void AddDataFiles(const std::vector<TString>& files, const char* objname = 0, 
+				  const char* samplename = "PAFDefaultSample");
+
+
+		PAFSampleCollection* AddSample(PAFSample* sample);
 
 		void SetFirstEvent(Long64_t firstEvent);
 		Long64_t GetFirstEvent() const;
@@ -49,14 +54,22 @@ class PAFProject : public PAFAbstractProject
 
 		bool ExistsTree(TFile* rootFile, const char* treeName);
 		void GetListOfTrees(TDirectory* directory, TList* resultTrees, const char* path);
+		PAFSample* CheckAndCreateSample(const char* samplename) const;
+		void CheckFileTrees(TDSet* tdset);
 
-		virtual TString GetDirectoryFromObjName(const TString& objName);
-		virtual TString GetNameFromObjName(const TString& objName);
 
 	protected:
-		TDSet* 	fDataFiles;
+		PAFSampleCollection* fSampleCollection;
 		Long64_t fFirstEvent;
 		Long64_t fNEvents;
 
 	ClassDef(PAFProject, 1);
 };
+
+
+//----------------------------------------------------------------------
+// Inline methods
+void PAFProject::SetDefaultTreeName(const TString& defaultTreeName) {
+  fSampleCollection->SetDefaultTreeName(defaultTreeName);
+}
+

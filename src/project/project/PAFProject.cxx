@@ -27,82 +27,69 @@ PAFProject::PAFProject(PAFIExecutionEnvironment* executionEnvironment)
 
 void PAFProject::InitMembers()
 {
-	fDataFiles = new TDSet("PAFFiles", "");
+        fSampleCollection = new PAFSampleCollection;
 	fFirstEvent = 0;
 	fNEvents = -1;
 }
 
 PAFProject::~PAFProject()
 {
-	delete fDataFiles;
+	delete fSampleCollection;
 }
 
-TString PAFProject::GetDefaultTreeName() const
+
+TDSet* PAFProject::GetDataFiles(const char* samplename)
 {
-	return TString(fDataFiles->GetObjName());
+        return fSampleCollection->GetDataFiles(samplename);
 }
 
-void PAFProject::SetDefaultTreeName(const TString& defaultTreeName)
+void PAFProject::SetDataFiles(TDSet* dataFiles, const char* samplename)
 {
-	TDSet* tmp = fDataFiles;
-	fDataFiles = new TDSet("PAFFiles", "");
+       if (!fSampleCollection)
+	 fSampleCollection = new PAFSampleCollection;
 
-	fDataFiles->SetDirectory(GetDirectoryFromObjName(defaultTreeName));
-	fDataFiles->SetObjName(GetNameFromObjName(defaultTreeName));
-
-	TList* oldDataFiles = tmp->GetListOfElements();
-	for(Int_t i = 0; i < oldDataFiles->GetEntries(); i++)
-	{
-		TDSetElement* item = (TDSetElement*)oldDataFiles->At(i);
-		const char* dir = TString(item->GetDirectory()).EqualTo("/") ? 0 : item->GetDirectory();
-		const char* obj = TString(item->GetObjName()).IsNull() ? 0 : item->GetObjName();
-		fDataFiles->Add(item->GetFileName(), obj, dir);
-	}
+       PAFSample* thesample = CheckAndCreateSample(samplename);
+       thesample->SetDataFiles(dataFiles);
 }
 
-void PAFProject::SetDefaultTreeName(const char* defaultTreeName)
+void PAFProject::AddDataFile(const TString& fileName, const char* objname, const char* samplename)
 {
-	TString tDefaultTreeName(defaultTreeName);	
-	SetDefaultTreeName(tDefaultTreeName);
-}
-
-TDSet* PAFProject::GetDataFiles()
-{
-	return fDataFiles;
-}
-
-void PAFProject::SetDataFiles(TDSet* dataFiles)
-{
-	fDataFiles = dataFiles;
-}
-
-void PAFProject::AddDataFile(const TString& fileName, const char* objname)
-{
-        TString tObjName(objname);
-	TString directory = GetDirectoryFromObjName(tObjName);
-	TString name = GetNameFromObjName(tObjName);
+	if (!fSampleCollection)
+	  fSampleCollection = new PAFSampleCollection;
 	
-	fDataFiles->Add(fileName, 
-			name.IsNull() ? NULL : name.Data(),
-			directory.IsNull() ? NULL : directory.Data());
+	PAFSample* thesample = CheckAndCreateSample(samplename);
+	thesample->AddDataFile(fileName, objname);
 }
 
-void PAFProject::AddDataFile(const char* fileName, const char* objname)
+
+void PAFProject::AddDataFile(TFileInfo* dataFile, 
+			     const char* samplename)
 {
-	AddDataFile(TString(fileName), objname);
+	if (!fSampleCollection)
+	  fSampleCollection = new PAFSampleCollection;
+	
+	PAFSample* thesample = CheckAndCreateSample(samplename);
+	thesample->AddDataFile(dataFile);
 }
 
-void PAFProject::AddDataFile(TFileInfo* dataFile)
-{
-	fDataFiles->Add(dataFile);
-}
-
-void PAFProject::AddDataFiles(const std::vector<TString>& files, const char* objname)
+void PAFProject::AddDataFiles(const std::vector<TString>& files, const char* objname, 
+			      const char* samplename)
 {
         for(std::vector<TString>::const_iterator it = files.begin(); it != files.end(); ++it) 
 	{
-	        AddDataFile(*it, objname);
+	  AddDataFile(*it, objname, samplename);
 	}
+}
+
+
+PAFSampleCollection* PAFProject::AddSample(PAFSample* sample) {
+
+	if (!fSampleCollection)
+	  fSampleCollection = new PAFSampleCollection;
+
+	fSampleCollection->AddSample(sample);
+
+	return fSampleCollection;
 }
 
 void PAFProject::SetFirstEvent(Long64_t firstEvent)
@@ -166,23 +153,43 @@ void PAFProject::GetListOfTrees(TDirectory* directory, TList* resultTrees, const
 	}
 }
 
-void PAFProject::doProjectChecks()
+PAFSample* PAFProject::CheckAndCreateSample(const char* samplename) const {
+	PAFSample* thesample = fSampleCollection->GetSampleByName(samplename);
+	if (!thesample) {
+	  PAF_WARN("PAFProject", 
+		    TString::Format("PAFSample \"%s\" did not exist. Creating it",samplename));
+	  thesample = new PAFSample(samplename);
+	  fSampleCollection->AddSample(thesample);
+	}
+	return thesample;
+}
+
+
+
+
+
+
+void PAFProject::CheckFileTrees(TDSet* tdset)
 {
-	TDSetElement* firstElement = (TDSetElement*)GetDataFiles()->GetListOfElements()->First();
+  	TDSetElement* firstElement = (TDSetElement*)tdset->GetListOfElements()->First();
 	if(firstElement == NULL)
 	{
-		PAF_FATAL("PAFProject", "There is no ROOT file specified.");
+	 	PAF_FATAL("PAFProject", "There is no ROOT file specified.");
 	}
 	
-	//If there is a Tree name specified, return.
-	if(!GetDefaultTreeName().IsNull())
-	{
-		return;
-	}
+        //If there is a Tree name specified, return.
+        // if(tdset->GetObjName())
+        // {
+        //         PAF_DEBUG("PAFProject", 
+	// 		  TString::Format("+ Tree already specified \"%s\"", tdset->GetObjName()));
+        //         return;
+        // }
+
 	
 	//If the first file has a Tree specified, return.
 	if(!TString(firstElement->GetObjName()).IsNull())
 	{
+                PAF_DEBUG("PAFProject", "+ Tree specified in first element");
 		return;
 	}
 	
@@ -231,46 +238,57 @@ void PAFProject::doProjectChecks()
 	}
 }
 
+
+
+
+
+
+
+void PAFProject::doProjectChecks() {
+  PAF_DEBUG("PAFProject", "Checking project for each sample");
+  for (unsigned int i = 0; i < fSampleCollection->GetNSamples(); i++) {
+    PAF_DEBUG("PAFProject", TString::Format("+ %s",fSampleCollection->GetSample(i)->GetName()));
+    CheckFileTrees(fSampleCollection->GetSample(i)->GetDataFiles());
+  }
+}
+
+
+
+
+
 void PAFProject::doRun(PAFBaseSelector* selector)
 {
-	fExecutionEnvironment->Process(selector, fDataFiles, fFirstEvent, fNEvents);
+        // Create variable containter with the input parameters in the project and in the
+        // sample collection
+        PAF_DEBUG("PAFProject", "Creating input parameters from PAFProject and PAFSampleCollection");
+	PAFVariableContainer* globalinputparams = new PAFVariableContainer();
+	globalinputparams->Add(fInputParameters);
+	globalinputparams->Add(fSampleCollection->GetParameters());
+
+
+        PAF_INFO("PAFProject", 
+		  TString::Format("Iterating over %d samples",fSampleCollection->GetNSamples()));
+	for (unsigned int i = 0; i < fSampleCollection->GetNSamples(); i++) {
+
+	  PAFSample* currentsample = fSampleCollection->GetSample(i);
+	  PAF_DEBUG("PAFProject", 
+		    TString::Format("Processing sample %s", currentsample->GetName()));
+
+	  TDSet* dataFiles = currentsample->GetDataFiles();
+
+	  PAF_DEBUG("PAFProject", 
+		    TString::Format("Merging input parameters from sample %s", currentsample->GetName()));
+	  PAFVariableContainer* allinputparams = new PAFVariableContainer();
+	  allinputparams->Add(globalinputparams);
+	  allinputparams->Add(currentsample->GetParameters());
+	  //allinputparams->GetKeys()->Dump();
+
+	  PAF_DEBUG("PAFProject", "Setting input parameters in selector");
+	  selector->SetSelectorParams(allinputparams);
+	  fExecutionEnvironment->AddInput(new PAFNamedItem("PAFParams", allinputparams));
+
+	  PAF_DEBUG("PAFProject", "... and finally processing the data");
+	  fExecutionEnvironment->Process(selector, dataFiles, fFirstEvent, fNEvents);
+	}
 }
 
-TString PAFProject::GetDirectoryFromObjName(const TString& objName)
-{
-	TString tObjName = objName;
-	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
-	
-	TString result;
-	
-	if(parts->size() > 0)
-	{
-		for(unsigned int i = 0; i < parts->size() - 1; i++)
-		{
-			result.Append(parts->at(i)->Data());
-		}
-	}
-	
-	parts->clear();
-	delete parts;
-	
-	return result;
-}
-
-TString PAFProject::GetNameFromObjName(const TString& objName)
-{
-	TString tObjName = objName;
-	std::vector<TString*>* parts = PAFStringUtil::Split(&tObjName, "/");
-	
-	TString result;
-	
-	if(parts->size() > 0)
-	{
-		result = (parts->at(parts->size() - 1))->Copy();
-	}
-	
-	parts->clear();
-	delete parts;
-	
-	return result;
-}
