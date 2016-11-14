@@ -18,6 +18,7 @@
 #include "TH1.h"
 
 #include "PAF.h"
+#include "PAFFindHelper.h"
 
 PAFSequentialEnvironment::PAFSequentialEnvironment()
 	: PAFIExecutionEnvironment(), fInputList(0), fFeedbackCanvas(0), fProgressUpdated(0)
@@ -39,7 +40,26 @@ void PAFSequentialEnvironment::InitMembers()
 
 void PAFSequentialEnvironment::AddInput(TObject* obj)
 {
+
+        //PAF_DEBUG("PAFSequentialEnvironment::AddInput", "Entering");
+	// Check that we are not adding again the input parameter
+        if (TString(obj->IsA()->GetName()).EqualTo("PAFNamedItem")) {
+	  if (TString(obj->GetName()).EqualTo("PAFParams")) {
+	    TObject* currentparams = 0;
+	    for (unsigned int i = 0; i < fInputList->GetEntries(); i++) {
+	      currentparams = fInputList->At(i);
+	      if (TString(currentparams->GetName()).EqualTo("PAFParams")) {
+		fInputList->Remove(currentparams);
+		delete currentparams;
+		break;
+	      }
+	    }
+	  }
+	}
+	
 	fInputList->Add(obj);
+	//PAF_DEBUG("PAFSequentialEnvironment::AddInput", "Listado de fInputList");
+	//fInputList->Dump();
 }
 
 void PAFSequentialEnvironment::AddFeedback(const char* name)
