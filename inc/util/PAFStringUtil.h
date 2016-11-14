@@ -18,4 +18,5 @@ class PAFStringUtil
 		static std::vector< TString* >* Split(TString* string, const char* cs);
 		static TString GetDirectoryFromObjName(const TString& objName);
 		static TString GetNameFromObjName(const TString& objName);
+		static TString InsertStringInROOTFile(const TString& file, const TString& insert);
 };

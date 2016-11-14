@@ -7,6 +7,8 @@
 	@date 2015-02-12
  */
 
+
+#include "PAF.h"
 #include "PAFStringUtil.h"
 
 std::vector< TString* >* PAFStringUtil::Split(TString* string, const char* cs)
@@ -67,4 +69,35 @@ TString PAFStringUtil::GetNameFromObjName(const TString& objName)
 	delete parts;
 	
 	return result;
+}
+
+
+
+TString PAFStringUtil::InsertStringInROOTFile(const TString& file, const TString& insert) {
+  TString prefix("");
+
+  // If pos is negative then it means there is no point in the file name
+  if (file.IsNull()) {
+    PAF_INFO("PAFStringUtil", "Output file name is empty. Using sample name in current directory for the output file.");
+  }
+  else {
+    Ssiz_t pos = file.Last('.');
+    if (pos < 0) {
+      PAF_WARN("PAFStringUtil", "Output file has no root suffix. It will be added");
+      prefix = file;
+    }
+    else {
+        TString suffix = file.SubString("root", pos);
+	if (suffix.IsNull()) {
+	  PAF_WARN("PAFStringUtil", "Output file has no root suffix. It will be added");
+	  prefix=file;
+	}
+	else {
+	  prefix = file(0,pos);
+	}
+    }
+  }
+
+  return prefix + "_" + insert + ".root";
+
 }
