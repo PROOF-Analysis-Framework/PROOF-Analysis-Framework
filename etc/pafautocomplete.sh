@@ -6,11 +6,16 @@ _paf()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     
     # Basic options
-    _paf_commands="-h --help addhistogram ah createselector cs inspecttree it reset"
+    _paf_commands="-h --help addhistogram ah createproject cp createselector cs inspecttree it reset"
     # Completion of basic arbuments
     case "${prev}" in
 	reset)
 	    local opts="-a -h --help"
+	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+	cp|createproject)
+	    local opts="-h --help"
 	    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
             return 0
             ;;
