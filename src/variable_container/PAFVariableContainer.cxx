@@ -22,7 +22,6 @@ void PAFVariableContainer::Add(PAFVariableContainer* other) {
 	while( (current = it->Next()) )
 	{
 		TPair* item = (TPair*)current;
-		PAF_DEBUG("PAFVarCont", ((TObjString*)item->Key())->GetString());
 		fPairs.Add(item->Key()->Clone(), item->Value()->Clone());
 	}
   }
