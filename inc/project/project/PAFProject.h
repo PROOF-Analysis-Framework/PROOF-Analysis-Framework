@@ -38,7 +38,10 @@ class PAFProject : public PAFAbstractProject
 				  const char* samplename = "PAFDefaultSample");
 
 
+		// Dealing with the sample collection
 		PAFSampleCollection* AddSample(PAFSample* sample);
+		inline void SetSampleCollection(PAFSampleCollection* sc);
+		inline PAFSampleCollection* GetSampleCollection();
 
 		void SetFirstEvent(Long64_t firstEvent);
 		Long64_t GetFirstEvent() const;
@@ -73,3 +76,10 @@ void PAFProject::SetDefaultTreeName(const TString& defaultTreeName) {
   fSampleCollection->SetDefaultTreeName(defaultTreeName);
 }
 
+void PAFProject::SetSampleCollection(PAFSampleCollection* sc) {
+  fSampleCollection = sc;
+}
+
+PAFSampleCollection* PAFProject::GetSampleCollection() {
+  return fSampleCollection;
+}
