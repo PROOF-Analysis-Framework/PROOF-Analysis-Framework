@@ -32,6 +32,7 @@ class PAFSample: public TNamed {
   // Dealing with files in the form TDSets
   inline void SetDataFiles(TDSet* dataFiles);
   inline TDSet* GetDataFiles();
+  inline Int_t  GetNDataFiles() const;
 
   // Dealing with tree names
   inline TString GetDefaultTreeName() const;
@@ -72,6 +73,9 @@ void PAFSample::SetParameter(const char* key, T param) {
 void PAFSample::SetDataFiles(TDSet* dataFiles) {fDataFiles = dataFiles;}
 
 TDSet* PAFSample::GetDataFiles() { return fDataFiles;}
+
+Int_t  PAFSample::GetNDataFiles() const { return fDataFiles->GetNumOfFiles();}
+
 
 TString PAFSample::GetDefaultTreeName() const { return fDataFiles->GetObjName();}
 
