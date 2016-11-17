@@ -293,6 +293,7 @@ void PAFProject::doRun(PAFBaseSelector* selector)
 	  if (nSamples > 1)
 	    outputfile = PAFStringUtil::InsertStringInROOTFile(fOutputFile, currentsample->GetName());
 	  selector->SetOutputFile(outputfile);
+	  PAF_DEBUG("PAFProject", TString::Format("+ Output file: %s", outputfile.Data()));
 
 	  PAF_DEBUG("PAFProject", "... and finally processing the data");
 	  fExecutionEnvironment->Process(selector, dataFiles, fFirstEvent, fNEvents);
