@@ -8,8 +8,12 @@
  */
 
 
+// PAF includes
 #include "PAF.h"
 #include "PAFStringUtil.h"
+
+// ROOT includes
+#include "TSystemFile.h"
 
 std::vector< TString* >* PAFStringUtil::Split(TString* string, const char* cs)
 {
@@ -73,31 +77,59 @@ TString PAFStringUtil::GetNameFromObjName(const TString& objName)
 
 
 
-TString PAFStringUtil::InsertStringInROOTFile(const TString& file, const TString& insert) {
-  TString prefix("");
+TString PAFStringUtil::InsertStringInROOTFile(const TString& file, const TString& sampleName) {
 
-  // If pos is negative then it means there is no point in the file name
-  if (file.IsNull()) {
-    PAF_INFO("PAFStringUtil", "Output file name is empty. Using sample name in current directory for the output file.");
+  TString finalname = file;
+
+  // Let's do the official case first
+  if (file.Contains("%PAFSAMPLENAME%")) {
+    finalname.ReplaceAll("%PAFSAMPLENAME%",sampleName);
   }
+
+
+  // If the pattern is not there, then deal with different cases
   else {
-    Ssiz_t pos = file.Last('.');
-    if (pos < 0) {
-      PAF_WARN("PAFStringUtil", "Output file has no root suffix. It will be added");
-      prefix = file;
+    TString prefix("");
+    TString suffix(".root");
+
+    // + If the file name is empty then we will have sampleName.root as output file
+    if (file.IsNull()) {
+      PAF_INFO("PAFStringUtil", "Output file name is empty. Using sample name in current directory for the output file.");
     }
+    // + Otherwise try to add the sampleName before .root
     else {
-        TString suffix = file.SubString("root", pos);
-	if (suffix.IsNull()) {
+      // - If it is a directoy store sampleName.root there
+      TSystemFile f;
+      if (f.IsDirectory(sampleName)) {
+	  prefix = sampleName;
+	  if (sampleName[sampleName.Sizeof()-2] != '/')
+	    prefix += '/';
+      }
+      else {
+	Ssiz_t pos = file.Last('.');
+	// - If the name is ill-formed (not even a dot), add it to the end
+	if (pos < 0) {
 	  PAF_WARN("PAFStringUtil", "Output file has no root suffix. It will be added");
-	  prefix=file;
+	  prefix = file + "_";
 	}
+	// - Otherwise look for .root
 	else {
-	  prefix = file(0,pos);
+	  TString suffix = file.SubString("root", pos);
+	  // * If we don't find .root, then it will be added
+	  if (suffix.IsNull()) {
+	    PAF_WARN("PAFStringUtil", "Output file has no root suffix. It will be added");
+	    prefix=file;
+	  }
+	  // * Otherwise the name before .root will be used as a base for the name
+	  else {
+	    prefix = file(0,pos);
+	  }
 	}
+      }
     }
+    finalname = prefix + "_" + sampleName + suffix;
   }
 
-  return prefix + "_" + insert + ".root";
+  return finalname; 
 
 }
