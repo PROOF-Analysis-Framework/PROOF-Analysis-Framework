@@ -42,6 +42,7 @@ TDSet* PAFSampleCollection::GetDataFiles(const char* name) {
       if (TString(fSamples[i]->GetName()) == name)
 	return fSamples[i]->GetDataFiles();
   }
+  return 0;
 }
 
 
