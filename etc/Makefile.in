@@ -25,6 +25,12 @@ MYINCLUDES+=-I$(PAFPATH)/include
 CXXFLAGS+= $(MYINCLUDES)
 MYLIBS+=-L$(PAFPATH)/lib -lPAF
 
+ifeq ($(wildcard LinkDef.h),)  
+LINKDEFFILE = 
+else
+LINKDEFFILE = LinkDef.h
+endif
+
 #------------------------------------------------------------------------------
 
 
@@ -74,7 +80,7 @@ $(TARGET).$(ObjSuf): $(TARGETHEAD)
 
 $(TARGET)Dict.$(SrcSuf): $(TARGETHEAD)
 	@echo "Generating dictionary $@..."
-	@rootcint -v4 -f $@ -c $(MYINCLUDES) $^
+	@rootcint -v4 -f $@ -c $(MYINCLUDES) $^ $(LINKDEFFILE)
 	@sync
 
 
