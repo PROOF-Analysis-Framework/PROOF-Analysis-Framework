@@ -24,7 +24,7 @@ class PAFVariableContainer : public TObject
 		inline virtual ~PAFVariableContainer();
 
 		template<typename T>
-		void Add(const char* key, T value);
+		void Add(const char* key, const T& value);
 
 		void Add(const char* key, const char* value);
 
@@ -48,11 +48,16 @@ class PAFVariableContainer : public TObject
 //----------------------------------------------------------------------
 // Template methods
 template <typename T>
-inline void PAFVariableContainer::Add(const char* key, T value)
+inline void PAFVariableContainer::Add(const char* key, const T& value)
 {
 	TObjString* objKey = new TObjString(key);
 
-	delete fPairs.Remove(objKey);
+	//	delete fPairs.Remove(objKey);
+	TPair* pair = (TPair*) fPairs.RemoveEntry(objKey);
+	if (pair) {
+	  delete pair->Value();
+	  delete pair->Key();
+	}
 
 	fPairs.Add(objKey, new PAFGenericItemVariableContainer<T>(value));
 }
@@ -70,7 +75,12 @@ inline void PAFVariableContainer::Add(const char* key, const char* value)
 	TObjString* objKey = new TObjString(key);
 	TString strvalue(value);
 
-	delete fPairs.Remove(objKey);
+	//delete fPairs.Remove(objKey);
+	TPair* pair = (TPair*) fPairs.RemoveEntry(objKey);
+	if (pair) {
+	  delete pair->Value();
+	  delete pair->Key();
+	}
 
 	fPairs.Add(objKey,  new PAFGenericItemVariableContainer<TString>(strvalue));
 }
