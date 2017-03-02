@@ -18,11 +18,11 @@ class PAFGenericItemVariableContainer : public TObject
 {
 	public:
 		PAFGenericItemVariableContainer() : TObject() {}
-		PAFGenericItemVariableContainer(T object) : TObject(), fObject(object) {}
+		PAFGenericItemVariableContainer(const T& object) : TObject(), fObject(object) {}
 		virtual ~PAFGenericItemVariableContainer() {}
 
-		void Set(T object) { fObject = object; }
-		T Get() { return fObject; }
+		void Set(const T& object) { fObject = object; }
+		T Get() const { return fObject; }
 
 		//TODO Maybe an "IsType" function could facilitate the evolution.
 	private:
