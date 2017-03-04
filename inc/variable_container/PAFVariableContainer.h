@@ -59,6 +59,8 @@ inline void PAFVariableContainer::Add(const char* key, const T& value)
 	  delete pair->Key();
 	}
 
+	delete pair;
+
 	fPairs.Add(objKey, new PAFGenericItemVariableContainer<T>(value));
 }
 
