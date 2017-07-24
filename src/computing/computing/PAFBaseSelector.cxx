@@ -46,6 +46,7 @@ TString PAFBaseSelector::GetOutputFile()
 
 void PAFBaseSelector::Init(TTree* tree)
 {
+	PAF_DEBUG("PAFBaseSelector", "Initializing...");
 	delete fVariables;
 	fVariables = new PAFVariableContainer();
 
@@ -54,11 +55,11 @@ void PAFBaseSelector::Init(TTree* tree)
 	if (ROOT::GetROOT()->GetVersionInt() >= 60000)
 	{
 		fTree->SetBranchStatus("*", 0);
-		PAF_DEBUG("PAFBaseSelector", "Enabling lazy loading of branches.");
+		PAF_INFO("PAFBaseSelector", "Enabling lazy loading of branches.");
 	}
 	else
 	{
-		PAF_DEBUG("PAFBaseSelector", "It was not possible to enable the lazy loading due to a bug in your ROOT version. Please, use ROOT6 or higher.");
+		PAF_WARN("PAFBaseSelector", "It was not possible to enable the lazy loading due to a bug in your ROOT version. Please, use ROOT6 or higher.");
 	}
 	
 	TObjArray* leaves = tree->GetListOfLeaves();
@@ -70,7 +71,26 @@ void PAFBaseSelector::Init(TTree* tree)
 		fVariables->Add(leaf->GetName(), (TObject*)factory.GetPAFType(leaf));
 	}
 	fPAFISelector->SetDynamicData(fVariables);
-	PAF_DEBUG("PAFBaseSelector", "Successfully configured ROOT file");
+	PAF_INFO("PAFBaseSelector", "Successfully configured ROOT file");
+
+}
+
+void PAFBaseSelector::Begin(TTree* /*tree*/) {
+        // This method is executed only on the master and not on the slaves
+        // It is needed to avoid having to retrieve things initialised in Selectors::Initialise() 
+        // in Summary()
+	PAF_DEBUG("PAFBaseSelector", "Initialising selectors in the master...");
+	if (!fPAFISelector)
+	  PAF_FATAL("PAFBaseSelector", "Could not find list of selectors.");
+
+	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF parameters in the master");
+	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
+
+	PAF_DEBUG("PAFBaseSelector::Begin()", "Initializing PAFSelectors in the master");
+	fPAFISelector->Initialise();
+
+	// This is needed to avoid duplications.
+	fOutput = new TSelectorList;
 }
 
 void PAFBaseSelector::SlaveBegin(TTree* /*tree*/)
@@ -80,6 +100,8 @@ void PAFBaseSelector::SlaveBegin(TTree* /*tree*/)
 	
 	PAF_DEBUG("PAFBaseSelector", "Searching for PAFSelector");
 	fPAFISelector = PAFFindHelper::FindPAFNamed<PAFISelector*>(fInput, "PAFSelector");
+	if (!fPAFISelector)
+	  PAF_FATAL("PAFBaseSelector", "Could not find list of selectors.");
 
 	PAF_DEBUG("PAFBaseSelector", "Setting up PROOF data");
 	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
@@ -97,11 +119,13 @@ Bool_t PAFBaseSelector::Process(Long64_t entry)
 
 void PAFBaseSelector::Terminate()
 {
+	PAF_DEBUG("PAFBaseSelector", "Terminating...");
 	fPAFISelector->SetStaticData(fInput, fOutput, fSelectorParams);
 	fPAFISelector->SetDynamicData(fVariables);
+	PAF_DEBUG("PAFBaseSelector", "Going for summary from the selectors...");
 	fPAFISelector->Summary();
 
-	PAF_DEBUG("PAFBaseSelector", "Saving output to file");
+	PAF_INFO("PAFBaseSelector", Form("Saving output to file %s", fOutputFile.Data()));
 	fOutput->Add(fInput);
 	fOutput->SaveAs(fOutputFile.Data());
 }
@@ -118,6 +142,7 @@ PAFISelector* PAFBaseSelector::GetPAFSelector()
 
 void PAFBaseSelector::SetSelectorParams(PAFVariableContainer* selectorparams)
 {
+	PAF_DEBUG("PAFBaseSelector", "Setting selector parameters...");
 	fSelectorParams = selectorparams;
 }
 

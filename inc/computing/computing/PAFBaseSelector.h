@@ -25,6 +25,7 @@ class PAFBaseSelector : public TSelector
 		virtual ~PAFBaseSelector();
 		virtual Int_t   Version() const;
 		virtual void 	Init(TTree* tree);
+		virtual void    Begin(TTree*);
 		virtual void    SlaveBegin(TTree* tree);
 		virtual Bool_t  Process(Long64_t entry);
 		virtual void    Terminate();
