@@ -25,7 +25,9 @@ class PAFProject : public PAFAbstractProject
 		PAFProject(PAFIExecutionEnvironment* executionEnvironment);
 		virtual ~PAFProject();
 
-		inline void SetDefaultTreeName(const TString& defaultTreeName);
+		// Set the name of the default tree. Should be called after the files are loaded
+		// TBD. Make sure AddDataFiles or SetDataFiles are not called after this
+		void SetDefaultTreeName(const TString& defaultTreeName);
 
 		void SetDataFiles(TDSet* dataFiles, const char* samplename = "PAFDefaultSample");
 		TDSet* GetDataFiles(const char* samplename = "PAFDefaultSample");
@@ -72,10 +74,6 @@ class PAFProject : public PAFAbstractProject
 
 //----------------------------------------------------------------------
 // Inline methods
-void PAFProject::SetDefaultTreeName(const TString& defaultTreeName) {
-  fSampleCollection->SetDefaultTreeName(defaultTreeName);
-}
-
 void PAFProject::SetSampleCollection(PAFSampleCollection* sc) {
   fSampleCollection = sc;
 }

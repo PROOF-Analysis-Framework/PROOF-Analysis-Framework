@@ -38,6 +38,16 @@ PAFProject::~PAFProject()
 }
 
 
+void PAFProject::SetDefaultTreeName(const TString& defaultTreeName) {
+  if (!fSampleCollection)
+    PAF_FATAL("PAFProject", "You tried to set the default tree name before adding input files or samples");
+  if (fSampleCollection->GetNSamples() == 0)
+    PAF_FATAL("PAFProject", "You tried to set the default tree name before adding input files or samples");
+    
+  fSampleCollection->SetDefaultTreeName(defaultTreeName);
+}
+
+
 TDSet* PAFProject::GetDataFiles(const char* samplename)
 {
         return fSampleCollection->GetDataFiles(samplename);
@@ -247,7 +257,8 @@ void PAFProject::CheckFileTrees(TDSet* tdset)
 void PAFProject::doProjectChecks() {
   PAF_DEBUG("PAFProject", "Checking project for each sample");
   for (unsigned int i = 0; i < fSampleCollection->GetNSamples(); i++) {
-    PAF_DEBUG("PAFProject", TString::Format("+ %s",fSampleCollection->GetSample(i)->GetName()));
+    PAF_DEBUG("PAFProject", TString::Format("+ Sample Collection: %s",fSampleCollection->GetSample(i)->GetName()));
+    PAF_DEBUG("PAFProject", TString::Format("+ Default Tree Name: %s",fSampleCollection->GetDefaultTreeName(i).Data()));
     CheckFileTrees(fSampleCollection->GetSample(i)->GetDataFiles());
   }
 }
