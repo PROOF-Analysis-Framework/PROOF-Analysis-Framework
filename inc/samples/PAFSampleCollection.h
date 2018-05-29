@@ -33,6 +33,7 @@ class PAFSampleCollection: public TNamed {
 
   // Tree name managemet
   std::vector<TString> GetDefaultTreeNames() const;
+  inline TString GetDefaultTreeName(unsigned int i) const;
   bool IsTreeNameSet() const;
   void SetDefaultTreeName(const TString& defaultTreeName);
 
@@ -69,3 +70,6 @@ void PAFSampleCollection::SetParameter(const char* key, T param) {
 void  PAFSampleCollection::AddSample(PAFSample* ps) {fSamples.push_back(ps);}
 unsigned int  PAFSampleCollection::GetNSamples() const {return fSamples.size();}
 PAFSample*  PAFSampleCollection::GetSample(unsigned int i) {return fSamples[i];}
+TString PAFSampleCollection::GetDefaultTreeName(unsigned int i) const {
+  return fSamples[i]->GetDefaultTreeName();
+}

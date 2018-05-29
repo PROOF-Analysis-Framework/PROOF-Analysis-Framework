@@ -61,13 +61,11 @@ void PAFSampleCollection::SetDefaultTreeName(const TString& defaultTreeName) {
 }
 
 
-
-
 std::vector<TString> PAFSampleCollection::GetDefaultTreeNames() const {
   std::vector<TString> treenames(fSamples.size());
   for (unsigned int i = 0; i < fSamples.size(); i++)
     treenames.push_back(fSamples[i]->GetDefaultTreeName());
-
+  return treenames;
 }
 
 bool PAFSampleCollection::IsTreeNameSet() const {
