@@ -42,7 +42,7 @@ ADD_DEFINITIONS(${ROOT_CXX_FLAGS})
 ROOT_GENERATE_DICTIONARY(G__PAF ${headers} LINKDEF LinkDef.hxx)
 
 # Compile all the files in sources variable and the dictionary.
-ROOT_LINKER_LIBRARY(PAF ${sources_paflibrary} G__PAF.cxx DEPENDENCIES Hist Proof Gpad)
+ROOT_LINKER_LIBRARY(PAF ${sources_paflibrary} G__PAF.cxx DEPENDENCIES Hist Core Proof Gpad RIO Tree)
 
 # Compile paf tool.
 ROOT_EXECUTABLE(paf ${sources_paftools} LIBRARIES PAF)
