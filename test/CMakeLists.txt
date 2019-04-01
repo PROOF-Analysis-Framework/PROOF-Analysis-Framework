@@ -14,18 +14,22 @@ endif(NOT DEFINED ENV{PAFPATH})
 # You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
 #   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS}/etc/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS}/cmake/modules)
+LIST(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS}/etc/cmake)
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS}/cmake/modules)
 
 #---Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
-find_package(ROOT REQUIRED COMPONENTS MathCore RIO Hist Tree Net Prof)
+FIND_PACKAGE(ROOT REQUIRED COMPONENTS MathCore RIO Hist Tree Net Proof)
+
+#---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
+INCLUDE(${ROOT_USE_FILE})
 
 
 #---Define the Standard macros for ROOT---
-include(RootNewMacros)
-if(NOT DEFINED ROOT_ARCHITECTURE)
-  include(CheckCompiler)
-endif()
+#include(RootNewMacros)
+#if(NOT DEFINED ROOT_ARCHITECTURE)
+#  include(CheckCompiler)
+#endif()
 
 #---Set Link and include directories------
 set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
@@ -59,7 +63,7 @@ add_definitions(${ROOT_CXX_FLAGS})
 enable_testing()
 
 root_linker_library(PAFTest ${PROJECT_SOURCE_DIR}/test_utils/PAFTest.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestExpectedException.cxx ${PROJECT_SOURCE_DIR}/test_utils/PAFTestIException.cxx
-	DEPENDENCIES Tree Hist Proof Gpad XMLIO Physics)
+	DEPENDENCIES Tree Hist Proof Gpad XMLIO Physics RIO)
 
 include_directories("test_utils")
 link_libraries(PAFTest)
